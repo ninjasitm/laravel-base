@@ -1,0 +1,39 @@
+<?php Block::put('breadcrumb') ?>
+    <ul>
+        <li><a href="<?= Backend::url('nitm/api/mappings') ?>"><?= e(trans('nitm.api::lang.mapping.page_title_one')) ?></a></li>
+        <li><?= e($this->pageTitle) ?></li>
+    </ul>
+<?php Block::endPut() ?>
+
+<?php if (!$this->fatalError): ?>
+
+    <div class="control-tabs content-tabs tabs-flush" data-control="tab">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#relation_form" class="oc-icon-connectdevelop"><?= e(trans('nitm.api::lang.mapping.tab_form')) ?></a></li>
+            <!-- <li><a href="#event_automation" class="oc-icon-magic"> <?= e(trans('nitm.api::lang.event_automation.title')) ?></a></li> -->
+        </ul>
+        <div class="tab-content">
+            <div id="comtentTabRelationForm" class="tab-pane active">
+                <div class="padded-container">
+                    <?= $this->makePartial('create_relation_form') ?>
+                </div>
+            </div>
+            <!--
+            <div id="comtentTabEventAutomation" class="tab-pane">
+                <div class="padded-container">
+                    <?= $this->makePartial('create_event_handler') ?>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+
+<?php else: ?>
+    <div class="padded-container">
+        <div class="control-breadcrumb">
+            <?= Block::placeholder('breadcrumb') ?>
+        </div>
+        <p class="flash-message static error"><?= e($this->fatalError) ?></p>
+        <p><a href="<?= Backend::url('nitm/api/mappings') ?>" class="btn btn-default"><?= trans('nitm.api::lang.generic.return_relations') ?></a></p>
+    </div>
+<?php endif ?>

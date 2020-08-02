@@ -1,0 +1,16 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+name: Event Handler
+form: ~/plugins/nitm/api/models/eventhandler/fields.yaml
+modelClass: Nitm\Api\Models\Eventhandler
+defaultRedirect: nitm/api/eventhandler
+
+create:
+    redirect: nitm/api/eventhandler/update/:id
+    redirectClose: nitm/api/eventhandler
+
+update:
+    redirect: nitm/api/eventhandler
+    redirectClose: nitm/api/eventhandler

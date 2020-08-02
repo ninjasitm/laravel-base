@@ -1,0 +1,20 @@
+# ===================================
+#  List Behavior Config
+# ===================================
+
+title: nitm.api::lang.blacklist.page_title
+list: ~/plugins/nitm/api/models/logs/columns.yaml
+modelClass: Nitm\Api\Models\Logs
+recordUrl: nitm/api/history/preview/:id
+noRecordsMessage: backend::lang.list.no_records
+recordsPerPage: 30
+showSetup: true
+showCheckboxes: true
+defaultSort:
+    column: created_at
+    direction: asc
+
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: backend::lang.list.search_prompt

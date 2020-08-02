@@ -1,0 +1,8 @@
+# ===================================
+#  Field Definitions
+# ===================================
+
+fields:
+
+  token:
+    label: nitm.api::lang.token.token

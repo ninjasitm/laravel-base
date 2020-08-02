@@ -1,0 +1,8 @@
+id,name,slug,code,description,parent_id,nest_left,nest_right,nest_depth,created_at,updated_at
+1,Uncategorized,uncategorized,,,,1,2,0,"2017-09-28 01:30:21","2017-09-28 01:30:21"
+2,Cloud,cloud,,"Cloud services",,3,4,0,"2017-10-26 15:13:11","2017-10-26 15:13:11"
+3,Development,development,,"Overall software development",,5,6,0,"2017-10-26 15:13:43","2017-10-26 15:13:43"
+4,UI/UX,uiux,,"UI/UX for mobile and web applicationss",,7,8,0,"2017-10-26 15:14:02","2017-10-26 15:14:02"
+5,Business,business,,"Business related posts",,9,10,0,"2017-10-26 15:14:15","2017-10-26 15:14:15"
+6,Chatbot,chatbot,,"Chatbots and more",,11,12,0,"2017-12-17 01:52:20","2017-12-17 01:52:20"
+7,"AI - Artificial Intelligence",ai-artificial-intelligence,,"Artificial intelligence.",,13,14,0,"2017-12-17 01:52:58","2017-12-17 01:52:58"

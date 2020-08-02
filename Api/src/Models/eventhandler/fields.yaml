@@ -1,0 +1,35 @@
+# ===================================
+#  Field Definitions
+# ===================================
+
+fields:
+  model:
+    label: nitm.api::lang.event_automation.model
+    span: left
+    type: dropdown
+    required: true
+
+  action:
+    label: nitm.api::lang.event_automation.action
+    span: right
+    type: dropdown
+    required: true
+
+  url:
+    label: nitm.api::lang.event_automation.external_url_header
+    span: left
+    required: true
+    default: https://
+    comment: nitm.api::lang.event_automation.external_url
+    required: true
+
+  sendmethod:
+    label: nitm.api::lang.event_automation.sending_method
+    span: right
+    type: dropdown
+    required: true
+
+  note:
+    label: nitm.api::lang.event_automation.notes
+    type: textarea
+    size: large

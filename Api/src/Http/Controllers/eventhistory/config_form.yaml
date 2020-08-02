@@ -1,0 +1,19 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+# Record name
+name: nitm.api::lang.eventlogs.page_title_one
+
+# Model Form Field configuration
+form: ~/plugins/nitm/api/models/eventlog/fields.yaml
+
+# Model Class name
+modelClass: Nitm\Api\Models\Eventlog
+
+# Default redirect location
+defaultRedirect: nitm/api/eventhistory
+
+# Preview page
+preview:
+    title: nitm.api::lang.eventlogs.details

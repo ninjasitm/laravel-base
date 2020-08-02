@@ -1,0 +1,19 @@
+columns:
+    user:
+        label: 'nitm.api::lang.tokens.user'
+        type: text
+        sortable: false
+        relation: user
+        valueFrom: username
+    token:
+        label: 'nitm.api::lang.tokens.token'
+        type: text
+    expires_at:
+        label: 'nitm.api::lang.tokens.expires'
+        type: datetime
+    permissions:
+        label: 'nitm.api::lang.tokens.permissions'
+        type: text
+    last_ip:
+        label: 'nitm.api::lang.tokens.ips'
+        type: text

@@ -1,0 +1,46 @@
+{
+    "name": "nitm/laravel-base",
+    "description": "Laravel packages for NITM",
+    "type": "laravel-helpers",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Malcolm Paul",
+            "email": "malcolm@ninjasitm.com"
+        }
+    ],
+    "support": {
+        "issues": "https://gitlab.com/nitm/laravel-base/issues",
+        "docs": "https://gitlab.com/nitm/laravel-base/wiki",
+        "source": "https://gitlab.com/nitm/laravel-base"
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.3.0",
+        "laravel/framework": "7.*"
+    },
+    "require-dev": {
+        "fzaninotto/faker": "~1.4",
+        "phpunit/phpunit": "~5.7",
+        "phpunit/phpunit-selenium": "~1.2",
+        "phpdocumentor/reflection-docblock": "2.0.4"
+    },
+    "config": {
+        "vendor-dir": "plugins"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nitm\\Content\\": "Content/src",
+            "Nitm\\Api\\": "Api/src",
+            "Nitm\\Helpers\\": "Helpers/src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nitm\\Content\\NitmContentServiceProvider",
+                "Nitm\\Api\\NitmApiServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,17 @@
+# ===================================
+#  List Behavior Config
+# ===================================
+
+title: nitm.api::lang.mapping.page_title
+list: ~/plugins/nitm/api/models/mapping/columns.yaml
+modelClass: Nitm\Api\Models\Mapping
+recordUrl: nitm/api/mappings/update/:id
+noRecordsMessage: backend::lang.list.no_records
+recordsPerPage: 30
+showCheckboxes: true
+showSetup: true
+
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: backend::lang.list.search_prompt

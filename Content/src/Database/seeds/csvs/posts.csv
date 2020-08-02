@@ -1,0 +1,388 @@
+id,user_id,title,slug,excerpt,content,content_html,published_at,published,created_at,updated_at
+2,1,"Servermore or Serverless?",servermore-or-serverless,"We’ve worked with startups and small businesses to help them develop their MVP and feature products. Part of that  conversations usually focuses around choosing the right cloud architecture. Cloud infrastructure can already be confusing and problematic if not setup and maintained properly. As always with technology there is the next evolution. Enter Serverless architecture.","We’ve worked with startups and small businesses to help them develop their MVP and feature products. Part of these conversations usually focus around choosing the right cloud architecture. Cloud infrastructure can already be confusing and problematic if not setup and maintained properly. As always with technology there is the next evolution. Enter Serverless architecture.
+
+# What is Serverless?
+
+So here we are with yet another new term to learn: Serverless. The good thing is that it’s pretty self-explanatory. Serverless, or lack of dedicated servers if you will, is a way of managing your IT infrastructure that reduces costs, while also lowering the time spent setting up and maintaining your backend infrastructure. Think of it as a way of further simplifying what the cloud is supposed to do. If that’s too simple try these definitions:
+
+> “Serverless architectures refer to applications that significantly depend on third-party services (knows as Backend as a Service or “BaaS”) or on custom code that’s run in ephemeral containers (Function as a Service or “FaaS”)…” -- (Maruti Techlabs, 2017)
+
+Or as Amazon describes it eloquently:
+
+> ""Building serverless applications means that your developers can focus on their core product instead of worrying about managing and operating servers or runtimes, either in the cloud or on-premises. This reduced overhead lets developers reclaim time and energy that can be spent on developing great products which scale and that are reliable."" (Amazon)
+
+You can now genuinely focus on the core functionality that affects your business and product, rather than the infrastructure that it runs on. This will lead to lower costs, more fine grained monitoring of usage and less headache to worry about as you grow your business.
+
+# Why is this important?
+
+As we evolve into the Work 2.0 paradigm of entrepreneurship and a more automated economy, we face a challenge of efficiency and lack of knowledge. As a business owner, do you need to know the cloud inside and out? Should you even care about the cloud at this stage? Understanding when too much knowledge is not necessary is just as important as understanding when you need that knowledge. Serverless computing can allow you to quickly develop your idea without worrying about the underlying servers or technology that runs your idea and business. You focus on the things that matter right now: Saving time, saving money, making more money and having fun while doing it.
+
+#How can it benefit you?
+## Save Time
+
+> “IT must relearn the vocabulary of business: money. And in doing so remove IT jargon from this process.” -- (Walker, 2017)
+
+Your tech team probably requires two developers, an admin, and a DevOps guy. What if you could eliminate the admin position, no hard feelings, and the DevOps position, no hard feelings, and execute your vision faster.
+
+## Save Money
+The more time you spend addressing technical issues that affect your customers, the more money you lose. Additionally if your team had more time they could focus on more security related issues relevant to your business. Serverless infrastructure helps you be more efficient and secure leading to saved money and minimized risk of security issues that could cost you money. A perfect example comes from 3wks (Walker, 2017) who explains that switching from Amazon AWS cloud hosting helped them to reduce costs from $4, 500/month fixed cost to a, maximum, $600/month bill with even better performance and reliability than before. That’s the cost of a full time employee. What would you do with another full time employee?
+
+## Make More Money
+How many transactions do you process per second? 10, 20, 50? What if that number grew 5x? You'd need your tech team to make sure resources are scaled and can accommodate the new load. Remember that more resources means more money out of your pocket. The way serverless functions work, you pay only for what you use at a fraction of the cost of managed cloud infrastructure. Save money even as you serve a growing customer base.
+
+## Have Fun Running Your Business
+You started your business not just to make money it to enjoy life. If managing your technology is a headache or your current setup distracts you from truly creating value, then serverless may be the answer. Make more money while having fun.
+
+# How can we help?
+We have years of experience setting up, maintaining and developing on cloud infrastructure. From AWS to Azure and Google Cloud engine with Firebase to smaller players such as OVH, Digital Ocean and Linode. We understand what it takes to get technology out of the way so that you can be successful. Contact us for help deciding how to efficiently plan and audit your infrastructure needs, build your MVP, scale your current service or backend and save money.
+
+# Works Cited
+ - “Serverless Computing - Amazon Web Services.” Amazon Web Services, Inc., [aws.amazon.com/serverless](http://aws.amazon.com/serverless).
+ - Techlabs, Maruti. “What Is Serverless Architecture? What Are Its Criticisms and Drawbacks?” Medium, Medium, 4 May 2017, [medium.com/@MarutiTech/what-is-serverless-architecture-what-are-its-criticisms-and-drawbacks-928659f9899a](http://medium.com/@MarutiTech/what-is-serverless-architecture-what-are-its-criticisms-and-drawbacks-928659f9899a).
+ - Walker, Andrew. “Google Not Amazon - Make Fantastic Savings in a Serverless World.” 3wks, 3wks, 19 July 2017, [in.3wks.com.au/google-not-amazon-make-fantastic-savings-in-a-serverless-world-b6d37710839c](http://in.3wks.com.au/google-not-amazon-make-fantastic-savings-in-a-serverless-world-b6d37710839c).
+ - Photo by Thomas Kvistholt on Unsplash","<p>We’ve worked with startups and small businesses to help them develop their MVP and feature products. Part of these conversations usually focus around choosing the right cloud architecture. Cloud infrastructure can already be confusing and problematic if not setup and maintained properly. As always with technology there is the next evolution. Enter Serverless architecture.</p>
+<h1>What is Serverless?</h1>
+<p>So here we are with yet another new term to learn: Serverless. The good thing is that it’s pretty self-explanatory. Serverless, or lack of dedicated servers if you will, is a way of managing your IT infrastructure that reduces costs, while also lowering the time spent setting up and maintaining your backend infrastructure. Think of it as a way of further simplifying what the cloud is supposed to do. If that’s too simple try these definitions:</p>
+<blockquote>
+<p>“Serverless architectures refer to applications that significantly depend on third-party services (knows as Backend as a Service or “BaaS”) or on custom code that’s run in ephemeral containers (Function as a Service or “FaaS”)…” -- (Maruti Techlabs, 2017)</p>
+</blockquote>
+<p>Or as Amazon describes it eloquently:</p>
+<blockquote>
+<p>&quot;Building serverless applications means that your developers can focus on their core product instead of worrying about managing and operating servers or runtimes, either in the cloud or on-premises. This reduced overhead lets developers reclaim time and energy that can be spent on developing great products which scale and that are reliable.&quot; (Amazon)</p>
+</blockquote>
+<p>You can now genuinely focus on the core functionality that affects your business and product, rather than the infrastructure that it runs on. This will lead to lower costs, more fine grained monitoring of usage and less headache to worry about as you grow your business.</p>
+<h1>Why is this important?</h1>
+<p>As we evolve into the Work 2.0 paradigm of entrepreneurship and a more automated economy, we face a challenge of efficiency and lack of knowledge. As a business owner, do you need to know the cloud inside and out? Should you even care about the cloud at this stage? Understanding when too much knowledge is not necessary is just as important as understanding when you need that knowledge. Serverless computing can allow you to quickly develop your idea without worrying about the underlying servers or technology that runs your idea and business. You focus on the things that matter right now: Saving time, saving money, making more money and having fun while doing it.</p>
+<h1>How can it benefit you?</h1>
+<h2>Save Time</h2>
+<blockquote>
+<p>“IT must relearn the vocabulary of business: money. And in doing so remove IT jargon from this process.” -- (Walker, 2017)</p>
+</blockquote>
+<p>Your tech team probably requires two developers, an admin, and a DevOps guy. What if you could eliminate the admin position, no hard feelings, and the DevOps position, no hard feelings, and execute your vision faster.</p>
+<h2>Save Money</h2>
+<p>The more time you spend addressing technical issues that affect your customers, the more money you lose. Additionally if your team had more time they could focus on more security related issues relevant to your business. Serverless infrastructure helps you be more efficient and secure leading to saved money and minimized risk of security issues that could cost you money. A perfect example comes from 3wks (Walker, 2017) who explains that switching from Amazon AWS cloud hosting helped them to reduce costs from $4, 500/month fixed cost to a, maximum, $600/month bill with even better performance and reliability than before. That’s the cost of a full time employee. What would you do with another full time employee?</p>
+<h2>Make More Money</h2>
+<p>How many transactions do you process per second? 10, 20, 50? What if that number grew 5x? You'd need your tech team to make sure resources are scaled and can accommodate the new load. Remember that more resources means more money out of your pocket. The way serverless functions work, you pay only for what you use at a fraction of the cost of managed cloud infrastructure. Save money even as you serve a growing customer base.</p>
+<h2>Have Fun Running Your Business</h2>
+<p>You started your business not just to make money it to enjoy life. If managing your technology is a headache or your current setup distracts you from truly creating value, then serverless may be the answer. Make more money while having fun.</p>
+<h1>How can we help?</h1>
+<p>We have years of experience setting up, maintaining and developing on cloud infrastructure. From AWS to Azure and Google Cloud engine with Firebase to smaller players such as OVH, Digital Ocean and Linode. We understand what it takes to get technology out of the way so that you can be successful. Contact us for help deciding how to efficiently plan and audit your infrastructure needs, build your MVP, scale your current service or backend and save money.</p>
+<h1>Works Cited</h1>
+<ul>
+<li>“Serverless Computing - Amazon Web Services.” Amazon Web Services, Inc., <a href=""http://aws.amazon.com/serverless"">aws.amazon.com/serverless</a>.</li>
+<li>Techlabs, Maruti. “What Is Serverless Architecture? What Are Its Criticisms and Drawbacks?” Medium, Medium, 4 May 2017, <a href=""http://medium.com/@MarutiTech/what-is-serverless-architecture-what-are-its-criticisms-and-drawbacks-928659f9899a"">medium.com/@MarutiTech/what-is-serverless-architecture-what-are-its-criticisms-and-drawbacks-928659f9899a</a>.</li>
+<li>Walker, Andrew. “Google Not Amazon - Make Fantastic Savings in a Serverless World.” 3wks, 3wks, 19 July 2017, <a href=""http://in.3wks.com.au/google-not-amazon-make-fantastic-savings-in-a-serverless-world-b6d37710839c"">in.3wks.com.au/google-not-amazon-make-fantastic-savings-in-a-serverless-world-b6d37710839c</a>.</li>
+<li>Photo by Thomas Kvistholt on Unsplash</li>
+</ul>","2017-10-25 15:52:00",1,"2017-10-26 15:51:24","2017-10-26 16:21:09"
+3,1,"What can the cloud do for you?",what-can-cloud-do-for-you,"Like most things tech, if you didn't grow up with technology or have an affinity for it then it'll be more difficult to learn and understand. The cloud is technology that either makes sense to a business owner or doesn't. It’s not magical or sentient and exists to both save you money and make more money.","Like most things tech, if you didn't grow up with technology or have an affinity for it then it'll be more difficult to learn and understand. The cloud is technology that either makes sense to a business owner or doesn't. It’s not magical or sentient and exists to both save you money and make more money.
+
+> “Simply put, cloud computing is the delivery of computing services—servers, storage, databases, networking, software, analytics, and more—over the Internet” (Azure)
+ 
+Cloud services are basically a collection of related services that are put together to enable you to deliver your service and support your business while reducing cost, improving reliability and setting you up for growth.
+
+As a business owner, are you more concerned with how tech can help you deliver more value to your clients? We can help you figure that out.
+
+# Why is it important?
+
+Are you spending unnecessarily on your technology infrastructure right now? Are you unsure of the value your employees are bringing to the table? Are you contemplating a full time employee to manage your technology? 
+
+For example one system administrator position can be eliminated saving you at least $100,000/year. That saved money can then be reinvested in marketing and new projects to increase customer engagement and drive new sales.
+
+> “Adding on-premise computing resources requires the outlay of capital expenses to buy additional servers, storage, power or sometimes in extreme cases building entirely new data centers.” (Petri)
+ 
+Or simply put, if you try to do it inhouse, it’s going to cost you significantly.
+
+If your aim is to grow your company and you depend on technology for some aspect of your business, making sure that your technology needs align with your business goals is critical. Not doing so could result in potential lost earnings and missed growth opportunities.
+
+# How does it help you?
+
+For any startup or company with a  service or product that depends on technology, investing in a proper cloud infrastructure will save you money immediately and in the long run. Those savings will be critical if you plan on increasing your audience. With growth comes the need for stability and the ability to increase your ability to serve more of your customers. Way back in 2009 Google identified the need for speedy and reliable services in their search engine. Hubspot details the need for speed and reliability with the following facts:
+
+* 79% of customers who report dissatisfaction with website performance are less likely to bu from that same site again
+* If your website makes $100,000/day, 1 second improvement in page speed beings in $7000/day
+
+[![](/storage/app/media/articles/2017/November/cropped-images/page-load-time-0-0-669-787-1510549487.jpg)](http://blog.hubspot.com/marketing/page-load-time-conversion-rates)
+
+Why lose revenue and new customers if you can make sure that your current infrastructure is reliable and stable enough to serve the traffic needs of your website or mobile application.
+
+With a well thought out and implemented cloud solution your customers will be served with a pleasant and consistent experience. The less time you spend maintaining your infrastructure, the more time you have to earn revenue and grow your company.
+
+# How can we help?
+
+We can help you get your IT under control in a few ways by reviewing your current infrastructure or plans for the future. Do you have problems with:
+
+## Downtime and reliability
+
+If there are issues affecting your ability to maintain a stable service then we can provide solutions. We can figure out why your services are not stable and why performance is not predictable by testing, auditing and recommending relevant solutions for your specific needs. 
+## Growing your revenue
+
+Should you be converting more free users into paid users? Are load times and speed affecting your ability to attract new clients? Let us figure out the exact reason that your current tech is affecting your growth potential and find the right solution. Less problems with tech means more revenue for your company.
+
+## Finding the right advice
+We are your point of understanding as technology changes. New technologies can either be an opportunity or a distraction. Don’t go down the wrong path if you don’t need to. 
+
+We are here to answer your questions and you may reach out for a consultation at any time by contacting us http://www.ninjasitm.com/contact.
+
+# Works Cited
+* “The Five Big Benefits of the Hybrid Cloud.” Petri, 8 Nov. 2017, [www.petri.com/five-big-benefits-hybrid-cloud](http://www.petri.com/five-big-benefits-hybrid-cloud).
+* Padychova, Zuzana. “How Page Load Time Affects Conversion Rates: 12 Case Studies [Infographic].” HubSpot Blog, [blog.hubspot.com/marketing/page-load-time-conversion-rates](http://blog.hubspot.com/marketing/page-load-time-conversion-rates).
+* “Speed Matters.” Research Blog, 23 June 2009, [research.googleblog.com/2009/06/speed-matters.html](http://research.googleblog.com/2009/06/speed-matters.html).
+* “What Is Cloud Computing? A Beginner's Guide | Microsoft Azure.” A Beginner's Guide | Microsoft Azure, [azure.microsoft.com/en-us/overview/what-is-cloud-computing/](http://azure.microsoft.com/en-us/overview/what-is-cloud-computing/).","<p>Like most things tech, if you didn't grow up with technology or have an affinity for it then it'll be more difficult to learn and understand. The cloud is technology that either makes sense to a business owner or doesn't. It’s not magical or sentient and exists to both save you money and make more money.</p>
+<blockquote>
+<p>“Simply put, cloud computing is the delivery of computing services—servers, storage, databases, networking, software, analytics, and more—over the Internet” (Azure)</p>
+</blockquote>
+<p>Cloud services are basically a collection of related services that are put together to enable you to deliver your service and support your business while reducing cost, improving reliability and setting you up for growth.</p>
+<p>As a business owner, are you more concerned with how tech can help you deliver more value to your clients? We can help you figure that out.</p>
+<h1>Why is it important?</h1>
+<p>Are you spending unnecessarily on your technology infrastructure right now? Are you unsure of the value your employees are bringing to the table? Are you contemplating a full time employee to manage your technology? </p>
+<p>For example one system administrator position can be eliminated saving you at least $100,000/year. That saved money can then be reinvested in marketing and new projects to increase customer engagement and drive new sales.</p>
+<blockquote>
+<p>“Adding on-premise computing resources requires the outlay of capital expenses to buy additional servers, storage, power or sometimes in extreme cases building entirely new data centers.” (Petri)</p>
+</blockquote>
+<p>Or simply put, if you try to do it inhouse, it’s going to cost you significantly.</p>
+<p>If your aim is to grow your company and you depend on technology for some aspect of your business, making sure that your technology needs align with your business goals is critical. Not doing so could result in potential lost earnings and missed growth opportunities.</p>
+<h1>How does it help you?</h1>
+<p>For any startup or company with a  service or product that depends on technology, investing in a proper cloud infrastructure will save you money immediately and in the long run. Those savings will be critical if you plan on increasing your audience. With growth comes the need for stability and the ability to increase your ability to serve more of your customers. Way back in 2009 Google identified the need for speedy and reliable services in their search engine. Hubspot details the need for speed and reliability with the following facts:</p>
+<ul>
+<li>79% of customers who report dissatisfaction with website performance are less likely to bu from that same site again</li>
+<li>If your website makes $100,000/day, 1 second improvement in page speed beings in $7000/day</li>
+</ul>
+<p><a href=""http://blog.hubspot.com/marketing/page-load-time-conversion-rates""><img src=""/storage/app/media/articles/2017/November/cropped-images/page-load-time-0-0-669-787-1510549487.jpg"" alt="""" /></a></p>
+<p>Why lose revenue and new customers if you can make sure that your current infrastructure is reliable and stable enough to serve the traffic needs of your website or mobile application.</p>
+<p>With a well thought out and implemented cloud solution your customers will be served with a pleasant and consistent experience. The less time you spend maintaining your infrastructure, the more time you have to earn revenue and grow your company.</p>
+<h1>How can we help?</h1>
+<p>We can help you get your IT under control in a few ways by reviewing your current infrastructure or plans for the future. Do you have problems with:</p>
+<h2>Downtime and reliability</h2>
+<p>If there are issues affecting your ability to maintain a stable service then we can provide solutions. We can figure out why your services are not stable and why performance is not predictable by testing, auditing and recommending relevant solutions for your specific needs. </p>
+<h2>Growing your revenue</h2>
+<p>Should you be converting more free users into paid users? Are load times and speed affecting your ability to attract new clients? Let us figure out the exact reason that your current tech is affecting your growth potential and find the right solution. Less problems with tech means more revenue for your company.</p>
+<h2>Finding the right advice</h2>
+<p>We are your point of understanding as technology changes. New technologies can either be an opportunity or a distraction. Don’t go down the wrong path if you don’t need to. </p>
+<p>We are here to answer your questions and you may reach out for a consultation at any time by contacting us <a href=""http://www.ninjasitm.com/contact"">http://www.ninjasitm.com/contact</a>.</p>
+<h1>Works Cited</h1>
+<ul>
+<li>“The Five Big Benefits of the Hybrid Cloud.” Petri, 8 Nov. 2017, <a href=""http://www.petri.com/five-big-benefits-hybrid-cloud"">www.petri.com/five-big-benefits-hybrid-cloud</a>.</li>
+<li>Padychova, Zuzana. “How Page Load Time Affects Conversion Rates: 12 Case Studies [Infographic].” HubSpot Blog, <a href=""http://blog.hubspot.com/marketing/page-load-time-conversion-rates"">blog.hubspot.com/marketing/page-load-time-conversion-rates</a>.</li>
+<li>“Speed Matters.” Research Blog, 23 June 2009, <a href=""http://research.googleblog.com/2009/06/speed-matters.html"">research.googleblog.com/2009/06/speed-matters.html</a>.</li>
+<li>“What Is Cloud Computing? A Beginner's Guide | Microsoft Azure.” A Beginner's Guide | Microsoft Azure, <a href=""http://azure.microsoft.com/en-us/overview/what-is-cloud-computing/"">azure.microsoft.com/en-us/overview/what-is-cloud-computing/</a>.</li>
+</ul>","2017-11-12 05:09:35",1,"2017-11-13 05:09:27","2017-11-13 05:12:58"
+5,1,"Why understanding the value of chatbots is critical to your success",why-understanding-value-chatbots-critical-your-success,"A chatbot is software that can be used with either visual, voice or text to interact with your users. Chatbots can be found in every part of life, from popular voice assistants such as Alexa and Google Home to messaging platforms such as Slack, Skype, Facebook Messenger and more. They offer a unique way to interact with potential users and could provide extra value to your customers with little effort.","A chatbot is software that can be used with either visual, voice or text to interact with your users. Chatbots can be found in every part of life, from popular voice assistants such as Alexa and Google Home to messaging platforms such as Slack, Skype, Facebook Messenger and more. They offer a unique way to interact with potential users and could provide extra value to your customers with little effort.
+
+# What is chatbot technology?
+> “ Essentially, a chatbot is just a robot chat that imitates human conversations through voice commands, text chats, or both. It's a virtual conversation in which one party is an online talking robot.” (Nguyen, 2017)
+
+Chatbots take text or voice input from a user. NLP (Natural Language Processing) technology is then used to understand what a user says. It can then respond based on scripted logic or incorporate AI (Artifical Intelligence) technology to respond, predict, recommend and take action based on what the user says. A chatbot is a cost effective, efficient way of communicating with your target market.
+
+# Why is it important?
+
+## People are already searching for chatbots
+People are looking for doctor chatbots for quick medical help, delivery and scheduling chatbots to order food, deliver packages, shopping chatbots to help order products and services online and more. Are you making sure you’re answering their needs?
+
+> “People are now spending more time in messaging apps than in social media and that is a huge turning point. Messaging apps are the platforms of the future and bots will be how their users access all sorts of services.” (Rajas, Twitter)
+
+## Conversational AI is not a fad
+
+Since chatbots are generally limited, and scripted, we can use AI (Artificial Intelligence) to make our chatbots smarter. For example we can add ordering, order status and more to our chatbots with conversational AI services. This enables a rich and more meaningful experience for your user. Would your service or product benefit from automations such as ordering, status information or more?
+
+![,](/storage/app/media/articles/2017/December/1%206J2T-ftDoHNGEvuMQiuWLA.jpeg)
+*© Chatbot Magazine 2017*
+
+We are changing the way we communicate. With AI, better hardware and uniquitous access, a chatbot could be the first line of contact for you and your business, service or product.
+
+> “In the future, talking to a bot will be like talking to a real person who has instant access to entire databases of information and can process your thoughts and desires instantly.” (Schlicht, 2017)
+
+# How does it help you?
+Have you ever spent time filtering potential leads and figuring out whether someone is a good fit for you? What if you could automate this process with a chatbot that asks the right questions from the start? Chatbots can help you filter the fans of your service or product with no overhead costs.
+
+The age of the standalone mobile app with multitudes of functionality is near capacity. Many users are finding that they are either downloading too many apps, are running out of space or, frankly, just don’t care about apps. A mobilized website with a conversational AI chatbot could provide all of the functionality on your website. Even a chatbot on Facebook’s platform could prove more value to your customers than a full fledged app.
+ 
+A Chatbot with voice is like an employee, with the difference being that it is noticeably cheaper and consistent. With either voice or text interaction, you can automate some of the more mundane or repetitive parts of your service and immediately see your user satisfaction go up.
+
+> “Language is the most natural interface humans understand, and that’s the interface that bots use.” (Schlicht, 2017)
+
+# How can we help?
+We can help you understand whether a chatbot will make sense for your product or service. Would a customized chatbot on your website result in more sales? Would a mobile app centered around chatbot technology be a better investment? 
+
+Once we help you understand how a chatbot can fit your business, we can then help you build it. We can build chatbot applications for:
+
+1. Facebook Messenger, WhatsApp or your Website
+1. Healthcare, customer service or eCommerce
+1. Alexa or Google Home 
+
+![](/storage/app/media/articles/2017/December/chatbot-alexa-google-home.jpg)
+
+If you’re interested in exploring the possibilities of chatbots for your business then don’t hesitate to contact us using the chatbot we have added to this site!
+
+# Works Cited
+1. “How Bots Will Completely Kill Websites and Mobile Apps.” Chatbots Magazine, Chatbots Magazine, 2 Nov. 2016, [chatbotsmagazine.com/how-bots-will-completely-kill-websites-and-mobile-apps-656db8e6fc03](http://chatbotsmagazine.com/how-bots-will-completely-kill-websites-and-mobile-apps-656db8e6fc03).
+1. Morgan, Blake. “What Is A Chatbot, And Why Is It Important For Customer Experience?” Forbes, Forbes Magazine, 10 Mar. 2017, [www.forbes.com/sites/blakemorgan/2017/03/09/what-is-a-chatbot-and-why-is-it-important-for-customer-experience/#52f4ac4d7188](http://www.forbes.com/sites/blakemorgan/2017/03/09/what-is-a-chatbot-and-why-is-it-important-for-customer-experience/#52f4ac4d7188).
+1. Nguyen, Mai-Hanh. “How Artificial Intelligence & Machine Learning Produced Robots We Can Talk To.” Business Insider, Business Insider, 6 Oct. 2017, [www.businessinsider.com/what-is-chatbot-talking-ai-robot-chat-simulators-2017-10](http://www.businessinsider.com/what-is-chatbot-talking-ai-robot-chat-simulators-2017-10).
+1. Quoc, Michael. “11 Examples of Conversational Commerce and Chatbots.” Chatbots Magazine, Chatbots Magazine, 31 May 2016, [chatbotsmagazine.com/11-examples-of-conversational-commerce-57bb8783d332](http://chatbotsmagazine.com/11-examples-of-conversational-commerce-57bb8783d332).
+1. “What Is a Chatbot? – Amazon Web Services (AWS).” Amazon Web Services, Inc., [aws.amazon.com/what-is-a-chatbot/](http://aws.amazon.com/what-is-a-chatbot/).","<p>A chatbot is software that can be used with either visual, voice or text to interact with your users. Chatbots can be found in every part of life, from popular voice assistants such as Alexa and Google Home to messaging platforms such as Slack, Skype, Facebook Messenger and more. They offer a unique way to interact with potential users and could provide extra value to your customers with little effort.</p>
+<h1>What is chatbot technology?</h1>
+<blockquote>
+<p>“ Essentially, a chatbot is just a robot chat that imitates human conversations through voice commands, text chats, or both. It's a virtual conversation in which one party is an online talking robot.” (Nguyen, 2017)</p>
+</blockquote>
+<p>Chatbots take text or voice input from a user. NLP (Natural Language Processing) technology is then used to understand what a user says. It can then respond based on scripted logic or incorporate AI (Artifical Intelligence) technology to respond, predict, recommend and take action based on what the user says. A chatbot is a cost effective, efficient way of communicating with your target market.</p>
+<h1>Why is it important?</h1>
+<h2>People are already searching for chatbots</h2>
+<p>People are looking for doctor chatbots for quick medical help, delivery and scheduling chatbots to order food, deliver packages, shopping chatbots to help order products and services online and more. Are you making sure you’re answering their needs?</p>
+<blockquote>
+<p>“People are now spending more time in messaging apps than in social media and that is a huge turning point. Messaging apps are the platforms of the future and bots will be how their users access all sorts of services.” (Rajas, Twitter)</p>
+</blockquote>
+<h2>Conversational AI is not a fad</h2>
+<p>Since chatbots are generally limited, and scripted, we can use AI (Artificial Intelligence) to make our chatbots smarter. For example we can add ordering, order status and more to our chatbots with conversational AI services. This enables a rich and more meaningful experience for your user. Would your service or product benefit from automations such as ordering, status information or more?</p>
+<p><img src=""/storage/app/media/articles/2017/December/1%206J2T-ftDoHNGEvuMQiuWLA.jpeg"" alt="","" />
+<em>© Chatbot Magazine 2017</em></p>
+<p>We are changing the way we communicate. With AI, better hardware and uniquitous access, a chatbot could be the first line of contact for you and your business, service or product.</p>
+<blockquote>
+<p>“In the future, talking to a bot will be like talking to a real person who has instant access to entire databases of information and can process your thoughts and desires instantly.” (Schlicht, 2017)</p>
+</blockquote>
+<h1>How does it help you?</h1>
+<p>Have you ever spent time filtering potential leads and figuring out whether someone is a good fit for you? What if you could automate this process with a chatbot that asks the right questions from the start? Chatbots can help you filter the fans of your service or product with no overhead costs.</p>
+<p>The age of the standalone mobile app with multitudes of functionality is near capacity. Many users are finding that they are either downloading too many apps, are running out of space or, frankly, just don’t care about apps. A mobilized website with a conversational AI chatbot could provide all of the functionality on your website. Even a chatbot on Facebook’s platform could prove more value to your customers than a full fledged app.</p>
+<p>A Chatbot with voice is like an employee, with the difference being that it is noticeably cheaper and consistent. With either voice or text interaction, you can automate some of the more mundane or repetitive parts of your service and immediately see your user satisfaction go up.</p>
+<blockquote>
+<p>“Language is the most natural interface humans understand, and that’s the interface that bots use.” (Schlicht, 2017)</p>
+</blockquote>
+<h1>How can we help?</h1>
+<p>We can help you understand whether a chatbot will make sense for your product or service. Would a customized chatbot on your website result in more sales? Would a mobile app centered around chatbot technology be a better investment? </p>
+<p>Once we help you understand how a chatbot can fit your business, we can then help you build it. We can build chatbot applications for:</p>
+<ol>
+<li>Facebook Messenger, WhatsApp or your Website</li>
+<li>Healthcare, customer service or eCommerce</li>
+<li>Alexa or Google Home </li>
+</ol>
+<p><img src=""/storage/app/media/articles/2017/December/chatbot-alexa-google-home.jpg"" alt="""" /></p>
+<p>If you’re interested in exploring the possibilities of chatbots for your business then don’t hesitate to contact us using the chatbot we have added to this site!</p>
+<h1>Works Cited</h1>
+<ol>
+<li>“How Bots Will Completely Kill Websites and Mobile Apps.” Chatbots Magazine, Chatbots Magazine, 2 Nov. 2016, <a href=""http://chatbotsmagazine.com/how-bots-will-completely-kill-websites-and-mobile-apps-656db8e6fc03"">chatbotsmagazine.com/how-bots-will-completely-kill-websites-and-mobile-apps-656db8e6fc03</a>.</li>
+<li>Morgan, Blake. “What Is A Chatbot, And Why Is It Important For Customer Experience?” Forbes, Forbes Magazine, 10 Mar. 2017, <a href=""http://www.forbes.com/sites/blakemorgan/2017/03/09/what-is-a-chatbot-and-why-is-it-important-for-customer-experience/#52f4ac4d7188"">www.forbes.com/sites/blakemorgan/2017/03/09/what-is-a-chatbot-and-why-is-it-important-for-customer-experience/#52f4ac4d7188</a>.</li>
+<li>Nguyen, Mai-Hanh. “How Artificial Intelligence &amp; Machine Learning Produced Robots We Can Talk To.” Business Insider, Business Insider, 6 Oct. 2017, <a href=""http://www.businessinsider.com/what-is-chatbot-talking-ai-robot-chat-simulators-2017-10"">www.businessinsider.com/what-is-chatbot-talking-ai-robot-chat-simulators-2017-10</a>.</li>
+<li>Quoc, Michael. “11 Examples of Conversational Commerce and Chatbots.” Chatbots Magazine, Chatbots Magazine, 31 May 2016, <a href=""http://chatbotsmagazine.com/11-examples-of-conversational-commerce-57bb8783d332"">chatbotsmagazine.com/11-examples-of-conversational-commerce-57bb8783d332</a>.</li>
+<li>“What Is a Chatbot? – Amazon Web Services (AWS).” Amazon Web Services, Inc., <a href=""http://aws.amazon.com/what-is-a-chatbot/"">aws.amazon.com/what-is-a-chatbot/</a>.</li>
+</ol>","2017-12-16 01:57:40",1,"2017-12-17 01:51:31","2017-12-17 19:54:06"
+4,1,"Why does the user need an experience?",why-does-user-need-experience,"Knowing your target market is simple. Understanding what they want and need requires a bit more work. Crafting a proper user experience is about listening to your customer, confirming their needs and providing a level of service they can be proud of.","Knowing your target market is simple. Understanding what they want and need requires a bit more work. Crafting a proper user experience is about listening to your customer, confirming their needs and providing a level of service they can be proud of.
+
+When you understand your market, you can provide them with a product or service that solves their real problems. People are driven by word of mouth and emotions. In short, you dictate how your customer feels by giving them the experience they want, with your unique brand personality.
+# Why is it important?
+## Mobile first
+Most computing is done on mobile devices these days.
+
+
+![StatCounter-comparison-ww-monthly-201610-201710.png](https://www.nitm.co/storage/app/uploads/public/5a2/0a0/5b0/5a20a05b00363772192703.png)
+
+If your website or service is not designed to be accessed from a mobile device then you're missing out on clients and revenue. 
+## Give them what they want
+Successful services and products are meant to solve specific problems for your client. You need to understand the type of experience your customer expects.
+
+> “...keeping your users mindsets and not changing a pattern they are already used to, so that’s why it’s so important to understand what are the common patterns in the industry and what is the expected behaviour on certain features.” (UX Boot Camp)
+
+If the user thinks your service is too complex for what you offer, they will seek your more user friendly competitor. If that competitor doesn't exist an innovator will take note and implement a more pleasing alternative.
+
+> “Users are more likely to remember the behavior than the look and feel itself.” (UX Boot Camp)
+Not just a customer but a fan
+
+## Fans talk, fans defend and fans promote.
+When your customer feels appreciated and feels like you've listened you will have gained a fan of your brand. Research shows that spheres of influence are the most effective way to reach a wider market. Find your influencer, make them happy and see your reach grow as they rave about your product or service.
+
+> “The first step to turning your customers into brand loyalists is to ensure your customers have a top- notch experience every time they visit your page or contact your customer service. If you make your customer feel like they are the only thing that matters in that moment in time, they will be sure to remember it.” (BizJournals.com)
+
+# How does it help you?
+## Less confusion means more opportunities
+How long did it take you to learn to use your mobile phone? Did you struggle? Customers who don't know what they need to do with your service or product will find a more user friendly competitor.
+## More meaningful activity means more relevant data
+If you know what you want your customer to do and they actually do it, then you can collect the data based on relevant activity. If you don't care how many times they look at the time on your app, why make it prominent. Give the user an experience that allows you to extract the type of data that help you take action to grow your business.
+## A happy customer is a paying customer
+> “Customers Who Don’t Feel Valued Leave” 
+
+Although a great design is appealing, it takes a smooth and simple experience to be able to convert a one time user into a happy user who returns to use your product or service. Return users are more likely to spend money on your service if they find the product easy to use and useful. Understanding what is simple for your market is key to making sure your user remains your user.
+
+> “Low prices can always be beaten. Stunning design ages quickly and can easily be copied. Impeccable uptime can be matched, and your features copied. However, a good customer relationship is unique, and loyal customers are hard to steal.” (Smashing Magazine)
+
+# How can we help?
+## We listen and we improve
+In a tech driven world research results need to be activated by tech expertise. We listen to your vision and help you craft a solution that makes sense for your budget and your audience.
+We implement and we advise
+We know how to take your understanding and implement a customer friendly solution to help you reach them on:
+
+* Conversational chat bots
+* Mobile applications
+* Desktop applications
+* VR and AR
+* Web, API and Platform
+* IoT (Internet of Things)
+
+![billetto-editorial-334686.jpg](https://www.nitm.co/storage/app/uploads/public/5a2/0a1/1d2/5a20a11d2fc05002147714.jpg)
+
+<small>Photo by Billetto Editorial on Unsplash</small>
+
+We help you choose the best and most efficient delivery channel so that you can start creating value immediately.
+## We deliver and we support
+We are your source for knowledge in a rapidly changing world. We can help you pivot instantly as your customer communicates their needs.
+
+# Works Cited
+* Bizjournals.com, [www.bizjournals.com/bizjournals/how-to/marketing/2016/05/how-to-turn-customers-into-fans.html](www.bizjournals.com/bizjournals/how-to/marketing/2016/05/how-to-turn-customers-into-fans.html).
+* Camp, UX Boot. “UX Best Practices (Part 1): Patterns – Prototypr.” Prototypr, Prototypr, 17 Nov. 2017, [blog.prototypr.io/ux-best-practices-part-1-ce447b316dd9?source=linkShare-f9f7597821c4-1511108677](blog.prototypr.io/ux-best-practices-part-1-ce447b316dd9?source=linkShare-f9f7597821c4-1511108677).
+* “Desktop vs Mobile vs Tablet Market Share Worldwide.” StatCounter Global Stats, [gs.statcounter.com/platform-market-share/desktop-mobile-tablet](gs.statcounter.com/platform-market-share/desktop-mobile-tablet).
+* Traynor, Des. “Taking A Customer From Like To Love: The UX Of Long-Term Relationships.” Smashing Magazine, 26 Aug. 2011, [www.smashingmagazine.com/2011/08/taking-a-customer-from-like-to-love-the-ux-of-long-term-relationships/](www.smashingmagazine.com/2011/08/taking-a-customer-from-like-to-love-the-ux-of-long-term-relationships/).","<p>Knowing your target market is simple. Understanding what they want and need requires a bit more work. Crafting a proper user experience is about listening to your customer, confirming their needs and providing a level of service they can be proud of.</p>
+<p>When you understand your market, you can provide them with a product or service that solves their real problems. People are driven by word of mouth and emotions. In short, you dictate how your customer feels by giving them the experience they want, with your unique brand personality.</p>
+<h1>Why is it important?</h1>
+<h2>Mobile first</h2>
+<p>Most computing is done on mobile devices these days.</p>
+<p><img src=""https://www.nitm.co/storage/app/uploads/public/5a2/0a0/5b0/5a20a05b00363772192703.png"" alt=""StatCounter-comparison-ww-monthly-201610-201710.png"" /></p>
+<p>If your website or service is not designed to be accessed from a mobile device then you're missing out on clients and revenue. </p>
+<h2>Give them what they want</h2>
+<p>Successful services and products are meant to solve specific problems for your client. You need to understand the type of experience your customer expects.</p>
+<blockquote>
+<p>“...keeping your users mindsets and not changing a pattern they are already used to, so that’s why it’s so important to understand what are the common patterns in the industry and what is the expected behaviour on certain features.” (UX Boot Camp)</p>
+</blockquote>
+<p>If the user thinks your service is too complex for what you offer, they will seek your more user friendly competitor. If that competitor doesn't exist an innovator will take note and implement a more pleasing alternative.</p>
+<blockquote>
+<p>“Users are more likely to remember the behavior than the look and feel itself.” (UX Boot Camp)
+Not just a customer but a fan</p>
+</blockquote>
+<h2>Fans talk, fans defend and fans promote.</h2>
+<p>When your customer feels appreciated and feels like you've listened you will have gained a fan of your brand. Research shows that spheres of influence are the most effective way to reach a wider market. Find your influencer, make them happy and see your reach grow as they rave about your product or service.</p>
+<blockquote>
+<p>“The first step to turning your customers into brand loyalists is to ensure your customers have a top- notch experience every time they visit your page or contact your customer service. If you make your customer feel like they are the only thing that matters in that moment in time, they will be sure to remember it.” (BizJournals.com)</p>
+</blockquote>
+<h1>How does it help you?</h1>
+<h2>Less confusion means more opportunities</h2>
+<p>How long did it take you to learn to use your mobile phone? Did you struggle? Customers who don't know what they need to do with your service or product will find a more user friendly competitor.</p>
+<h2>More meaningful activity means more relevant data</h2>
+<p>If you know what you want your customer to do and they actually do it, then you can collect the data based on relevant activity. If you don't care how many times they look at the time on your app, why make it prominent. Give the user an experience that allows you to extract the type of data that help you take action to grow your business.</p>
+<h2>A happy customer is a paying customer</h2>
+<blockquote>
+<p>“Customers Who Don’t Feel Valued Leave” </p>
+</blockquote>
+<p>Although a great design is appealing, it takes a smooth and simple experience to be able to convert a one time user into a happy user who returns to use your product or service. Return users are more likely to spend money on your service if they find the product easy to use and useful. Understanding what is simple for your market is key to making sure your user remains your user.</p>
+<blockquote>
+<p>“Low prices can always be beaten. Stunning design ages quickly and can easily be copied. Impeccable uptime can be matched, and your features copied. However, a good customer relationship is unique, and loyal customers are hard to steal.” (Smashing Magazine)</p>
+</blockquote>
+<h1>How can we help?</h1>
+<h2>We listen and we improve</h2>
+<p>In a tech driven world research results need to be activated by tech expertise. We listen to your vision and help you craft a solution that makes sense for your budget and your audience.
+We implement and we advise
+We know how to take your understanding and implement a customer friendly solution to help you reach them on:</p>
+<ul>
+<li>Conversational chat bots</li>
+<li>Mobile applications</li>
+<li>Desktop applications</li>
+<li>VR and AR</li>
+<li>Web, API and Platform</li>
+<li>IoT (Internet of Things)</li>
+</ul>
+<p><img src=""https://www.nitm.co/storage/app/uploads/public/5a2/0a1/1d2/5a20a11d2fc05002147714.jpg"" alt=""billetto-editorial-334686.jpg"" /></p>
+<p><small>Photo by Billetto Editorial on Unsplash</small></p>
+<p>We help you choose the best and most efficient delivery channel so that you can start creating value immediately.</p>
+<h2>We deliver and we support</h2>
+<p>We are your source for knowledge in a rapidly changing world. We can help you pivot instantly as your customer communicates their needs.</p>
+<h1>Works Cited</h1>
+<ul>
+<li>Bizjournals.com, <a href=""www.bizjournals.com/bizjournals/how-to/marketing/2016/05/how-to-turn-customers-into-fans.html"">www.bizjournals.com/bizjournals/how-to/marketing/2016/05/how-to-turn-customers-into-fans.html</a>.</li>
+<li>Camp, UX Boot. “UX Best Practices (Part 1): Patterns – Prototypr.” Prototypr, Prototypr, 17 Nov. 2017, <a href=""blog.prototypr.io/ux-best-practices-part-1-ce447b316dd9?source=linkShare-f9f7597821c4-1511108677"">blog.prototypr.io/ux-best-practices-part-1-ce447b316dd9?source=linkShare-f9f7597821c4-1511108677</a>.</li>
+<li>“Desktop vs Mobile vs Tablet Market Share Worldwide.” StatCounter Global Stats, <a href=""gs.statcounter.com/platform-market-share/desktop-mobile-tablet"">gs.statcounter.com/platform-market-share/desktop-mobile-tablet</a>.</li>
+<li>Traynor, Des. “Taking A Customer From Like To Love: The UX Of Long-Term Relationships.” Smashing Magazine, 26 Aug. 2011, <a href=""www.smashingmagazine.com/2011/08/taking-a-customer-from-like-to-love-the-ux-of-long-term-relationships/"">www.smashingmagazine.com/2011/08/taking-a-customer-from-like-to-love-the-ux-of-long-term-relationships/</a>.</li>
+</ul>","2017-11-29 04:50:01",1,"2017-11-30 23:49:54","2017-12-01 02:16:23"

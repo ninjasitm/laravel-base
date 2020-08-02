@@ -1,0 +1,28 @@
+<div class="padded-container container-flush">
+    <?= $this->makeHintPartial('nitm_logs_hint', 'hint', ['type' => 'success', 'icon' => 'icon-ban', 'title' => e(trans('nitm.api::lang.settings.ip_blacklist.title'))]) ?>
+</div>
+
+<form>
+    <div class="padded-container form-group span-left">
+        <textarea name="ip_blacklist" id="ip_blacklist" autocomplete="off" class="form-control field-textarea size-giant" placeholder=""><?= $this->ip_blacklist ?></textarea>
+    </div>
+
+    <div class="padded-container form-group span-right">
+        <div class="padded-container container-flush">
+            <?= $this->makeHintPartial('nitm_logs_hint_usage', 'hint_usage', ['type' => 'success', 'icon' => 'icon-question', 'title' => e(trans('nitm.api::lang.blacklist.ip_range_usage'))]) ?>
+        </div>
+    </div>
+
+    <div data-control="toolbar" class="loading-indicator-container padded-container form-group span-left">
+        <a
+            href="javascript:;"
+            data-request="onSaveBlacklist"
+            data-hotkey="ctrl+s, cmd+s"
+            data-request-confirm="<?= e(trans('nitm.api::lang.blacklist.save_confirm')) ?>" 
+            data-load-indicator="<?= e(trans('system::lang.request_log.empty_loading')) ?>"
+            class="btn btn-primary oc-icon-save">
+            <?= e(trans('nitm.api::lang.blacklist.save_list')) ?>
+        </a>
+    </div>
+
+</form>

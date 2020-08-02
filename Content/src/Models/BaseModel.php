@@ -1,0 +1,42 @@
+<?php
+
+namespace Nitm\Content\Models;
+
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Nitm\Content\Traits\Search;
+use Nitm\Content\Traits\CustomWith;
+use Nitm\Content\Traits\SyncsRelations;
+use Nitm\Content\Traits\Model as ModelTrait;
+use Nitm\Content\Traits\HasFiles;
+use Nitm\Content\Traits\HasMetadata;
+use Nitm\Content\Traits\Notifications;
+use Nitm\Content\Traits\SetUserId;
+use Nitm\Content\Traits\ContentBelongsToTeams;
+use Nitm\Content\Traits\DatesTimezoneConversion;
+use Nitm\Content\Traits\FiltersModels;
+use Nitm\Content\Traits\FiltersUsers;
+use Nitm\Content\Traits\ProvidesUrls;
+use Nitm\Content\Traits\HasTimestamps;
+
+class BaseModel extends EloquentModel
+{
+    use ModelTrait,
+        HasTimestamps,
+        Search,
+        CustomWith,
+        SyncsRelations,
+        HasFiles,
+        HasMetadata,
+        ContentBelongsToTeams,
+        Notifications,
+        SetUserId,
+        FiltersModels,
+        FiltersUsers,
+        DatesTimezoneConversion,
+        ProvidesUrls;
+
+    public function fromJson($value, $asObject = false)
+    {
+        return is_array($value) || is_object($value) ? $value : json_decode($value, !$asObject);
+    }
+}

@@ -1,0 +1,11 @@
+<?php if (count($formModel->exportfields) > 0): ?>
+    <div class="form-control control-simplelist with-icons">
+        <ul>
+            <?php foreach ((array) $formModel->exportfields as $exportfields): ?>
+                <li class="oc-icon-file-o"><?= $exportfields ?></li>
+            <?php endforeach ?>
+        </ul>
+    </div>
+<?php else: ?>
+    <div class="form-control"><em style="color: #C30;"><?= e(trans('nitm.api::lang.logs.no_exportfields')) ?></em></div>
+<?php endif ?>

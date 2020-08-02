@@ -1,0 +1,23 @@
+<div data-control="toolbar">
+    <a
+        href="<?= Backend::url('nitm/api/mappings/create') ?>"
+        class="btn btn-primary oc-icon-plus">
+        <?= e(trans('backend::lang.relation.create_name', ['name' => trans('nitm.api::lang.mapping.page_title_one')])) ?>
+    </a>
+    <button
+        class="btn btn-default oc-icon-trash-o"
+        disabled="disabled"
+        onclick="$(this).data('request-data', {
+            checked: $('.control-list').listWidget('getChecked')
+        })"
+        data-request="onDelete"
+        data-request-confirm="<?= e(trans('backend::lang.form.action_confirm')) ?>"
+        data-trigger-type="select"
+        data-trigger-action="enable"
+        data-trigger=".control-list input[type=checkbox]"
+        data-trigger-condition="checked"
+        data-stripe-load-indicator>
+        <?= e(trans('backend::lang.form.delete')) ?>
+    </button>
+
+</div>

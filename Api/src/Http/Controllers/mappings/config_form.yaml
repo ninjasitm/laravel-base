@@ -1,0 +1,16 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+name: nitm.api::lang.mapping.page_title_one
+form: ~/plugins/nitm/api/models/mapping/fields.yaml
+modelClass: Nitm\Api\Models\Mapping
+defaultRedirect: nitm/api/mappings
+
+create:
+    redirect: nitm/api/mappings/update/:id
+    redirectClose: nitm/api/mappings
+
+update:
+    redirect: nitm/api/mappings
+    redirectClose: nitm/api/mappings

@@ -1,0 +1,35 @@
+# ===================================
+#  Column Definitions
+# ===================================
+columns:
+  reqparameter:
+    label: nitm.api::lang.mapping.reqparameter
+    searchable: true
+    sortable: yes
+
+  relatedtable:
+    label: nitm.api::lang.mapping.relatedtable
+    searchable: true
+    sortable: yes
+
+  result_limit:
+    label: nitm.api::lang.mapping.result_limit
+    searchable: true
+    sortable: yes
+
+  order_by:
+    label: nitm.api::lang.mapping.order_by
+    searchable: yes
+    sortable: yes
+
+  read_only:
+    label: nitm.api::lang.mapping.read_only
+    type: switch
+    searchable: yes
+    sortable: yes
+
+  allow_indexkeys:
+    label: nitm.api::lang.mapping.allow_indexkeys_list
+    type: switch
+    searchable: yes
+    sortable: yes
