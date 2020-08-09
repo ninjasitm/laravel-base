@@ -20,6 +20,7 @@ class CreatePostsTable extends Migration
             $table->timestamp('published_at')->nullable();
             $table->boolean('published')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });

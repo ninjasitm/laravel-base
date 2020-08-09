@@ -11,9 +11,9 @@ class CreateCategoryTable extends Migration
             Schema::create('categories', function ($table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id');
-                $table->text('title');
-                $table->text('slug');
-                $table->text('description');
+                $table->text('title')->nullable();
+                $table->text('slug')->nullable();
+                $table->text('description')->nullable();
                 $table->text('photo_url')->nullable();
                 $table->integer('author_id');
                 $table->integer('editor_id')->nullable();

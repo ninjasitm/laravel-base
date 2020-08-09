@@ -6,25 +6,24 @@ use Nitm\Content\Models\BaseModel as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Class Post
+ * Class PostCategory
  * @package Nitm\Content\Models
  * @version July 20, 2020, 1:28 am UTC
  *
- * @property \Nitm\Content\Models\User $user
- * @property integer $user_id
- * @property string $title
+ * @property string $name
  * @property string $slug
- * @property string $excerpt
- * @property string $content
- * @property string $content_html
- * @property string|\Carbon\Carbon $published_at
- * @property boolean $published
+ * @property string $code
+ * @property string $description
+ * @property integer $parent_id
+ * @property integer $nest_left
+ * @property integer $nest_right
+ * @property integer $nest_depth
  */
-class Post extends Model
+class PostCategory extends Model
 {
     use SoftDeletes;
 
-    public $table = 'posts';
+    public $table = 'post_categories';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
@@ -34,14 +33,14 @@ class Post extends Model
 
 
     public $fillable = [
-        'user_id',
-        'title',
+        'name',
         'slug',
-        'excerpt',
-        'content',
-        'content_html',
-        'published_at',
-        'published'
+        'code',
+        'description',
+        'parent_id',
+        'nest_left',
+        'nest_right',
+        'nest_depth'
     ];
 
     /**
@@ -51,14 +50,14 @@ class Post extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'user_id' => 'integer',
-        'title' => 'string',
+        'name' => 'string',
         'slug' => 'string',
-        'excerpt' => 'string',
-        'content' => 'string',
-        'content_html' => 'string',
-        'published_at' => 'datetime',
-        'published' => 'boolean'
+        'code' => 'string',
+        'description' => 'string',
+        'parent_id' => 'integer',
+        'nest_left' => 'integer',
+        'nest_right' => 'integer',
+        'nest_depth' => 'integer'
     ];
 
     /**
@@ -66,8 +65,5 @@ class Post extends Model
      *
      * @var array
      */
-    public static $rules = [
-        'slug' => 'required',
-        'published' => 'required'
-    ];
+    public static $rules = [];
 }
