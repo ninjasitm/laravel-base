@@ -2,8 +2,6 @@
 
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Database\Query\Expression;
 
 trait HasTimestamps
@@ -119,7 +117,7 @@ trait HasTimestamps
 
     public function sanitizeInterval($interval)
     {
-        return \Nitm\Content\Helpers\DateTimeHelper::isInterval($interval) ? $interval : 'day';
+        return \Nitm\Helpers\DateTimeHelper::isInterval($interval) ? $interval : 'day';
     }
 
     /**

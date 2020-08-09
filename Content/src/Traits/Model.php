@@ -247,7 +247,7 @@ trait Model
      */
     public function setIsActiveAttribute($value = null)
     {
-        $this->attributes['is_active'] = \Nitm\Content\Helpers\ModelHelper::boolval($value);
+        $this->attributes['is_active'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
     /**
@@ -258,7 +258,7 @@ trait Model
      */
     public function setIsPublicAttribute($value = null)
     {
-        $this->attributes['is_public'] = \Nitm\Content\Helpers\ModelHelper::boolval($value);
+        $this->attributes['is_public'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
     /**
@@ -269,7 +269,7 @@ trait Model
      */
     public function setIsPrivateAttribute($value = null)
     {
-        $this->attributes['is_private'] = \Nitm\Content\Helpers\ModelHelper::boolval($value);
+        $this->attributes['is_private'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
     /**
@@ -280,7 +280,7 @@ trait Model
      */
     public function setIsRecurringAttribute($value = null)
     {
-        $this->attributes['is_recurring'] = \Nitm\Content\Helpers\ModelHelper::boolval($value);
+        $this->attributes['is_recurring'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
     /**
@@ -291,7 +291,7 @@ trait Model
      */
     public function setIsRequiredAttribute($value = null)
     {
-        $this->attributes['is_required'] = \Nitm\Content\Helpers\ModelHelper::boolval($value);
+        $this->attributes['is_required'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
     /**

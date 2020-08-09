@@ -5,7 +5,7 @@ namespace Nitm\Content\Traits;
 use DbDongle;
 use Nitm\Content\Database\Collection;
 use Nitm\Content\Database\TreeCollection;
-use Nitm\Content\Database\NestedTreeScope;
+use Nitm\Content\Database\Scopes\NestedTreeScope;
 use Exception;
 
 /**
@@ -84,41 +84,41 @@ trait NestedTree
     {
         static::addGlobalScope(new NestedTreeScope);
 
-        static::extend(function ($model) {
-            /*
-             * Define relationships
-             */
-            $model->hasMany['children'] = [
-                get_class($model),
-                'key' => $model->getParentColumnName(),
-                'order' => $model->getLeftColumnName()
-            ];
-
-            $model->belongsTo['parent'] = [
-                get_class($model),
-                'key' => $model->getParentColumnName()
-            ];
-
-            /*
+        /*
              * Bind events
              */
-            $model->bindEvent('model.beforeCreate', function () use ($model) {
-                $model->setDefaultLeftAndRight();
-            });
-
-            $model->bindEvent('model.beforeSave', function () use ($model) {
-                $model->storeNewParent();
-            });
-
-            $model->bindEvent('model.afterSave', function () use ($model) {
-                $model->moveToNewParent();
-                $model->setDepth();
-            });
-
-            $model->bindEvent('model.beforeDelete', function () use ($model) {
-                $model->deleteDescendants();
-            });
+        static::creating(function ($model) {
+            $model->setDefaultLeftAndRight();
         });
+
+        static::saving(function ($model) {
+            $model->storeNewParent();
+        });
+
+        static::saved(function ($model) {
+            $model->moveToNewParent();
+            $model->setDepth();
+        });
+
+        static::deleting(function ($model) {
+            $model->deleteDescendants();
+        });
+    }
+
+    /**
+     * @return [type]
+     */
+    public function children()
+    {
+        return $this->belongsTo(get_class($this), $this->getParentColumnName())->orderBy($this->getLeftColumnName());
+    }
+
+    /**
+     * @return [type]
+     */
+    public function parent()
+    {
+        return $this->hasMany(get_class($this), $this->getParentColumnName());
     }
 
     /**
@@ -170,7 +170,7 @@ trait NestedTree
             return;
 
         $this->getConnection()->transaction(function () {
-            $this->reload();
+            $this->refresh();
 
             $leftCol = $this->getLeftColumnName();
             $rightCol = $this->getRightColumnName();
@@ -634,7 +634,7 @@ trait NestedTree
     public function setDepth()
     {
         $this->getConnection()->transaction(function () {
-            $this->reload();
+            $this->refresh();
 
             $level = $this->getLevel();
 
@@ -797,7 +797,7 @@ trait NestedTree
          * Validate target
          */
         if ($target instanceof \Nitm\Content\Database\Model) {
-            $target->reload();
+            $target->refresh();
         } else {
             $target = $this->newQuery()->find($target);
         }
@@ -817,14 +817,14 @@ trait NestedTree
         /*
          * Reapply alignments
          */
-        $target->reload();
+        $target->refresh();
         $this->setDepth();
 
         foreach ($this->newQuery()->allChildren()->get() as $descendant) {
             $descendant->save();
         }
 
-        $this->reload();
+        $this->refresh();
         return $this;
     }
 

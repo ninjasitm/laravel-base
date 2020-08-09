@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNitmNitmPages extends Migration
+class CreateNitmPages extends Migration
 {
     public function up()
     {

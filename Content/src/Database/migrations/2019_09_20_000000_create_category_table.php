@@ -16,7 +16,7 @@ class CreateCategoryTable extends Migration
                 $table->text('description');
                 $table->text('photo_url')->nullable();
                 $table->integer('author_id');
-                $table->integer('editor_id')->nullable()->default(0);
+                $table->integer('editor_id')->nullable();
                 $table->timestamp('updated_at')->nullable();
                 $table->timestamp('created_at')->nullable();
                 $table->integer('deleter_id')->nullable();

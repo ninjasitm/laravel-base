@@ -2,73 +2,97 @@
 
 namespace Nitm\Content\Models;
 
-use Model;
-use Nitm\Restful\Classes\Trivet;
+use Nitm\Content\Traits\Sluggable;
+use Nitm\Content\Traits\NestedTree;
+use Nitm\Content\Models\BaseModel as Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Model.
+ * Class Category
+ * @package App\Models
+ * @version July 20, 2020, 1:25 am UTC
+ *
+ * @property \App\Models\User $author
+ * @property \App\Models\User $editor
+ * @property \App\Models\User $deleter
+ * @property \Illuminate\Database\Eloquent\Collection $projects
+ * @property \Illuminate\Database\Eloquent\Collection $people
+ * @property \Illuminate\Database\Eloquent\Collection $project3s
+ * @property string $title
+ * @property string $slug
+ * @property string $description
+ * @property string $photo_url
+ * @property integer $author_id
+ * @property integer $editor_id
+ * @property integer $deleter_id
+ * @property integer $parent_id
+ * @property integer $nest_left
+ * @property integer $nest_right
+ * @property integer $nest_depth
  */
-class Category extends BaseContent
+class Category extends Model
 {
-    use \Nitm\Content\Traits\Category;
-    use \October\Rain\Database\Traits\NestedTree;
-    use \October\Rain\Database\Traits\Sluggable;
+    use SoftDeletes, Sluggable, NestedTree;
+
+    public $table = 'categories';
 
     public $bindToType;
 
-    /*
-     * Validation
-     */
-    public $rules = [];
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
-    /*
-     * Disable timestamps by default.
-     * Remove this line if timestamps are defined in the database table.
-     */
-    public $timestamps = true;
+
+    protected $dates = ['deleted_at'];
+
+
+    public $fillable = [
+        'title',
+        'slug',
+        'description',
+        'photo_url',
+        'author_id',
+        'editor_id',
+        'deleter_id',
+        'parent_id',
+        'nest_left',
+        'nest_right',
+        'nest_depth'
+    ];
 
     /**
-     * @var string The database table used by the model
+     * The attributes that should be casted to native types.
+     *
+     * @var array
      */
-    public $table = 'nitm_categories';
+    protected $casts = [
+        'id' => 'integer',
+        'title' => 'string',
+        'slug' => 'string',
+        'description' => 'string',
+        'photo_url' => 'string',
+        'author_id' => 'integer',
+        'editor_id' => 'integer',
+        'deleter_id' => 'integer',
+        'parent_id' => 'integer',
+        'nest_left' => 'integer',
+        'nest_right' => 'integer',
+        'nest_depth' => 'integer'
+    ];
+
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public static $rules = [
+        'title' => 'required',
+        'slug' => 'required',
+        'description' => 'required',
+        'author_id' => 'required'
+    ];
 
     protected $slugs = [
         'slug' => ['title', 'parentSlugTitle'],
-    ];
-
-    public $visible = [
-        'id', 'title', 'slug', 'image', 'description', 'children',
-    ];
-
-    public $with = ['image'];
-
-    public $eagerWith = [
-        'image', 'author',
-    ];
-
-    public $fillable = [
-        'id', 'title', 'image', 'slug', 'description', 'nest_depth', 'nest_left', 'nest_right', 'parent_id',
-    ];
-
-    public $implement = [
-        '@Nitm.Content.Behaviors.Blamable',
-        '@Nitm.Content.Behaviors.Search',
-        '@Nitm.Content.Behaviors.Permissions',
-        '@Nitm.Content.Behaviors.Activity',
-    ];
-
-    public $attachOneDefault = [
-        'image' => [
-            'Nitm\Content\Models\File',
-            'attachment_type' => 'Nitm\Content\Models\Category',
-        ],
-    ];
-
-    public $attachManyDefault = [
-        'images' => [
-            'Nitm\Content\Models\File',
-            'morphClass' => 'Nitm\Content\Models\Category',
-        ],
     ];
 
     /**
@@ -78,20 +102,28 @@ class Category extends BaseContent
     {
         parent::boot();
 
-        static::addGlobalScope(new \Nitm\Content\Scopes\CategoryDefaultOrderScope());
+        static::addGlobalScope(new \Nitm\Content\Database\Scopes\CategoryDefaultOrderScope());
+
+        static::saving(function ($model) {
+            if (!$model->slug) {
+                $model->slugAttributes();
+            }
+        });
     }
 
-    public function beforeSave()
-    {
-        $this->slug = null;
-        $this->slugAttributes();
-    }
-
+    /**
+     * @return [type]
+     */
     public function getBelongsToOtherAttribute()
     {
         return !is_null(array_get($this->attributes, 'parent_id'));
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return [type]
+     */
     public function setBelongsToOtherAttribute($value)
     {
         if (!$value) {
@@ -99,6 +131,21 @@ class Category extends BaseContent
         }
     }
 
+    /**
+     * @param mixed $value
+     *
+     * @return [type]
+     */
+    public function setEditorIdAttribute($value)
+    {
+        if (!$value) {
+            $this->attributes['editor_id'] = null;
+        }
+    }
+
+    /**
+     * @return [type]
+     */
     public function getParentSlugTitleAttribute()
     {
         $parent = !is_object($this->parent) ? $this->parent()->first() : $this->parent;
@@ -120,52 +167,54 @@ class Category extends BaseContent
     }
 
     /**
-     * Custom API query function.
-     *
-     * @param array   $options  Array of parameters for the query builder
-     * @param bool    $multiple Is this a request for multiple records?
-     * @param Builder $query    The query to use
-     *
-     * @return [type] [description]
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     **/
+    public function author()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'author_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     **/
+    public function editor()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'editor_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     **/
+    public function deleter()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'deleter_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     **/
+    public function projects()
+    {
+        return $this->hasMany(\App\Models\Project::class, 'type_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     **/
+    public function people()
+    {
+        return $this->hasMany(\App\Models\Person::class, 'position_id');
+    }
+
+    /**
+     * Scopes
      */
-    public static function apiQuery($options = [], $multiple = false, $query = null)
-    {
-        $query = parent::apiQuery($options, $multiple, $query);
 
-        $inputs = Trivet::getInputs();
-
-        if (isset($inputs['type'])) {
-            $query->onlyTypes($inputs['type']);
-        }
-
-        //   print_r(Trivet::getInputs());
-        //   exit;
-
-        return $query;
-    }
-
-    public function scopeOnlyTypes($query, $types)
-    {
-        $types = (array) $types;
-        foreach ($types as $type) {
-            switch ($type) {
-                case 'types':
-                    $slug = 'art-type';
-                    break;
-
-                case 'mediums':
-                    $slug = 'art-medium';
-                    break;
-
-                case 'types':
-                    $slug = 'art-type';
-                    break;
-            }
-        }
-        //   print_r($types);
-        //   exit;
-    }
-
+    /**
+     * @param mixed $query
+     *
+     * @return [type]
+     */
     public function scopeSelf($query)
     {
         $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', snake_case(class_basename(get_called_class())));
@@ -178,9 +227,14 @@ class Category extends BaseContent
         return $query;
     }
 
+    /**
+     * @param mixed $query
+     *
+     * @return [type]
+     */
     public function scopeBindToType($query)
     {
-        if (get_called_class() !== 'Nitm\Content\Models\Category') {
+        if (get_called_class() !== 'App\Models\Category') {
             if (!$this->id) {
                 $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', snake_case(class_basename(get_called_class())));
                 $model = \DB::table($this->getTable())->where([
@@ -192,21 +246,5 @@ class Category extends BaseContent
                 }
             }
         }
-    }
-
-    public function newQuery()
-    {
-        $query = parent::newQuery();
-        if ($this->bindToType && !$this->id) {
-            $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', snake_case(class_basename(get_called_class())));
-            $model = \DB::table($this->getTable())->where([
-                'slug' => $slug,
-            ])->first();
-            if ($model) {
-                $this->fill((array)$model);
-                $query->allChildren();
-            }
-        }
-        return $query;
     }
 }

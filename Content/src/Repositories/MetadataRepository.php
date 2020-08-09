@@ -2,8 +2,6 @@
 
 namespace Nitm\Content\Repositories;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Nitm\Content\Models\Metadata\Metadata;
 use Nitm\Content\Repositories\BaseRepository;
 

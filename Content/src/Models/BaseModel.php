@@ -25,7 +25,6 @@ class BaseModel extends EloquentModel
         SyncsRelations,
         HasFiles,
         HasMetadata,
-        Notifications,
         SetUserId,
         FiltersModels,
         FiltersUsers,

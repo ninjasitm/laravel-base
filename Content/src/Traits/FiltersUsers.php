@@ -2,10 +2,8 @@
 
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Nitm\Content\User;
-use Nitm\Content\Helpers\AttachedUsersHelper;
+use Nitm\Helpers\AttachedUsersHelper;
 use Illuminate\Database\Eloquent\Builder;
 
 trait FiltersUsers

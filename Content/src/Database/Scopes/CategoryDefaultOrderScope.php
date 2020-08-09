@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content\Scopes;
+namespace Nitm\Content\Database\Scopes;
 
 use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Database\Eloquent\Model;
@@ -20,14 +20,14 @@ class CategoryDefaultOrderScope implements Scope
         $builder->orderBy('title', 'asc');
     }
 
-     /**
-      * Apply the scope to a given Eloquent query builder.
-      *
-      * @param \Illuminate\Database\Eloquent\Builder $builder
-      * @param \Illuminate\Database\Eloquent\Model   $model
-      */
-     public function remove(Builder $builder, Model $model)
-     {
-         $builder->orderBy('title', 'asc');
-     }
+    /**
+     * Apply the scope to a given Eloquent query builder.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param \Illuminate\Database\Eloquent\Model   $model
+     */
+    public function remove(Builder $builder, Model $model)
+    {
+        $builder->orderBy('title', 'asc');
+    }
 }

@@ -2,13 +2,10 @@
 
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Nitm\Content\Helpers\DateTimeHelper;
+use Carbon\Carbon;
 use Nitm\Content\Team;
 use Illuminate\Foundation\Auth\User;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Nitm\Helpers\DateTimeHelper;
 
 trait DatesTimezoneConversion
 {

@@ -3,7 +3,7 @@
 namespace Nitm\Content\Traits;
 
 use Illuminate\Support\Arr;
-use Nitm\Content\Helpers\DateTimeHelper;
+use Nitm\Helpers\DateTimeHelper;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;

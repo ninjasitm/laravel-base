@@ -30,14 +30,12 @@ trait Sluggable
         /*
          * Set slugged attributes on new records
          */
-        static::extend(function ($model) {
-            $model->bindEvent('model.saveInternal', function () use ($model) {
-                if ($model->exists) {
-                    return;
-                }
+        static::saving(function ($model) {
+            if ($model->exists) {
+                return;
+            }
 
-                $model->slugAttributes();
-            });
+            $model->slugAttributes();
         });
     }
 

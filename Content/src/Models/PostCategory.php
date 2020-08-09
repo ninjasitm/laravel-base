@@ -2,62 +2,72 @@
 
 namespace Nitm\Content\Models;
 
-use Model;
-use RainLab\Blog\Models\Category as BaseCategory;
+use Nitm\Content\Models\BaseModel as Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Model.
+ * Class Post
+ * @package Nitm\Content\Models
+ * @version July 20, 2020, 1:28 am UTC
+ *
+ * @property \Nitm\Content\Models\User $user
+ * @property integer $user_id
+ * @property string $title
+ * @property string $slug
+ * @property string $excerpt
+ * @property string $content
+ * @property string $content_html
+ * @property string|\Carbon\Carbon $published_at
+ * @property boolean $published
  */
-class PostCategory extends BaseCategory
+class Post extends Model
 {
-    use \Nitm\Content\Traits\Model;
+    use SoftDeletes;
 
-    public $implement = ['@Nitm.Content.Behaviors.Search', '@Nitm.Content.Behaviors.Permissions'];
+    public $table = 'posts';
 
-    public $visible = [
-      'name', 'slug', 'description',
-   ];
+    const CREATED_AT = 'created_at';
+    const UPDATED_AT = 'updated_at';
 
-    public $with = [
-   ];
 
-    public $eagerWith = [
-   ];
+    protected $dates = ['deleted_at'];
 
-    public $belongsToMany = [
-      'posts' => [
-           'Nitm\Content\Models\Post',
-            'table' => 'rainlab_blog_posts_categories',
-            'order' => 'published_at desc',
-            'scope' => 'isPublished',
-      ],
-   ];
 
-    public function getMorphClass()
-    {
-        return 'RainLab\Post\Models\Category';
-    }
+    public $fillable = [
+        'user_id',
+        'title',
+        'slug',
+        'excerpt',
+        'content',
+        'content_html',
+        'published_at',
+        'published'
+    ];
 
-    public static function apiFind($id, $options = [])
-    {
-        return static::internalApiFind($id, array_merge([
-           'columns' => '*',
-           'stringColumns' => ['slug'],
-        ], $options));
-    }
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'integer',
+        'user_id' => 'integer',
+        'title' => 'string',
+        'slug' => 'string',
+        'excerpt' => 'string',
+        'content' => 'string',
+        'content_html' => 'string',
+        'published_at' => 'datetime',
+        'published' => 'boolean'
+    ];
 
-    public function toArray()
-    {
-        $attributes = parent::toArray();
-        $attributes['id'] = $attributes['slug'];
-
-        return array_reverse($attributes);
-    }
-
-    public function toFeedArray()
-    {
-        $attributes = parent::toArray();
-
-        return $attributes;
-    }
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public static $rules = [
+        'slug' => 'required',
+        'published' => 'required'
+    ];
 }

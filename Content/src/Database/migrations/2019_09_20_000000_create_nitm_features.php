@@ -5,7 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCiteContentFeatures extends Migration
+class CreateNitmFeatures extends Migration
 {
     public function up()
     {
@@ -26,8 +26,10 @@ class CreateCiteContentFeatures extends Migration
 
                 \Nitm\Content\Models\Category::create([
                     'title' => 'Feature Type',
+                    'slug' => 'feature-type',
                     'description' => 'Feature types',
                     'author_id' => 1,
+                    'editor_id' => null
                 ]);
             });
         }

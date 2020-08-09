@@ -2,8 +2,8 @@
 
 namespace Nitm\Content\Traits;
 
-use Nitm\Content\Helpers\DbHelper;
-use Nitm\Content\Helpers\ModelHelper;
+use Nitm\Helpers\DbHelper;
+use Nitm\Helpers\ModelHelper;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -361,7 +361,7 @@ trait Search
                             $order = end($value) ?? Arr::pluck($value, 'order') ?? Arr::get($params, 'order', null);
                             $value = array_shift($value);
                             if (!is_string($order)) {
-                                $order = \Nitm\Content\Helpers\ModelHelper::boolval($order) ? 'desc' : 'asc';
+                                $order = \Nitm\Helpers\ModelHelper::boolval($order) ? 'desc' : 'asc';
                             } else {
                                 $order = $value[0] === '-' ? 'desc' : 'asc';
                             }
@@ -374,7 +374,7 @@ trait Search
                             foreach ($value as $k => $v) {
                                 $field = is_numeric($k) ? $v : $k;
                                 if (is_numeric($k)) {
-                                    $order = \Nitm\Content\Helpers\ModelHelper::boolval(Arr::get($orders, $k)) ? 'desc' : 'asc';
+                                    $order = \Nitm\Helpers\ModelHelper::boolval(Arr::get($orders, $k)) ? 'desc' : 'asc';
                                 } else {
                                     $order = $field[0] === '-' ? 'desc' : 'asc';
                                 }
@@ -395,7 +395,7 @@ trait Search
                         break;
 
                     case 'strict':
-                        if (\Nitm\Content\Helpers\ModelHelper::boolval($value) == true) {
+                        if (\Nitm\Helpers\ModelHelper::boolval($value) == true) {
                             $query->strictExclusivity();
                         } else {
                             $query->strictInclusivity();

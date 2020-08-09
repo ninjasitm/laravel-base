@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 
-class PostCreateCategoriesTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     public function up()
     {

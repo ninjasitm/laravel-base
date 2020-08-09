@@ -2,11 +2,8 @@
 
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Nitm\Content\Models\AttachedUser;
-use Nitm\Content\Helpers\AttachedUsersHelper;
-use Illuminate\Database\Eloquent\Builder;
+use Nitm\Helpers\AttachedUsersHelper;
 
 trait HasAttachedUsers
 {
