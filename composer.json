@@ -38,8 +38,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Nitm\\Content\\NitmContentServiceProvider",
-                "Nitm\\Api\\NitmApiServiceProvider"
+                "Nitm\\Content\\NitmContentServiceProvider"
             ]
         }
     }

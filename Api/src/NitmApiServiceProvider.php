@@ -9,7 +9,7 @@ use Nitm\Api\Classes\Trivet;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
-class NitmContentServiceProvider extends ServiceProvider
+class NitmApiServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any package services.
