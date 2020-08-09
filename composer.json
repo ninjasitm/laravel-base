@@ -25,9 +25,6 @@
         "phpunit/phpunit-selenium": "~1.2",
         "phpdocumentor/reflection-docblock": "2.0.4"
     },
-    "config": {
-        "vendor-dir": "plugins"
-    },
     "autoload": {
         "psr-4": {
             "Nitm\\Content\\": "Content/src",

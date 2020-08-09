@@ -9,7 +9,6 @@ use Nitm\Content\Traits\SyncsRelations;
 use Nitm\Content\Traits\Model as ModelTrait;
 use Nitm\Content\Traits\HasFiles;
 use Nitm\Content\Traits\HasMetadata;
-use Nitm\Content\Traits\Notifications;
 use Nitm\Content\Traits\SetUserId;
 use Nitm\Content\Traits\DatesTimezoneConversion;
 use Nitm\Content\Traits\FiltersModels;
