@@ -11,7 +11,6 @@ use Nitm\Content\Traits\HasFiles;
 use Nitm\Content\Traits\HasMetadata;
 use Nitm\Content\Traits\Notifications;
 use Nitm\Content\Traits\SetUserId;
-use Nitm\Content\Traits\ContentBelongsToTeams;
 use Nitm\Content\Traits\DatesTimezoneConversion;
 use Nitm\Content\Traits\FiltersModels;
 use Nitm\Content\Traits\FiltersUsers;
@@ -27,7 +26,6 @@ class BaseModel extends EloquentModel
         SyncsRelations,
         HasFiles,
         HasMetadata,
-        ContentBelongsToTeams,
         Notifications,
         SetUserId,
         FiltersModels,
