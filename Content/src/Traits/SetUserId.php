@@ -26,6 +26,6 @@ trait SetUserId
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(\Nitm\Content\RelatedUser::class, 'user_id');
+        return $this->belongsTo(\Nitm\Content\Models\User::class, 'user_id');
     }
 }

@@ -86,9 +86,8 @@ class Category extends Model
      */
     public static $rules = [
         'title' => 'required',
-        'slug' => 'required',
-        'description' => 'required',
-        'author_id' => 'required'
+        'description' => 'sometimes',
+        'author_id' => 'sometimes'
     ];
 
     protected $slugs = [

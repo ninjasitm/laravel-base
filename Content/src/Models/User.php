@@ -48,9 +48,7 @@ class User extends Authenticatable
         'iu_gender', 'iu_job', 'iu_about', 'iu_company', 'iu_blog', 'iu_facebook', 'iu_twitter', 'iu_webpage', 'profile'
     ];
 
-    public $with = [
-        'avatar', 'apiToken', 'groups', 'country', 'state'
-    ];
+    public $with = [];
 
     public $appends = ['profile', 'fullName'];
 

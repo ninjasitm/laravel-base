@@ -1,8 +1,7 @@
 <?php
-namespace Ewaste\Ewaste\Classes;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+namespace Nitm\Helpers;
+
 /**
  * FastImage - Because sometimes you just want the size!
  * Based on the Ruby Implementation by Steven Sykes (https://github.com/sdsykes/fastimage).
@@ -68,9 +67,9 @@ class ImageHelper
                     return $this->type = 'bmp';
                 case 'GI':
                     return $this->type = 'gif';
-                case chr(0xFF).chr(0xd8):
+                case chr(0xFF) . chr(0xd8):
                     return $this->type = 'jpeg';
-                case chr(0x89).'P':
+                case chr(0x89) . 'P':
                     return $this->type = 'png';
                 default:
                     return false;
@@ -235,7 +234,7 @@ class ImageHelper
             return '';
         }
 
-        return \Cache::rememberForever(md5($image->getPath().$width.'x'.$height), function () use ($image, $width, $height) {
+        return \Cache::rememberForever(md5($image->getPath() . $width . 'x' . $height), function () use ($image, $width, $height) {
             try {
                 if (!$image) {
                     throw new \Exception("Image doesn't exist!");
