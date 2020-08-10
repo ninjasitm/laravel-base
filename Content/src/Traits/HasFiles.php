@@ -4,7 +4,7 @@ namespace Nitm\Content\Traits;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Nitm\Content\Models\Files\File as FileModel;
+use Nitm\Content\Models\File as FileModel;
 use Nitm\Content\Repositories\FileRepository as File;
 use Illuminate\Http\UploadedFile;
 
