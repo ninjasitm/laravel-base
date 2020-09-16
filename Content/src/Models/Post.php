@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Nitm\Content\Models\BaseModel as Model;
 use Nitm\Helpers\ImageHelper;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -102,7 +103,12 @@ class Post extends Model
         });
     }
 
-    public function toArray($fullContent = false)
+    /**
+     * @param bool $fullContent
+     *
+     * @return array
+     */
+    public function toArray($fullContent = false): array
     {
         $attributes = parent::toArray();
         $genericAvatar = ImageHelper::getPlaceHolderAvatar();
@@ -121,6 +127,14 @@ class Post extends Model
     }
 
     /**
+     * @return BelongsToMany
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(PostCategory::class);
+    }
+
+    /**
      * Get the image attribute.
      */
     public function getImageAttribute()
@@ -135,6 +149,19 @@ class Post extends Model
     public function getUpdatedAttribute()
     {
         return $this->updated_at ? $this->updated_at->toFormattedDateString() : '';
+    }
+
+    //
+    // Scopes
+    //
+
+    public function scopeIsPublished($query)
+    {
+        return $query
+            ->whereNotNull('published')
+            ->where('published', true)
+            ->whereNotNull('published_at')
+            ->where('published_at', '<', Carbon::now());
     }
 
     /**
@@ -159,5 +186,120 @@ class Post extends Model
                     });
             });
         });
+    }
+    /**
+     * Allows filtering for specifc categories.
+     * @param  Illuminate\Query\Builder  $query      QueryBuilder
+     * @param  array                     $categories List of category ids
+     * @return Illuminate\Query\Builder              QueryBuilder
+     */
+    public function scopeFilterCategories($query, $categories)
+    {
+        return $query->whereHas('categories', function ($q) use ($categories) {
+            $q->whereIn('id', $categories);
+        });
+    }
+
+    //
+    // Summary / Excerpt
+    //
+
+    /**
+     * Used by "has_summary", returns true if this post uses a summary (more tag).
+     * @return boolean
+     */
+    public function getHasSummaryAttribute()
+    {
+        $more = '<!-- more -->';
+
+        return (!!strlen(trim($this->excerpt)) ||
+            strpos($this->content_html, $more) !== false ||
+            strlen(Html::strip($this->content_html)) > 600);
+    }
+
+    /**
+     * Used by "summary", if no excerpt is provided, generate one from the content.
+     * Returns the HTML content before the <!-- more --> tag or a limited 600
+     * character version.
+     *
+     * @return string
+     */
+    public function getSummaryAttribute()
+    {
+        $excerpt = $this->excerpt;
+        if (strlen(trim($excerpt))) {
+            return $excerpt;
+        }
+
+        $more = '<!-- more -->';
+        if (strpos($this->content_html, $more) !== false) {
+            $parts = explode($more, $this->content_html);
+
+            return array_get($parts, 0);
+        }
+
+        return Html::limit($this->content_html, 600);
+    }
+
+    //
+    // Next / Previous
+    //
+
+    /**
+     * Apply a constraint to the query to find the nearest sibling
+     *
+     *     // Get the next post
+     *     Post::applySibling()->first();
+     *
+     *     // Get the previous post
+     *     Post::applySibling(-1)->first();
+     *
+     *     // Get the previous post, ordered by the ID attribute instead
+     *     Post::applySibling(['direction' => -1, 'attribute' => 'id'])->first();
+     *
+     * @param       $query
+     * @param array $options
+     * @return
+     */
+    public function scopeApplySibling($query, $options = [])
+    {
+        if (!is_array($options)) {
+            $options = ['direction' => $options];
+        }
+
+        extract(array_merge([
+            'direction' => 'next',
+            'attribute' => 'published_at'
+        ], $options));
+
+        $isPrevious = in_array($direction, ['previous', -1]);
+        $directionOrder = $isPrevious ? 'asc' : 'desc';
+        $directionOperator = $isPrevious ? '>' : '<';
+
+        $query->where('id', '<>', $this->id);
+
+        if (!is_null($this->$attribute)) {
+            $query->where($attribute, $directionOperator, $this->$attribute);
+        }
+
+        return $query->orderBy($attribute, $directionOrder);
+    }
+
+    /**
+     * Returns the next post, if available.
+     * @return self
+     */
+    public function nextPost()
+    {
+        return self::isPublished()->applySibling()->first();
+    }
+
+    /**
+     * Returns the previous post, if available.
+     * @return self
+     */
+    public function previousPost()
+    {
+        return self::isPublished()->applySibling(-1)->first();
     }
 }
