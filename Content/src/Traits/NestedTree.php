@@ -118,7 +118,7 @@ trait NestedTree
      */
     public function parent()
     {
-        return $this->hasMany(get_class($this), $this->getParentColumnName());
+        return $this->belongsTo(get_class($this), $this->getParentColumnName());
     }
 
     /**

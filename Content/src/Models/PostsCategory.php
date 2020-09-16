@@ -3,7 +3,6 @@
 namespace Nitm\Content\Models;
 
 use Nitm\Content\Models\BaseModel as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class PostsCategory
@@ -14,15 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PostsCategory extends Model
 {
-    use SoftDeletes;
-
     public $table = 'posts_categories';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['created_at', 'updated_at'];
 
 
     public $fillable = [

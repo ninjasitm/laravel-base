@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Support\Str;
 use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Traits\NestedTree;
 use Nitm\Content\Models\BaseModel as Model;
@@ -235,7 +236,7 @@ class Category extends Model
     {
         if (get_called_class() !== 'App\Models\Category') {
             if (!$this->id) {
-                $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', snake_case(class_basename(get_called_class())));
+                $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
                 $model = \DB::table($this->getTable())->where([
                     'slug' => $slug,
                 ])->first();
@@ -245,5 +246,14 @@ class Category extends Model
                 }
             }
         }
+    }
+
+    public function newQuery()
+    {
+        $query = parent::newQuery();
+        if ($this->bindToType && !$this->id) {
+            $query->bindToType();
+        }
+        return $query;
     }
 }

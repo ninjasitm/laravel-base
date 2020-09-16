@@ -12,7 +12,6 @@ namespace Nitm\Content\Database;
  */
 class TreeCollection extends Collection
 {
-
     /**
      * Converts a flat collection of nested set models to an set where
      * children is eager loaded

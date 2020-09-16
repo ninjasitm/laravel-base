@@ -3,7 +3,8 @@
 namespace Nitm\Content\Models;
 
 use Nitm\Content\Models\BaseModel as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Nitm\Content\Traits\Sluggable;
+use Nitm\Content\Traits\NestedTree;
 
 /**
  * Class PostCategory
@@ -21,16 +22,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class PostCategory extends Model
 {
-    use SoftDeletes;
+    use Sluggable, NestedTree;
 
     public $table = 'post_categories';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-
-    protected $dates = ['deleted_at'];
-
+    protected $dates = [];
 
     public $fillable = [
         'name',
@@ -66,4 +65,8 @@ class PostCategory extends Model
      * @var array
      */
     public static $rules = [];
+
+    protected $slugs = [
+        'slug' => ['title'],
+    ];
 }
