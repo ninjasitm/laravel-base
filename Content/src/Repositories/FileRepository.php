@@ -2,12 +2,13 @@
 
 namespace Nitm\Content\Repositories;
 
-use Nitm\Content\Models\Files\File;
-use Nitm\Content\Repositories\BaseRepository;
-use Illuminate\Http\UploadedFile;
+use Storage;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Storage;
+use Illuminate\Http\UploadedFile;
+use Nitm\Content\Models\File;
+use Illuminate\Database\Eloquent\Model;
+use Nitm\Content\Repositories\BaseRepository;
 
 /**
  * Class FileRepository
@@ -84,14 +85,17 @@ class FileRepository extends BaseRepository
      * @param [type] $folder
      * @param string $entityRelation
      * @param bool $public Should the file be public?
+     * @param Model $model The model
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function store($files, string $folder = 'files', $entityRelation = 'file', $public = true): \Illuminate\Support\Collection
+    public static function store($files, string $folder = 'files', $entityRelation = 'file', $public = true, Model $model = null): \Illuminate\Support\Collection
     {
         $files = is_array($files) && !Arr::isAssoc($files) ? $files : [$files];
+        $modelClass = $model ? get_class($model) : null;
+        $modelId = $model ? $model->id : null;
 
-        $array = array_filter(array_map(function ($file) use ($public, $folder, $entityRelation) {
+        $array = array_filter(array_map(function ($file) use ($public, $folder, $entityRelation, $modelClass, $modelId) {
             if (!($file instanceof UploadedFile) && (is_array($file) && !Arr::get($file, 'url'))) {
                 return null;
             }
@@ -128,8 +132,8 @@ class FileRepository extends BaseRepository
                         'size' => $file->getSize(),
                         'fingerprint' => md5_file($file->getRealPath()),
                         'readable_size' => static::humanReadableSize($file->getSize()),
-                        'entity_type' => request()->input('entity_type') ?? Arr::get($file, 'entity_type') ?? 'Nitm\Content\Model',
-                        'entity_id' => request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
+                        'entity_type' => $modelClass ?? request()->input('entity_type') ?? Arr::get($file, 'entity_type') ?? 'Nitm\Content\Model',
+                        'entity_id' => $modelId ?? request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
                         'entity_relation' => Str::camel($entityRelation),
                     ];
                 } else {
@@ -142,9 +146,9 @@ class FileRepository extends BaseRepository
                         'size' => Arr::get($file, 'size'),
                         'fingerprint' => Arr::get($file, 'fingerprint'),
                         'readable_size' => static::humanReadableSize(Arr::get($file, 'size')),
-                        'entity_type' => request()->input('entity_type') ?? Arr::get($file, 'entity_type') ??
+                        'entity_type' => $modelClass ?? request()->input('entity_type') ?? Arr::get($file, 'entity_type') ??
                             'Nitm\Content\Model',
-                        'entity_id' => request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
+                        'entity_id' => $modelId ?? request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
                         'entity_relation' => Str::camel($entityRelation),
 
                     ];
@@ -218,7 +222,8 @@ class FileRepository extends BaseRepository
      */
     public static function getUrl(File $model, $url, bool $forDownload = false): string
     {
-        preg_match("/" . preg_quote(implode('|', static::getStorageDomains()), '/') . "/", $url, $matches);
+        $regex = static::getUrlMatchRegex();
+        preg_match("/" . $regex . "/", $url, $matches);
         if (count($matches)) {
             if (!static::getIsLocalUrl($url)) {
                 // echo "URL isn't local: $url\n";
@@ -260,7 +265,8 @@ class FileRepository extends BaseRepository
             return $url;
         }
 
-        preg_match("/" . preg_quote(implode('|', static::getStorageDomains()), '/') . "/", $url, $matches);
+        $regex = static::getUrlMatchRegex();
+        preg_match("/" . $regex . "/", $url, $matches);
         if (count($matches)) {
 
             if (!static::getIsLocalUrl($url)) {
@@ -299,10 +305,18 @@ class FileRepository extends BaseRepository
             static::getStorageConfig('bucket', 'cloud') . '.s3',
             'localhost',
             'dev.local',
-            'wethrive.dev.ninjasitm.com',
-            'wethrive.tech',
             request()->getHost()
         ];
+    }
+
+    /**
+     * getUrlMatchRegex
+     *
+     * @return string
+     */
+    protected static function getUrlMatchRegex(): string
+    {
+        return str_replace('\|', '|', preg_quote(implode('|', static::getStorageDomains()), '/'));
     }
 
     /**
@@ -470,6 +484,7 @@ class FileRepository extends BaseRepository
      */
     public static function getCloudStorageDisk()
     {
+
         return Storage::disk(static::getCloudStorageDriver());
     }
 }

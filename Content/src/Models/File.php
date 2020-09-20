@@ -5,7 +5,7 @@ namespace Nitm\Content\Models;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Nitm\Content\Models\BaseModel as Model;
-use Nitm\Content\Repositories\Files\FileRepository as Repository;
+use Nitm\Content\Repositories\FileRepository as Repository;
 
 /**
  * @SWG\Definition(
