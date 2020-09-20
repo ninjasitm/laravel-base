@@ -45,9 +45,9 @@ class NitmContentServiceProvider extends ServiceProvider
     {
         return [
             'domain' => config('nitm-content.domain', null),
-            'namespace' => 'Nitm\Content\Http\Controllers',
-            'prefix' => config('nitm-content.path'),
-            'middleware' => 'nitm-content',
+            'namespace' => config('nitm-content.route-namespace'),
+            'prefix' => config('nitm-content.route-prefix'),
+            'middleware' => config('nitm-content.route-middleware'),
         ];
     }
 
