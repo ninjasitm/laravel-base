@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 /**
@@ -55,6 +56,19 @@ class PageConfig extends BaseModel
                 \Cache::forget(static::getCacheKey($model->page));
             }
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setAttribute($key, $value)
+    {
+        $attributes = explode('.', $key);
+        die($key);
+        if (!empty($attributes) && $attributes[0] === 'config') {
+            Arr::set($this->attributes, $key, $value);
+        }
+        parent::setAttribute($key, $value);
     }
 
     /**
@@ -226,7 +240,7 @@ class PageConfig extends BaseModel
      *
      * @return array
      */
-    public function getPageOptions($directory = 'Models', $namespace = 'App\Models'): array
+    public function getPageModelOptions($directory = 'Models', $namespace = 'App\Models'): array
     {
         $files = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(app_path($directory)));
         $values = array_map(function ($model) use ($namespace) {
@@ -235,6 +249,24 @@ class PageConfig extends BaseModel
         $models = array_map(function ($model) {
             return str_replace('PageConfig', '', class_basename($model));
         }, $values);
+
+        return array_combine($values, $models);
+    }
+
+    /**
+     * Get Page Options
+     *
+     * @return array
+     */
+    public function getPageOptions($directory = 'Models'): array
+    {
+        $files = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(app_path($directory)));
+        $values = array_map(function ($model) {
+            return strtolower(substr($model, 0, strpos($model, '.')));
+        }, $files);
+        $models = array_map(function ($model) {
+            return str_replace(static::getGroupName(), '', substr($model, 0, strpos($model, '.')));
+        }, $files);
 
         return array_combine($values, $models);
     }
