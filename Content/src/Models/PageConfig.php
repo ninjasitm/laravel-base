@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Support\Str;
 
 /**
  * PageConfig
@@ -26,18 +27,24 @@ class PageConfig extends BaseModel
         'config' => 'array'
     ];
 
+    protected $createdByAuthFields = ['author_id'];
+
     protected $result;
 
     /**
      * @inheritDoc
      */
-    public static function boot() {
+    public static function boot()
+    {
+        parent::boot();
         static::creating(
             function ($model) {
-                $page = preg_replace('/[^a-zA-Z0-9]/', '_', $model->page);
-                $model->modelName = $model->getGroupName().ucfirst(camel_case($page));
-                $model->page = 'pageconfig'.preg_replace('/[^a-zA-Z0-9]/', '', strtolower($page));
-                $model->modelClass = '\\'.trim($model->namespace, '\\').'\\Models\\'.trim($model->modelName, '\\');
+                $class = $model->page;
+                $page = preg_replace('/[^a-zA-Z0-9]/', '_', class_basename($class));
+                $model->modelName = class_exists($class) ? class_basename($class) : $model->getGroupName().ucfirst(Str::camel($page));
+                $model->page = 'pageconfig'.preg_replace('/[^a-zA-Z0-9]|pageconfig/', '', strtolower($page));
+                $model->namespace = $model->namesapce ?? (class_exists($class) ? (new \ReflectionClass($class))->getNamespaceName() : 'App\Models');
+                $model->modelClass = class_exists($class) ? $class : '\\'.trim($model->namespace, '\\').'\\Models\\'.trim($model->modelName, '\\');
                 $model->config = [];
             }
         );
@@ -219,14 +226,17 @@ class PageConfig extends BaseModel
      *
      * @return array
      */
-    public function getPageOptions(): array
+    public function getPageOptions($directory = 'Models', $namespace = 'App\Models'): array
     {
-        $models = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(__DIR__));
+        $files = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(app_path($directory)));
+        $values = array_map(function ($model) use ($namespace) {
+            return $namespace.'\\'.substr($model, 0, strpos($model, '.'));
+        }, $files);
         $models = array_map(function ($model) {
-            return substr($this, 0, strpos($$modelthis, '.'));
-        }, $models);
+            return str_replace('PageConfig', '', class_basename($model));
+        }, $values);
 
-        return array_combine(array_map('strtolower', $this), $this);
+        return array_combine($values, $models);
     }
 
     // public function afterCreate()
@@ -322,7 +332,7 @@ class PageConfig extends BaseModel
      *
      * @return self
      */
-    public function take(): static
+    public function take()
     {
         return $this;
     }
@@ -357,7 +367,7 @@ class PageConfig extends BaseModel
      *
      * @return void
      */
-    public function getModel(): static
+    public function getModel()
     {
         return $this;
     }
