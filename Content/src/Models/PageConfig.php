@@ -63,12 +63,14 @@ class PageConfig extends BaseModel
      */
     public function setAttribute($key, $value)
     {
+        $key = str_replace('->', '.', $key);
         $attributes = explode('.', $key);
-        die($key);
-        if (!empty($attributes) && $attributes[0] === 'config') {
+        $configKey = array_shift($attributes);
+        if (!empty($attributes) && $configKey === 'config') {
             Arr::set($this->attributes, $key, $value);
+        } else {
+            parent::setAttribute($key, $value);
         }
-        parent::setAttribute($key, $value);
     }
 
     /**
@@ -95,53 +97,62 @@ class PageConfig extends BaseModel
     }
 
     /**
-    * Get the cache key for this model
-    * @param  [type] $id     [description]
-    * @param  [type] $params [description]
-    * @return string         [description]
-    */
+     * Get the cache key for this model
+     *
+     * @param  [type] $id     [description]
+     * @param  [type] $params [description]
+     * @return string         [description]
+     */
     protected static function getCacheKey($id=null, $params=[]): string
     {
         $id = $id ?: strtolower(class_basename(get_called_class()));
         $params = json_encode($params);
-        return implode('-', array_merge((array)$params, [
-            md5(get_called_class()),
-            $id,
-        ]));
+        return implode(
+            '-', array_merge(
+                (array)$params, [
+                md5(get_called_class()),
+                $id,
+                ]
+            )
+        );
     }
 
     /**
-    * Return the page configuration.
-    *
-    * @return array the configuration
-    */
+     * Return the page configuration.
+     *
+     * @return array the configuration
+     */
     public static function getConfig($id = null, $options = []): array
     {
         $id = $id ?: strtolower(class_basename(get_called_class()));
         $routeParams = $id != 'pageconfigglobal' ? \Route::current()->parameters() : [];
         $key = static::getCacheKey($id, array_merge((array)$_GET, (array)$routeParams));
 
-        return \Cache::remember($key, static::$duration, function () use ($id, $routeParams, $options) {
-            $originalId = $id;
-            $id = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $id));
-            $page = static::getPage($id);
-            if ($page) {
-                $modelClass = $page->modelClass;
-                if (class_exists($modelClass)) {
-                    $model = new $modelClass();
-                    $model->fill($page->attributes);
-                    $model->config = json_decode($model->config);
-                    $args = [$page->pageObject, $options, $routeParams];
+        return \Cache::remember(
+            $key, static::$duration, function () use ($id, $routeParams, $options) {
+                $originalId = $id;
+                $id = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $id));
+                $page = static::getPage($id);
+                if ($page) {
+                    $modelClass = $page->modelClass;
+                    if (class_exists($modelClass)) {
+                        $model = new $modelClass();
+                        $model->fill($page->attributes);
+                        $model->config = json_decode($model->config);
+                        $args = [$page->pageObject, $options, $routeParams];
 
-                    $ret_val = array_merge([
-                    'id' => $originalId,
-                    ], (array) call_user_func_array([$model, 'prepareConfig'], $args));
-                    return $ret_val;
-                } else {
-                    return [];
+                        $ret_val = array_merge(
+                            [
+                            'id' => $originalId,
+                            ], (array) call_user_func_array([$model, 'prepareConfig'], $args)
+                        );
+                        return $ret_val;
+                    } else {
+                        return [];
+                    }
                 }
             }
-        });
+        );
     }
 
     /**
@@ -152,10 +163,13 @@ class PageConfig extends BaseModel
     protected function getNavigation(): array
     {
         $ret_val = [];
-        if (!$this->result || ($this->result && !in_array(get_class($this->result), [
+        if (!$this->result || ($this->result && !in_array(
+            get_class($this->result), [
             'Illuminate\Pagination\LengthAwarePaginator',
             'Illuminate\Pagination\Paginator',
-        ]))) {
+            ]
+        ))
+        ) {
             return $ret_val;
         }
         if ($this->result->nextPageUrl()) {
@@ -171,14 +185,13 @@ class PageConfig extends BaseModel
     /**
      * Get Pagination
      *
-     * @param mixed $items
+     * @param  mixed $items
      * @return array
      */
     protected function getPagination($items = null): array
     {
         $items = $items ?: $this->items;
-        if (
-            !is_null($items)
+        if (!is_null($items)
             && !$items instanceof \Illuminate\Pagination\LengthAwarePaginator
             || $items instanceof \Illuminate\Pagination\Paginator
         ) {
@@ -203,17 +216,21 @@ class PageConfig extends BaseModel
     {
         extract($config);
 
-        return array_merge($config, array_filter([
-            'title' => @$title,
-            'isEvent' => @$isEvent,
-            'isShowcase' => @$isShowcase,
-            'isFeatured' => @$isFeatured,
-            'featureTitle' => @$featureTitle,
-            'pageTitle' => @$pageTitle,
-            'image' => @$image,
-            'isLocalImage' => @$isLocalImage,
-            'description' => @$description,
-        ]));
+        return array_merge(
+            $config, array_filter(
+                [
+                'title' => @$title,
+                'isEvent' => @$isEvent,
+                'isShowcase' => @$isShowcase,
+                'isFeatured' => @$isFeatured,
+                'featureTitle' => @$featureTitle,
+                'pageTitle' => @$pageTitle,
+                'image' => @$image,
+                'isLocalImage' => @$isLocalImage,
+                'description' => @$description,
+                ]
+            )
+        );
     }
 
     /**
@@ -243,12 +260,16 @@ class PageConfig extends BaseModel
     public function getPageModelOptions($directory = 'Models', $namespace = 'App\Models'): array
     {
         $files = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(app_path($directory)));
-        $values = array_map(function ($model) use ($namespace) {
-            return $namespace.'\\'.substr($model, 0, strpos($model, '.'));
-        }, $files);
-        $models = array_map(function ($model) {
-            return str_replace('PageConfig', '', class_basename($model));
-        }, $values);
+        $values = array_map(
+            function ($model) use ($namespace) {
+                return $namespace.'\\'.substr($model, 0, strpos($model, '.'));
+            }, $files
+        );
+        $models = array_map(
+            function ($model) {
+                return str_replace('PageConfig', '', class_basename($model));
+            }, $values
+        );
 
         return array_combine($values, $models);
     }
@@ -261,12 +282,16 @@ class PageConfig extends BaseModel
     public function getPageOptions($directory = 'Models'): array
     {
         $files = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(app_path($directory)));
-        $values = array_map(function ($model) {
-            return strtolower(substr($model, 0, strpos($model, '.')));
-        }, $files);
-        $models = array_map(function ($model) {
-            return str_replace(static::getGroupName(), '', substr($model, 0, strpos($model, '.')));
-        }, $files);
+        $values = array_map(
+            function ($model) {
+                return strtolower(substr($model, 0, strpos($model, '.')));
+            }, $files
+        );
+        $models = array_map(
+            function ($model) {
+                return str_replace(static::getGroupName(), '', substr($model, 0, strpos($model, '.')));
+            }, $files
+        );
 
         return array_combine($values, $models);
     }
@@ -370,20 +395,20 @@ class PageConfig extends BaseModel
     }
 
     /**
-    * Faker for querying the API.
-    *
-    * @return array the configuration
-    */
+     * Faker for querying the API.
+     *
+     * @return array the configuration
+     */
     public static function apiFind($id, $options = [])
     {
         return static::getConfig($id, $options);
     }
 
     /**
-    * Faker for querying the API.
-    *
-    * @return array the configuration
-    */
+     * Faker for querying the API.
+     *
+     * @return array the configuration
+     */
     public static function apiQuery($options = [], $multiple = false, $query = null)
     {
         return new static();
