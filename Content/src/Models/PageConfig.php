@@ -66,6 +66,9 @@ class PageConfig extends BaseModel
         $key = str_replace('->', '.', $key);
         $attributes = explode('.', $key);
         $configKey = array_shift($attributes);
+
+        // echo $key;
+        // print_R([$key, $attributes, implode('.', $attributes), $this->config, $this->attributes]);
         if (!empty($attributes) && $configKey === 'config') {
             Arr::set($this->attributes, $key, $value);
         } else {
@@ -138,8 +141,8 @@ class PageConfig extends BaseModel
                     if (class_exists($modelClass)) {
                         $model = new $modelClass();
                         $model->fill($page->attributes);
-                        $model->config = json_decode($model->config);
-                        $args = [$page->pageObject, $options, $routeParams];
+                        $model->config = is_array($model->config) ? $model->config : json_decode($model->config);
+                        $args = [$options, $routeParams];
 
                         $ret_val = array_merge(
                             [
@@ -414,7 +417,14 @@ class PageConfig extends BaseModel
         return new static();
     }
 
-    public function prepareConfig($page, $config = [], $routeParameters = [])
+    /**
+     * Prepare Config
+     *
+     * @param  mixed $config
+     * @param  mixed $routeParameters
+     * @return void
+     */
+    public function prepareConfig($config = [], $routeParameters = []): array
     {
         throw new \Exception(__FUNCTION__.' needs to be defined by all sub classes');
     }
