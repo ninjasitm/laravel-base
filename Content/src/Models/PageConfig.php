@@ -96,8 +96,6 @@ class PageConfig extends BaseModel
     {
         $id = strpos($id, 'pageconfig') !== false ? $id : 'pageconfig'.$id;
 
-        echo $id;
-
         return static::query()->where(['page' => $id])->first();
     }
 
