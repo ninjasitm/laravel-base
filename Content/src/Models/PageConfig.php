@@ -41,11 +41,11 @@ class PageConfig extends BaseModel
         static::creating(
             function ($model) {
                 $class = $model->page;
-                $page = preg_replace('/[^a-zA-Z0-9]/', '_', class_basename($class));
+                $page = preg_replace('/[^a-zA-Z0-9]|pageconfig/', '_', class_basename($class));
                 $model->modelName = class_exists($class) ? class_basename($class) : $model->getGroupName().ucfirst(Str::camel($page));
                 $model->page = 'pageconfig'.preg_replace('/[^a-zA-Z0-9]|pageconfig/', '', strtolower($page));
                 $model->namespace = $model->namesapce ?? (class_exists($class) ? (new \ReflectionClass($class))->getNamespaceName() : 'App\Models');
-                $model->modelClass = class_exists($class) ? $class : '\\'.trim($model->namespace, '\\').'\\Models\\'.trim($model->modelName, '\\');
+                $model->modelClass = class_exists($class) ? $class : trim($model->namespace, '\\').'\\Models\\'.trim($model->modelName, '\\');
                 $model->config = [];
             }
         );
