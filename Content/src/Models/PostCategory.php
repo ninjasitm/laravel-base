@@ -2,12 +2,14 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Nitm\Content\Models\BaseModel as Model;
 use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Traits\NestedTree;
 
 /**
  * Class PostCategory
+ *
  * @package Nitm\Content\Models
  * @version July 20, 2020, 1:28 am UTC
  *

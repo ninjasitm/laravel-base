@@ -6,6 +6,7 @@ use Nitm\Content\Models\BaseModel as Model;
 
 /**
  * Class PostsCategory
+ *
  * @package Nitm\Content\Models
  * @version July 20, 2020, 1:28 am UTC
  *
@@ -44,4 +45,24 @@ class PostsCategory extends Model
     public static $rules = [
         'category_id' => 'required'
     ];
+
+    /**
+     * Post
+     *
+     * @return BelongsTo
+     */
+    public function post(): BelongsTo
+    {
+        return $this->belongsTo(Post::class);
+    }
+
+    /**
+     * Post
+     *
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(PostCategory::class);
+    }
 }
