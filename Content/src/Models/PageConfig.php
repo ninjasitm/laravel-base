@@ -45,7 +45,7 @@ class PageConfig extends BaseModel
                 $model->modelName = class_exists($class) ? class_basename($class) : $model->getGroupName().ucfirst(Str::camel($page));
                 $model->page = 'pageconfig'.preg_replace('/[^a-zA-Z0-9]|pageconfig/', '', strtolower($page));
                 $model->namespace = $model->namesapce ?? (class_exists($class) ? (new \ReflectionClass($class))->getNamespaceName() : 'App\Models');
-                $model->modelClass = class_exists($class) ? $class : trim($model->namespace, '\\').trim($model->modelName, '\\');
+                $model->modelClass = class_exists($class) ? $class : trim($model->namespace, '\\')."\\".trim($model->modelName, '\\');
                 $model->config = [];
             }
         );
