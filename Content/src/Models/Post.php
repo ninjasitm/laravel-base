@@ -2,12 +2,13 @@
 
 namespace Nitm\Content\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Nitm\Content\Models\BaseModel as Model;
-use Nitm\Helpers\ImageHelper;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Nitm\Helpers\ImageHelper;
 use Nitm\Content\Traits\Sluggable;
+use Nitm\Content\Models\BaseModel as Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Class Post
