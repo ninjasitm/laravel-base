@@ -4,6 +4,7 @@ namespace Nitm\Content;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Nitm\Content\Console\Commands\SyncSequences;
 
 class NitmContentServiceProvider extends ServiceProvider
 {
@@ -22,6 +23,8 @@ class NitmContentServiceProvider extends ServiceProvider
             __DIR__ . '/../publishes/resources/views',
             'nitm-content'
         );
+
+        $this->registerCommands();
     }
 
     /**
@@ -31,9 +34,11 @@ class NitmContentServiceProvider extends ServiceProvider
      */
     private function registerRoutes()
     {
-        Route::group($this->routeConfiguration(), function () {
-            $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
-        });
+        Route::group(
+            $this->routeConfiguration(), function () {
+                $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
+            }
+        );
     }
 
     /**
@@ -63,6 +68,23 @@ class NitmContentServiceProvider extends ServiceProvider
         }
     }
 
+
+    /**
+     * Register the package's migrations.
+     *
+     * @return void
+     */
+    private function registerCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands(
+                [
+                SyncSequences::class,
+                ]
+            );
+        }
+    }
+
     /**
      * Register the package's publishable resources.
      *
@@ -71,17 +93,21 @@ class NitmContentServiceProvider extends ServiceProvider
     private function registerPublishing()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([
+            $this->publishes(
+                [
                 __DIR__ . '/Database/migrations' => database_path('migrations'),
-            ], 'nitm-content-migrations');
+                ], 'nitm-content-migrations'
+            );
 
             // $this->publishes([
             //     __DIR__ . '/../public' => public_path('vendor/nitm-content'),
             // ], 'nitm-content-assets');
 
-            $this->publishes([
+            $this->publishes(
+                [
                 __DIR__ . '/../publishes/config/nitm-content.php' => config_path('nitm-content.php'),
-            ], 'nitm-content-config');
+                ], 'nitm-content-config'
+            );
         }
     }
 
