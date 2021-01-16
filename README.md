@@ -23,5 +23,10 @@ To Publish the classes and traits ndeeded
 ```
 php artisan vendor:publish  --tag=nitm-api
 ```
+
+To Publish the infyom templates
+```
+php artisan vendor:publish  --tag=nitm-api-infyom
+```
 ## Dependedncies
  - `infyom/laravel-generator` for API and model generation support

@@ -82,9 +82,11 @@ class NitmApiServiceProvider extends ServiceProvider
             //     ], 'nitm-api-migrations'
             // );
 
-            // $this->publishes([
-            //     __DIR__ . '/../public' => public_path('vendor/nitm-api'),
-            // ], 'nitm-api-assets');
+            $this->publishes(
+                [
+                __DIR__ . '/../publishes/resources' => resource_path('infyom'),
+                ], 'nitm-api-infyom'
+            );
 
             $this->publishes(
                 [
