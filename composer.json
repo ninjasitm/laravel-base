@@ -38,7 +38,7 @@
         "laravel": {
             "providers": [
                 "Nitm\\Content\\NitmContentServiceProvider",
-                "Nitm\\Content\\NitmApiServiceProvider"
+                "Nitm\\Api\\NitmApiServiceProvider"
             ]
         }
     }
