@@ -29,7 +29,7 @@ class $MODEL_NAME$Controller extends ApiController
     {
         $models = $this->getRepository()->search($request->all());
 
-        return $this->paginate($request, $MODEL_NAME$Resource::collection($mode), '$MODEL_NAME_PLURAL_HUMAN$ retrieved successfully');
+        return $this->paginate($request, $MODEL_NAME$Resource::collection($models), '$MODEL_NAME_PLURAL_HUMAN$ retrieved successfully');
     }
 
     $DOC_STORE$
