@@ -84,7 +84,7 @@ class NitmApiServiceProvider extends ServiceProvider
 
             $this->publishes(
                 [
-                __DIR__ . '/../publishes/resources' => resource_path('infyom'),
+                __DIR__ . '/../publishes/resources/infyom' => resource_path('infyom'),
                 ], 'nitm-api-infyom'
             );
 
