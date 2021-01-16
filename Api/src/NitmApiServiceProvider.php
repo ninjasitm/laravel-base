@@ -99,7 +99,11 @@ class NitmApiServiceProvider extends ServiceProvider
                     __DIR__.'/../stubs/ApiController.stub.php' => app_path('Http/Controllers/API/ApiController.php'),
                     __DIR__.'/../stubs/Controller.stub.php' => app_path('Http/Controllers/Controller.php'),
                     __DIR__.'/../stubs/TeamApiController.stub.php' => app_path('Http/Controllers/API/TeamApiController.php'),
-                    __DIR__.'/../stubs/TeamController.stub.php' => app_path('Http/Controllers/TeamController.php')
+                    __DIR__.'/../stubs/TeamController.stub.php' => app_path('Http/Controllers/TeamController.php'),
+                    __DIR__ . '/../stubs/tests/ApiTestTrait.stub.php' => resource_path('tests/ApiTestTrait.php'),
+                    __DIR__ . '/../stubs/tests/CreatesApplication.stub.php' => resource_path('tests/CreatesApplication.php'),
+                    __DIR__ . '/../stubs/tests/RefreshDatabase.stub.php' => resource_path('tests/RefreshDatabase.php'),
+                    __DIR__ . '/../stubs/tests/Testcase.stub.php' => resource_path('tests/Testcase.php'),
                 ], 'nitm-api'
             );
         }
