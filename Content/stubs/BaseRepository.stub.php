@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use Nitm\Content\Repositories\BaseRepository;
+use Nitm\Content\Repositories\BaseRepository as AbstractBaseRepository;
 
-class Repository extends BaseRepository
+abstract class BaseRepository extends AbstractBaseRepository
 {
     /**
      * @inheritDoc

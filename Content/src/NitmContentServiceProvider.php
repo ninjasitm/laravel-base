@@ -165,7 +165,7 @@ class NitmContentServiceProvider extends ServiceProvider
             $this->publishes(
                 [
                     __DIR__.'/../stubs/Model.stub.php' => app_path('Models/Model.php'),
-                    __DIR__.'/../stubs/Repository.stub.php' => app_path('Repositories/Repository.php'),
+                    __DIR__.'/../stubs/BaseRepository.stub.php' => app_path('Repositories/BaseRepository.php'),
                 ], 'nitm-content'
             );
         }

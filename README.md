@@ -6,6 +6,7 @@ This package provides support for custom repositories, app helpers and useful tr
 You may publish config and migrations using the following commands:
 
 ```
+php artisan vendor:publish  --tag=nitm-content
 php artisan vendor:publish  --tag=nitm-content-config
 php artisan vendor:publish  --tag=nitm-content-migrations
 ```
