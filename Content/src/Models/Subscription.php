@@ -6,6 +6,8 @@ use Laravel\Cashier\Subscription as CashierSubscription;
 
 class Subscription extends CashierSubscription
 {
+    protected $table = "billing_subscriptions";
+
     /**
      * The accessors to append to the model's array form.
      *

@@ -11,7 +11,7 @@ class TeamSubscription extends CashierSubscription
      *
      * @var string
      */
-    protected $table = 'team_subscriptions';
+    protected $table = 'billing_team_subscriptions';
 
     /**
      * The accessors to append to the model's array form.

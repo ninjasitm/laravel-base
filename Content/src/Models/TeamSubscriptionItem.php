@@ -19,7 +19,7 @@ class TeamSubscriptionItem extends Model
      *
      * @var string
      */
-    protected $table = 'team_subscription_items';
+    protected $table = 'billing_team_subscription_items';
 
     /**
      * The attributes that are not mass assignable.

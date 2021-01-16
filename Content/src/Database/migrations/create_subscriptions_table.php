@@ -13,7 +13,7 @@ class CreateSubscriptionsTable extends Migration
     public function up()
     {
         Schema::create(
-            'subscriptions', function (Blueprint $table) {
+            'billing_subscriptions', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('user_id');
                 $table->string('name');
@@ -28,7 +28,7 @@ class CreateSubscriptionsTable extends Migration
         );
 
         Schema::create(
-            'team_subscriptions', function (Blueprint $table) {
+            'billing_team_subscriptions', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('team_id');
                 $table->string('name');
@@ -43,7 +43,7 @@ class CreateSubscriptionsTable extends Migration
         );
 
         Schema::create(
-            'subscription_items', function (Blueprint $table) {
+            'billing_subscription_items', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('subscription_id');
                 $table->string('stripe_id')->index();
@@ -56,7 +56,7 @@ class CreateSubscriptionsTable extends Migration
         );
 
         Schema::create(
-            'team_subscription_items', function (Blueprint $table) {
+            'billing_team_subscription_items', function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->unsignedBigInteger('subscription_id');
                 $table->string('stripe_id')->index();
@@ -76,9 +76,9 @@ class CreateSubscriptionsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('subscriptions');
-        Schema::drop('team_subscriptions');
-        Schema::drop('subscription_items');
-        Schema::drop('team_subscription_items');
+        Schema::drop('billing_subscriptions');
+        Schema::drop('billing_team_subscriptions');
+        Schema::drop('billing_subscription_items');
+        Schema::drop('billing_team_subscription_items');
     }
 }
