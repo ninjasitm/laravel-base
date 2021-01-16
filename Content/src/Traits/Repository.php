@@ -11,7 +11,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Nitm\Content\Traits\RepositorySyncsRelations;
-use Nitm\Content\Team;
+use Nitm\Content\Models\User;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -59,7 +59,7 @@ trait Repository
     /**
      * Allow the user to define the fields to return for the collection
      *
-     * @param Collection|Paginator|LengthAwarePaginator $collection
+     * @param  Collection|Paginator|LengthAwarePaginator $collection
      * @return void
      */
     public static function collectionToArray($collection)
@@ -108,8 +108,8 @@ trait Repository
     /**
      * Paginate records for scaffold.
      *
-     * @param int $perPage
-     * @param array $columns
+     * @param  int   $perPage
+     * @param  array $columns
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage, $columns = ['*'])
@@ -122,7 +122,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param array $data
+     * @param  array $data
      * @return Builder
      */
     public function search($data = [])
@@ -133,7 +133,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param array $data
+     * @param  array $data
      * @return Builder
      */
     public function trashedSearch($data = [])
@@ -144,9 +144,9 @@ trait Repository
     /**
      * Build a query for retrieving all records.
      *
-     * @param array $search
-     * @param int|null $skip
-     * @param int|null $limit
+     * @param  array    $search
+     * @param  int|null $skip
+     * @param  int|null $limit
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function allQuery($search = [], $skip = null, $limit = null)
@@ -167,10 +167,10 @@ trait Repository
     /**
      * Retrieve all records with given filter criteria
      *
-     * @param array $search
+     * @param array    $search
      * @param int|null $skip
      * @param int|null $limit
-     * @param array $columns
+     * @param array    $columns
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
      */
@@ -202,7 +202,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int $id
+     * @param int   $id
      * @param array $columns
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
@@ -240,7 +240,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int $id
+     * @param int   $id
      * @param array $columns
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
@@ -261,7 +261,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int $id
+     * @param int   $id
      * @param array $columns
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
@@ -291,7 +291,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int $id
+     * @param int   $id
      * @param array $columns
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
@@ -312,7 +312,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int $id
+     * @param int   $id
      * @param array $columns
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
@@ -343,7 +343,7 @@ trait Repository
      * Update model record for given id
      *
      * @param array $input
-     * @param int $id
+     * @param int   $id
      *
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
      */
@@ -385,7 +385,7 @@ trait Repository
      *
      * @param array $data
      *
-     * @return  void
+     * @return void
      */
     public function syncData($model, array $data)
     {

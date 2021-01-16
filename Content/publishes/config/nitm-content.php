@@ -6,6 +6,10 @@ return [
      */
     'user_model' => env('NITM_CONTENT_USER_MODEL', 'App\User'),
     /**
+     * User model
+     */
+    'team_model' => env('NITM_CONTENT_TEAM_MODEL', 'App\Team'),
+    /**
      * The domain for the app
      */
     'domain' => null,

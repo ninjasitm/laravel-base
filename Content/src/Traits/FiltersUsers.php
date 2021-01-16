@@ -2,7 +2,7 @@
 
 namespace Nitm\Content\Traits;
 
-use Nitm\Content\User;
+use Nitm\Content\Models\User;
 use Nitm\Helpers\AttachedUsersHelper;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -37,6 +37,14 @@ trait FiltersUsers
     //     }
     // }
 
+    /**
+     * Filter Users
+     *
+     * @param  mixed $query
+     * @param  mixed $user
+     * @param  mixed $property
+     * @return void
+     */
     public static function filterUsers($query, $user, $property)
     {
         return AttachedUsersHelper::filterUsers($query, $user, $property);
@@ -46,77 +54,85 @@ trait FiltersUsers
      * Filter by given user
      *
      * @param Builder $query
-     * @param mixed $user
-     * @param string $property
+     * @param mixed   $user
+     * @param string  $property
      *
      * @return void
      */
     public function scopeHasUser($query, $user, $property = 'id')
     {
-        $query->whereHas('users', function ($query) use ($user, $property) {
-            $query->select('users.id');
-            static::filterUsers($query, $user, $property);
-        });
+        $query->whereHas(
+            'users', function ($query) use ($user, $property) {
+                $query->select('users.id');
+                static::filterUsers($query, $user, $property);
+            }
+        );
     }
 
     /**
      * Filter by organisation mentors
      *
      * @param Builder $query
-     * @param mixed $user
-     * @param string $property
+     * @param mixed   $user
+     * @param string  $property
      *
      * @return void
      */
     public function scopeHasMentor($query, $user, $property = 'id')
     {
-        $query->whereHas('mentors', function ($query) use ($user, $property) {
-            $query->select('users.id');
-            static::filterUsers($query, $user, $property);
-        });
+        $query->whereHas(
+            'mentors', function ($query) use ($user, $property) {
+                $query->select('users.id');
+                static::filterUsers($query, $user, $property);
+            }
+        );
     }
 
     /**
      * Filter by organisation students
      *
      * @param Builder $query
-     * @param mixed $user
-     * @param string $property
+     * @param mixed   $user
+     * @param string  $property
      *
      * @return void
      */
     public function scopeHasStudent($query, $user, $property = 'id')
     {
-        $query->whereHas('students', function ($query) use ($user, $property) {
-            $query->select('users.id');
+        $query->whereHas(
+            'students', function ($query) use ($user, $property) {
+                $query->select('users.id');
 
-            static::filterUsers($query, $user, $property);
-        });
+                static::filterUsers($query, $user, $property);
+            }
+        );
     }
 
     /**
      * Filter by organisation admins
      *
      * @param Builder $query
-     * @param mixed $user
-     * @param string $property
+     * @param mixed   $user
+     * @param string  $property
      *
      * @return void
      */
     public function scopeHasOrganizationAdmin($query, $user, $property = 'id')
     {
-        $query->whereHas('organizationAdmins', function ($query) use ($user, $property) {
-            $query->select('users.id');
-            static::filterUsers($query, $user, $property);
-        });
+        $query->whereHas(
+            'organizationAdmins', function ($query) use ($user, $property) {
+                $query->select('users.id');
+                static::filterUsers($query, $user, $property);
+            }
+        );
     }
 
     /**
      * Filter users using the given property and values
      *
      * @param Builder $query
-     * @param mixed $user
-     * @param string $property
+     * @param mixed   $user
+     * @param string  $property
      *
      * @return void
      */

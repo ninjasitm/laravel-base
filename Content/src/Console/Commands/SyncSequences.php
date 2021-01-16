@@ -1,9 +1,15 @@
 <?php
+
 namespace Nitm\Content\Console\Commands;
 
 use DB;
 use Illuminate\Console\Command;
 
+/**
+ * Sync Sequences
+ *
+ * @author Malcolm Paul <malcolm@ninjasitm.com>
+ */
 class SyncSequences extends Command
 {
     protected $signature = 'nitm:sync-sequences {table?*}';

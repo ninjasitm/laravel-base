@@ -31,7 +31,8 @@
     "autoload": {
         "psr-4": {
             "Nitm\\Content\\": "Content/src",
-            "Nitm\\Api\\": "Api/src"
+            "Nitm\\Api\\": "Api/src",
+            "Nitm\\Helpers\\": "Api/Helpers"
         }
     },
     "extra": {

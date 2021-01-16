@@ -1,11 +1,14 @@
 <?php
 namespace Nitm\Content\Console\Commands;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Console\Scheduling\Schedule;
 
+/**
+ * Schedule List
+ *
+ * @author Malcolm Paul <malcolm@ninjasitm.com>
+ */
 class ScheduleList extends Command
 {
     protected $signature = 'nitm:schedule-list';

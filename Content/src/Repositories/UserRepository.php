@@ -2,11 +2,14 @@
 
 namespace Nitm\Content\Repositories;
 
-use Nitm\Content\User;
+use Nitm\Content\Models\User;
 use Nitm\Content\Repositories\BaseRepository;
+use App\Traits\Repository as RepositoryTrait;
+use Nitm\Content\Traits\RepositoryProfile;
 
 /**
  * Class UserRepository
+ *
  * @package Nitm\Content\Repositories
  */
 

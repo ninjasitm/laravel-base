@@ -2,8 +2,6 @@
 
 namespace Nitm\Content\Contracts;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 interface Repository

@@ -1,10 +1,6 @@
 <?php
 
 namespace Nitm\Content\Contracts;
-
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-
 interface NotifiesOfActivity
 {
 

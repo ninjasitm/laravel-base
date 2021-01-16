@@ -2,8 +2,8 @@
 
 namespace Nitm\Content\Traits;
 
-use Nitm\Content\Team;
-use Nitm\Content\User;
+use Nitm\Content\Models\User;
+use Nitm\Content\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -14,12 +14,12 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
  */
 trait Model
 {
-    public static $_tableColumns = [];
+    public static $tableColumns = [];
 
     /**
      * Toggle a single atribute on the model
      *
-     * @param string|array $attributes The atributes to be toggled
+     * @param  string|array $attributes The atributes to be toggled
      * @return array The toggled attributes
      */
     public function toggle($attributes = 'is_active')
@@ -36,10 +36,10 @@ trait Model
     /**
      * Get stats for this model
      *
-     * @param array $stats
-     * @param \Nitm\Content\Team $team
-     * @param array $groups
-     * @param \Nitm\Content\User $user
+     * @param array                     $stats
+     * @param \Nitm\Content\Models\Team $team
+     * @param array                     $groups
+     * @param \Nitm\Content\Models\User $user
      *
      * @return void
      */
@@ -96,7 +96,7 @@ trait Model
     /**
      * Get the fillable fields for this model
      *
-     * @param \Nitm\Content\User $user
+     * @param \Nitm\Content\Models\User $user
      *
      * @return array
      */
@@ -115,7 +115,7 @@ trait Model
     /**
      * Add fillable attributes for the model.
      *
-     * @param  array|string|null  $attributes
+     * @param  array|string|null $attributes
      * @return void
      */
     public function addFillable($attributes = null)
@@ -127,7 +127,7 @@ trait Model
     /**
      * Add fillable attributes for the model.
      *
-     * @param  array|string|null  $attributes
+     * @param  array|string|null $attributes
      * @return void
      */
     public function addAppends($attributes = null)
@@ -140,7 +140,7 @@ trait Model
     /**
      * Add jsonable attributes for the model.
      *
-     * @param  array|string|null  $attributes
+     * @param  array|string|null $attributes
      * @return void
      */
     public function addJsonable($attributes = null)
@@ -160,12 +160,12 @@ trait Model
     public function getTableColumns($table = null)
     {
         $table = $table ?: $this->getTable();
-        if (!isset(static::$_tableColumns[$table])) {
+        if (!isset(static::$tableColumns[$table])) {
             $manager = $this->getConnection()->getDoctrineSchemaManager();
-            static::$_tableColumns[$table] = $manager->listTableColumns($table);
+            static::$tableColumns[$table] = $manager->listTableColumns($table);
         }
 
-        return static::$_tableColumns[$table];
+        return static::$tableColumns[$table];
     }
 
     /**
@@ -183,7 +183,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param array $options
+     * @param  array $options
      * @return void
      */
     public static function getFilterOptions($options = [])
@@ -194,7 +194,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param array $options
+     * @param  array $options
      * @return void
      */
     public static function getFormOptions($options = [])
@@ -230,7 +230,7 @@ trait Model
     /**
      * Set a given attribute on the model directly without mutators.
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $value
      * @return mixed
      */
@@ -242,7 +242,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param [type] $value
+     * @param  [type] $value
      * @return void
      */
     public function setIsActiveAttribute($value = null)
@@ -253,7 +253,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param [type] $value
+     * @param  [type] $value
      * @return void
      */
     public function setIsPublicAttribute($value = null)
@@ -264,7 +264,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param [type] $value
+     * @param  [type] $value
      * @return void
      */
     public function setIsPrivateAttribute($value = null)
@@ -275,7 +275,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param [type] $value
+     * @param  [type] $value
      * @return void
      */
     public function setIsRecurringAttribute($value = null)
@@ -286,7 +286,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param [type] $value
+     * @param  [type] $value
      * @return void
      */
     public function setIsRequiredAttribute($value = null)
@@ -297,8 +297,8 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param string $date
-     * @param string $format
+     * @param  string $date
+     * @param  string $format
      * @return Carbon || null
      */
     protected function parseDate($date, $format = 'Y-m-d H:i:s')
@@ -320,7 +320,7 @@ trait Model
     /**
      * Only get items that are active
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeIsActive($query)
@@ -331,9 +331,9 @@ trait Model
     /**
      * Save a relation
      *
-     * @param [type] $relation
-     * @param [type] $value
-     * @param string $method
+     * @param  [type] $relation
+     * @param  [type] $value
+     * @param  string $method
      * @return void
      */
     public function saveRelation($relation, $value, $method = 'save')
@@ -343,10 +343,12 @@ trait Model
             $model = $this->$relation()->$method($value);
             $this->setRelation($relation, $model);
         } else {
-            static::saved(function () use ($relation, $value, $method) {
-                $model = $this->$relation()->$method($value);
-                $this->setRelation($relation, $model);
-            });
+            static::saved(
+                function () use ($relation, $value, $method) {
+                    $model = $this->$relation()->$method($value);
+                    $this->setRelation($relation, $model);
+                }
+            );
         }
     }
 
