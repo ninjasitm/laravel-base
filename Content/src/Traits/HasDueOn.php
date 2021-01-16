@@ -4,7 +4,7 @@ namespace Nitm\Content\Traits;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Spark;
+use NitmContent;
 use Carbon\Carbon;
 
 trait HasDueOn
@@ -72,9 +72,9 @@ trait HasDueOn
      * Check for items expiring in the given interval
      *
      * @param integer $count
-     * @param string $interval
-     * @param string $from
-     * @param string $timezone
+     * @param string  $interval
+     * @param string  $from
+     * @param string  $timezone
      *
      * @return void
      */

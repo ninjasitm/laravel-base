@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Spark;
+namespace Nitm\Content;
 
 use Laravel\Cashier\Subscription as CashierSubscription;
 
@@ -35,7 +35,7 @@ class TeamSubscription extends CashierSubscription
      */
     public function owner()
     {
-        return $this->belongsTo(Spark::teamModel(), 'team_id');
+        return $this->belongsTo(NitmContent::teamModel(), 'team_id');
     }
 
     /**

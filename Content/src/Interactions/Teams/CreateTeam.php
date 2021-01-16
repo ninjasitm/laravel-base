@@ -1,8 +1,8 @@
 <?php
 
-namespace Nitm\Content\Interactions;
+namespace Nitm\Content\Interactions\Teams;
 
-use Nitm\Content\Spark;
+use Nitm\Content\NitmContent;
 use Illuminate\Support\Facades\Validator;
 use Nitm\Content\Events\Teams\TeamCreated;
 use Nitm\Content\Events\Teams\TeamOwnerAdded;
@@ -18,11 +18,11 @@ class CreateTeam implements Contract
      */
     public function validator($user, array $data)
     {
-        $validator = Validator::make($data, Spark::call(static::class.'@rules'));
+        $validator = Validator::make($data, NitmContent::call(static::class.'@rules'));
 
         $validator->sometimes(
             'slug', 'required|alpha_dash|max:255|unique:teams,slug', function () {
-                return Spark::teamsIdentifiedByPath();
+                return NitmContent::teamsIdentifiedByPath();
             }
         );
 
@@ -78,13 +78,13 @@ class CreateTeam implements Contract
     {
         event(
             new TeamCreated(
-                $team = Spark::interact(
+                $team = NitmContent::interact(
                     TeamRepository::class.'@create', [$user, $data]
                 )
             )
         );
 
-        Spark::interact(
+        NitmContent::interact(
             AddTeamMemberContract::class, [
             $team, $user, 'owner'
             ]
@@ -93,7 +93,7 @@ class CreateTeam implements Contract
         event(new TeamOwnerAdded($team, $user));
 
         try {
-            if (Spark::chargesUsersPerTeam() && $user->subscription()
+            if (NitmContent::chargesUsersPerTeam() && $user->subscription()
                 && $user->ownedTeams()->count() > 1
             ) {
                 $user->addSeat();

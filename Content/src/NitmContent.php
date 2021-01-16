@@ -2,7 +2,7 @@
 
 namespace Nitm\Content;
 
-class Spark
+class NitmContent
 {
     use Configuration\CallsInteractions,
         Configuration\ManagesApiOptions,

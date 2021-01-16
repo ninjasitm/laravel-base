@@ -100,7 +100,7 @@ class NitmContentServiceProvider extends ServiceProvider
 
 
     /**
-     * Register the Spark services.
+     * Register the NitmContent services.
      *
      * @return void
      */
@@ -118,29 +118,25 @@ class NitmContentServiceProvider extends ServiceProvider
             'Contracts\Repositories\TeamRepository' => 'Repositories\TeamRepository',
             'Contracts\Repositories\UserRepository' => 'Repositories\UserRepository',
             'Contracts\Repositories\LocalInvoiceRepository' => 'Repositories\StripeLocalInvoiceRepository',
-            'Contracts\Repositories\PerformanceIndicatorsRepository' => 'Repositories\PerformanceIndicatorsRepository',
             'Contracts\Repositories\Geography\StateRepository' => 'Repositories\Geography\StateRepository',
             'Contracts\Repositories\Geography\CountryRepository' => 'Repositories\Geography\CountryRepository',
-            'Contracts\InitialFrontendState' => 'InitialFrontendState',
             'Contracts\Interactions\Support\SendSupportEmail' => 'Interactions\Support\SendSupportEmail',
             'Contracts\Interactions\Subscribe' => 'Interactions\SubscribeUsingStripe',
             'Contracts\Interactions\SubscribeTeam' => 'Interactions\SubscribeTeamUsingStripe',
             'Contracts\Interactions\CheckPlanEligibility' => 'Interactions\CheckPlanEligibility',
             'Contracts\Interactions\CheckTeamPlanEligibility' => 'Interactions\CheckTeamPlanEligibility',
-            'Contracts\Interactions\Auth\CreateUser' => 'Interactions\Auth\CreateUser',
-            'Contracts\Interactions\Auth\Register' => 'Interactions\Auth\Register',
-            'Contracts\Interactions\Settings\Profile\UpdateProfilePhoto' => 'Interactions\Settings\Profile\UpdateProfilePhoto',
-            'Contracts\Interactions\Settings\Profile\UpdateContactInformation' => 'Interactions\Settings\Profile\UpdateContactInformation',
-            'Contracts\Interactions\Settings\Teams\CreateTeam' => 'Interactions\Settings\Teams\CreateTeam',
-            'Contracts\Interactions\Settings\Teams\AddTeamMember' => 'Interactions\Settings\Teams\AddTeamMember',
-            'Contracts\Interactions\Settings\Teams\UpdateTeamMember' => 'Interactions\Settings\Teams\UpdateTeamMember',
-            'Contracts\Interactions\Settings\Teams\UpdateTeamPhoto' => 'Interactions\Settings\Teams\UpdateTeamPhoto',
-            'Contracts\Interactions\Settings\Teams\SendInvitation' => 'Interactions\Settings\Teams\SendInvitation',
-            'Contracts\Interactions\Settings\Security\EnableTwoFactorAuth' => 'Interactions\Settings\Security\EnableTwoFactorAuthUsingAuthy',
-            'Contracts\Interactions\Settings\Security\VerifyTwoFactorAuthToken' => 'Interactions\Settings\Security\VerifyTwoFactorAuthTokenUsingAuthy',
-            'Contracts\Interactions\Settings\Security\DisableTwoFactorAuth' => 'Interactions\Settings\Security\DisableTwoFactorAuthUsingAuthy',
-            'Contracts\Interactions\Settings\PaymentMethod\UpdatePaymentMethod' => 'Interactions\Settings\PaymentMethod\UpdateStripePaymentMethod',
-            'Contracts\Interactions\Settings\PaymentMethod\RedeemCoupon' => 'Interactions\Settings\PaymentMethod\RedeemStripeCoupon',
+            'Contracts\Interactions\Profile\UpdateProfilePhoto' => 'Interactions\Profile\UpdateProfilePhoto',
+            'Contracts\Interactions\Profile\UpdateContactInformation' => 'Interactions\Profile\UpdateContactInformation',
+            'Contracts\Interactions\Teams\CreateTeam' => 'Interactions\Teams\CreateTeam',
+            'Contracts\Interactions\Teams\AddTeamMember' => 'Interactions\Teams\AddTeamMember',
+            'Contracts\Interactions\Teams\UpdateTeamMember' => 'Interactions\Teams\UpdateTeamMember',
+            'Contracts\Interactions\Teams\UpdateTeamPhoto' => 'Interactions\Teams\UpdateTeamPhoto',
+            'Contracts\Interactions\Teams\SendInvitation' => 'Interactions\Teams\SendInvitation',
+            'Contracts\Interactions\Security\EnableTwoFactorAuth' => 'Interactions\Security\EnableTwoFactorAuthUsingAuthy',
+            'Contracts\Interactions\Security\VerifyTwoFactorAuthToken' => 'Interactions\Security\VerifyTwoFactorAuthTokenUsingAuthy',
+            'Contracts\Interactions\Security\DisableTwoFactorAuth' => 'Interactions\Security\DisableTwoFactorAuthUsingAuthy',
+            'Contracts\Interactions\PaymentMethod\UpdatePaymentMethod' => 'Interactions\PaymentMethod\UpdateStripePaymentMethod',
+            'Contracts\Interactions\PaymentMethod\RedeemCoupon' => 'Interactions\PaymentMethod\RedeemStripeCoupon',
         ];
 
         foreach ($services as $key => $value) {

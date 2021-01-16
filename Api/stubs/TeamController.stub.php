@@ -10,6 +10,6 @@ use Nitm\Api\Http\Controllers\BaseTeamController;
  *
  * @author Malcolm Paul <malcolm@ninjasitm.com>
  */
-class Controller extends BaseTeamController
+class TeamController extends BaseTeamController
 {
 }

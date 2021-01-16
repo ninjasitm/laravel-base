@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content\Contracts\Interactions;
+namespace Nitm\Content\Contracts\Interactions\Teams;
 
 interface CreateTeam
 {

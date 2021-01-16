@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Spark;
+namespace Nitm\Content;
 
 class TeamPlan extends Plan
 {

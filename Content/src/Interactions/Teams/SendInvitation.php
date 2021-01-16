@@ -1,9 +1,9 @@
 <?php
 
-namespace Nitm\Content\Interactions;
+namespace Nitm\Content\Interactions\Teams;
 
 use Ramsey\Uuid\Uuid;
-use Nitm\Content\Spark;
+use Nitm\Content\NitmContent;
 use Illuminate\Support\Str;
 use Nitm\Content\Invitation;
 use Illuminate\Support\Facades\Mail;
@@ -18,9 +18,9 @@ class SendInvitation implements Contract
      */
     public function handle($team, $email, $role)
     {
-        $invitedUser = Spark::user()->where('email', $email)->first();
+        $invitedUser = NitmContent::user()->where('email', $email)->first();
 
-        $role = array_key_exists($role, Spark::roles()) ? $role : Spark::defaultRole();
+        $role = array_key_exists($role, NitmContent::roles()) ? $role : NitmContent::defaultRole();
 
         $this->emailInvitation(
             $invitation = $this->createInvitation($team, $email, $invitedUser, $role)

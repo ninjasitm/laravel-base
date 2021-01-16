@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Spark;
+namespace Nitm\Content;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Cashier\Concerns\Prorates;
@@ -50,7 +50,7 @@ class TeamSubscriptionItem extends Model
     /**
      * Swap the subscription item to a new Stripe plan.
      *
-     * @param  string  $plan
+     * @param  string $plan
      * @param  array  $options
      * @return $this
      *
@@ -62,12 +62,14 @@ class TeamSubscriptionItem extends Model
             throw SubscriptionUpdateFailure::incompleteSubscription($this->subscription);
         }
 
-        $options = array_merge([
+        $options = array_merge(
+            [
             'plan' => $plan,
             'quantity' => $this->quantity,
             'proration_behavior' => $this->prorateBehavior(),
             'tax_rates' => $this->subscription->getPlanTaxRatesForPayload($plan),
-        ], $options);
+            ], $options
+        );
 
         $item = StripeSubscriptionItem::update(
             $this->stripe_id,
@@ -75,16 +77,20 @@ class TeamSubscriptionItem extends Model
             $this->subscription->owner->stripeOptions()
         );
 
-        $this->fill([
+        $this->fill(
+            [
             'stripe_plan' => $plan,
             'quantity' => $item->quantity,
-        ])->save();
+            ]
+        )->save();
 
         if ($this->subscription->hasSinglePlan()) {
-            $this->subscription->fill([
+            $this->subscription->fill(
+                [
                 'stripe_plan' => $plan,
                 'quantity' => $item->quantity,
-            ])->save();
+                ]
+            )->save();
         }
 
         return $this;
@@ -93,7 +99,7 @@ class TeamSubscriptionItem extends Model
     /**
      * Swap the subscription item to a new Stripe plan, and invoice immediately.
      *
-     * @param  string  $plan
+     * @param  string $plan
      * @param  array  $options
      * @return $this
      *

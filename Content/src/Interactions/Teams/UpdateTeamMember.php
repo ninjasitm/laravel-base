@@ -1,8 +1,8 @@
 <?php
 
-namespace Nitm\Content\Interactions;
+namespace Nitm\Content\Interactions\Teams;
 
-use Nitm\Content\Spark;
+use Nitm\Content\NitmContent;
 use Illuminate\Support\Facades\Validator;
 use Nitm\Content\Contracts\Interactions\UpdateTeamMember as Contract;
 
@@ -15,7 +15,7 @@ class UpdateTeamMember implements Contract
     {
         return Validator::make(
             $data, [
-            'role' => 'required|in:'.implode(',', array_keys(Spark::roles())),
+            'role' => 'required|in:'.implode(',', array_keys(NitmContent::roles())),
             ]
         );
     }

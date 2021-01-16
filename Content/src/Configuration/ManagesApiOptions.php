@@ -28,7 +28,7 @@ trait ManagesApiOptions
     public static $tokenDefaults = [];
 
     /**
-     * Indicates if Spark should unserializes cookies.
+     * Indicates if NitmContent should unserializes cookies.
      *
      * @var bool
      */
@@ -95,7 +95,7 @@ trait ManagesApiOptions
     }
 
     /**
-     * Instruct Spark to enable cookie serialization.
+     * Instruct NitmContent to enable cookie serialization.
      *
      * @return void
      */

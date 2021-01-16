@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Spark;
+namespace Nitm\Content;
 
 use JsonSerializable;
 use Illuminate\Support\Arr;
@@ -73,8 +73,8 @@ class Plan implements JsonSerializable
     /**
      * Create a new plan instance.
      *
-     * @param  string  $name
-     * @param  string  $id
+     * @param  string $name
+     * @param  string $id
      * @return void
      */
     public function __construct($name, $id)
@@ -86,7 +86,7 @@ class Plan implements JsonSerializable
     /**
      * Set the price of the plan.
      *
-     * @param  string|integer  $price
+     * @param  string|integer $price
      * @return $this
      */
     public function price($price)
@@ -111,7 +111,7 @@ class Plan implements JsonSerializable
     /**
      * Specify the number of trial days that come with the plan.
      *
-     * @param  int  $trialDays
+     * @param  int $trialDays
      * @return $this
      */
     public function trialDays($trialDays)
@@ -124,7 +124,7 @@ class Plan implements JsonSerializable
     /**
      * Specify the plan's features.
      *
-     * @param  array  $features
+     * @param  array $features
      * @return $this
      */
     public function features(array $features)
@@ -137,7 +137,7 @@ class Plan implements JsonSerializable
     /**
      * Get a given attribute from the plan.
      *
-     * @param  string  $key
+     * @param  string $key
      * @param  mixed  $default
      * @return mixed
      */
@@ -149,7 +149,7 @@ class Plan implements JsonSerializable
     /**
      * Set the maximum number of teams that can be owned for this plan.
      *
-     * @param  int  $max
+     * @param  int $max
      * @return $this
      */
     public function maxTeams($max)
@@ -160,7 +160,7 @@ class Plan implements JsonSerializable
     /**
      * Set the maximum number of total collaborators an account may have.
      *
-     * @param  int  $max
+     * @param  int $max
      * @return $this
      */
     public function maxCollaborators($max)
@@ -171,7 +171,7 @@ class Plan implements JsonSerializable
     /**
      * Set the maximum number of team members that a team may have.
      *
-     * @param  int  $max
+     * @param  int $max
      * @return $this
      */
     public function maxTeamMembers($max)
@@ -182,7 +182,7 @@ class Plan implements JsonSerializable
     /**
      * Specify the plan's attributes.
      *
-     * @param  array  $attributes
+     * @param  array $attributes
      * @return $this
      */
     public function attributes(array $attributes)
@@ -227,7 +227,7 @@ class Plan implements JsonSerializable
     /**
      * Dynamically access the plan's attributes.
      *
-     * @param  string  $key
+     * @param  string $key
      * @return mixed
      */
     public function __get($key)

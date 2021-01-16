@@ -2,7 +2,7 @@
 
 namespace Nitm\Content\Http\Controllers;
 
-use Nitm\Content\Spark;
+use Nitm\Content\NitmContent;
 use Illuminate\Http\Request;
 use Nitm\Content\Models\Invitation;
 use Nitm\Content\Http\Controllers\Controller;

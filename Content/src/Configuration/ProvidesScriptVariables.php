@@ -2,7 +2,7 @@
 
 namespace Nitm\Content\Configuration;
 
-use Nitm\Content\Spark;
+use Nitm\Content\NitmContent;
 use Laravel\Cashier\Cashier;
 use Illuminate\Support\Facades\Auth;
 use Nitm\Content\Contracts\InitialFrontendState;
@@ -10,7 +10,7 @@ use Nitm\Content\Contracts\InitialFrontendState;
 trait ProvidesScriptVariables
 {
     /**
-     * Get the default JavaScript variables for Spark.
+     * Get the default JavaScript variables for NitmContent.
      *
      * @return array
      */
@@ -18,31 +18,31 @@ trait ProvidesScriptVariables
     {
         return [
             'translations' => static::getTranslations() + ['teams.team' => trans('teams.team'), 'teams.member' => trans('teams.member')],
-            'cardUpFront' => Spark::needsCardUpFront(),
-            'collectsBillingAddress' => Spark::collectsBillingAddress(),
-            'collectsEuropeanVat' => Spark::collectsEuropeanVat(),
-            'createsAdditionalTeams' => Spark::createsAdditionalTeams(),
+            'cardUpFront' => NitmContent::needsCardUpFront(),
+            'collectsBillingAddress' => NitmContent::collectsBillingAddress(),
+            'collectsEuropeanVat' => NitmContent::collectsEuropeanVat(),
+            'createsAdditionalTeams' => NitmContent::createsAdditionalTeams(),
             'csrfToken' => csrf_token(),
             'currency' => config('cashier.currency'),
             'currencyLocale' => config('cashier.currency_locale'),
             'env' => config('app.env'),
-            'roles' => Spark::roles(),
-            'state' => Spark::call(InitialFrontendState::class.'@forUser', [Auth::user()]),
+            'roles' => NitmContent::roles(),
+            'state' => NitmContent::call(InitialFrontendState::class.'@forUser', [Auth::user()]),
             'stripeApiVersion' => Cashier::STRIPE_VERSION,
             'stripeKey' => config('cashier.key'),
             'cashierPath' => config('cashier.path'),
-            'teamsPrefix' => Spark::teamsPrefix(),
-            'teamsIdentifiedByPath' => Spark::teamsIdentifiedByPath(),
+            'teamsPrefix' => NitmContent::teamsPrefix(),
+            'teamsIdentifiedByPath' => NitmContent::teamsIdentifiedByPath(),
             'userId' => Auth::id(),
-            'usesApi' => Spark::usesApi(),
-            'usesTeams' => Spark::usesTeams(),
-            'usesStripe' => Spark::billsUsingStripe(),
-            'chargesUsersPerSeat' => Spark::chargesUsersPerSeat(),
-            'seatName' => Spark::seatName(),
-            'chargesTeamsPerSeat' => Spark::chargesTeamsPerSeat(),
-            'teamSeatName' => Spark::teamSeatName(),
-            'chargesUsersPerTeam' => Spark::chargesUsersPerTeam(),
-            'chargesTeamsPerMember' => Spark::chargesTeamsPerMember(),
+            'usesApi' => NitmContent::usesApi(),
+            'usesTeams' => NitmContent::usesTeams(),
+            'usesStripe' => NitmContent::billsUsingStripe(),
+            'chargesUsersPerSeat' => NitmContent::chargesUsersPerSeat(),
+            'seatName' => NitmContent::seatName(),
+            'chargesTeamsPerSeat' => NitmContent::chargesTeamsPerSeat(),
+            'teamSeatName' => NitmContent::teamSeatName(),
+            'chargesUsersPerTeam' => NitmContent::chargesUsersPerTeam(),
+            'chargesTeamsPerMember' => NitmContent::chargesTeamsPerMember(),
         ];
     }
 

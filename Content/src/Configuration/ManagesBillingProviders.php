@@ -4,7 +4,7 @@ namespace Nitm\Content\Configuration;
 
 use Closure;
 use Exception;
-use Nitm\Content\Spark;
+use Nitm\Content\NitmContent;
 use Illuminate\Http\Request;
 
 trait ManagesBillingProviders

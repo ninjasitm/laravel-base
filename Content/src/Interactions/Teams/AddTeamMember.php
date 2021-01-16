@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content\Interactions;
+namespace Nitm\Content\Interactions\Teams;
 
 use Nitm\Content\NitmContent;
 use Nitm\Content\Events\Teams\TeamMemberAdded;

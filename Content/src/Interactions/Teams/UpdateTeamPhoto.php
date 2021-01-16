@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content\Interactions;
+namespace Nitm\Content\Interactions\Teams;
 
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\Storage;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Spark;
+namespace Nitm\Content;
 
 use Laravel\Cashier\Subscription as CashierSubscription;
 

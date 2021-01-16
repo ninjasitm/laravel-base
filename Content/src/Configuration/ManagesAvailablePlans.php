@@ -268,7 +268,7 @@ trait ManagesAvailablePlans
     }
 
     /**
-     * Get a comma delimited list of active Spark plan IDs.
+     * Get a comma delimited list of active NitmContent plan IDs.
      *
      * @return string
      */
@@ -348,7 +348,7 @@ trait ManagesAvailablePlans
     }
 
     /**
-     * Get a comma delimited list of active Spark team plan IDs.
+     * Get a comma delimited list of active NitmContent team plan IDs.
      *
      * @return string
      */

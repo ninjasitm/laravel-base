@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Spark;
+namespace Nitm\Content;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,6 +32,6 @@ class LocalInvoice extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Spark::userModel(), 'user_id');
+        return $this->belongsTo(NitmContent::userModel(), 'user_id');
     }
 }
