@@ -1,0 +1,34 @@
+<?php
+
+namespace $NAMESPACE_API_REQUEST$;
+
+use App\User;
+use $NAMESPACE_MODEL$\$MODEL_NAME$;
+use Illuminate\Validation\Rule;
+
+class Update$MODEL_NAME$APIRequest extends Create$MODEL_NAME$APIRequest
+{
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        $rules = $MODEL_NAME$::$rules;
+        $UNIQUE_RULES$
+        return $rules;
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     * In the {{field}}.{{rule}} format
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+        ];
+    }
+}

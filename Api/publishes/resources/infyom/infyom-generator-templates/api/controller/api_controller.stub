@@ -1,0 +1,79 @@
+<?php
+
+namespace $NAMESPACE_API_CONTROLLER$;
+
+use App\Team;
+use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
+use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
+use $NAMESPACE_MODEL$\$MODEL_NAME$;
+use $NAMESPACE_REPOSITORY$\$MODEL_NAME$Repository;
+use $NAMESPACE_APP$\Http\Controllers\BaseControllers\CustomController;
+use Illuminate\Http\Request;
+use Response;
+
+$DOC_CONTROLLER$
+class $MODEL_NAME$Controller extends CustomController
+{
+    /**
+     * Get the repository class
+     *
+     * @return string
+     */
+    public function repository()
+    {
+        return $MODEL_NAME$Repository::class;
+    }
+
+    $DOC_INDEX$
+    public function index(Request $request, Team $team)
+    {
+        $models = $this->getRepository()->all(
+            $request->except(['skip', 'limit']),
+            $request->get('skip'),
+            $request->get('limit')
+        );
+
+        return $this->paginate($request, $models, '$MODEL_NAME_PLURAL_HUMAN$ retrieved successfully');
+    }
+
+    $DOC_STORE$
+    public function store(Create$MODEL_NAME$APIRequest $request, Team $team)
+    {
+        $input = $request->all();
+
+        $model = $this->getRepository()->create($input);
+
+        return $this->printModelSuccess($model, '$MODEL_NAME_HUMAN$ saved successfully');
+    }
+
+    $DOC_SHOW$
+    public function show(Request $request, Team $team, $id)
+    {
+        /** @var $MODEL_NAME$ $model */
+        $model = $this->getRepository()->findOrFail($id);
+
+        return $this->printModelSuccess($model, '$MODEL_NAME_HUMAN$ retrieved successfully');
+    }
+
+    $DOC_UPDATE$
+    public function update(Update$MODEL_NAME$APIRequest $request, Team $team, $id)
+    {
+        $input = $request->all();
+
+        /** @var $MODEL_NAME$ $model */
+        $this->getRepository()->existsOrFail($id);
+
+        $model = $this->getRepository()->update($input, $id);
+
+        return $this->printModelSuccess($model, '$MODEL_NAME$ updated successfully');
+    }
+
+    $DOC_DESTROY$
+    public function destroy(Request $request, Team $team, $id)
+    {
+        /** @var $MODEL_NAME$ $model */
+        $model = $this->getRepository()->findOrFail($id);
+
+        return $this->printModelSuccess($model->delete(), '$MODEL_NAME_HUMAN$ deleted successfully');
+    }
+}
