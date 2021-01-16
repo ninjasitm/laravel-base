@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content\Http\Controllers;
+namespace Nitm\Content\Http\Controllers\Api;
 
 use Nitm\Content\NitmContent;
 use Illuminate\Http\Request;

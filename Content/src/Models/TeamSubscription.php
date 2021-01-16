@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content;
+namespace Nitm\Content\Models;
 
 use Laravel\Cashier\Subscription as CashierSubscription;
 

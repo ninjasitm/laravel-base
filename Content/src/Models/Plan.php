@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content;
+namespace Nitm\Content\Models;
 
 use JsonSerializable;
 use Illuminate\Support\Arr;

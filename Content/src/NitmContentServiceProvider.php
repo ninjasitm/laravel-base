@@ -106,12 +106,6 @@ class NitmContentServiceProvider extends ServiceProvider
      */
     protected function registerServices()
     {
-        $this->registerAuthyService();
-
-        $this->registerInterventionService();
-
-        $this->registerApiTokenRepository();
-
         $services = [
             'Contracts\Repositories\AnnouncementRepository' => 'Repositories\AnnouncementRepository',
             'Contracts\Repositories\NotificationRepository' => 'Repositories\NotificationRepository',
