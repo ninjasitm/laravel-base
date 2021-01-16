@@ -104,6 +104,7 @@ class NitmApiServiceProvider extends ServiceProvider
                     __DIR__ . '/../stubs/tests/CreatesApplication.stub.php' => base_path('tests/CreatesApplication.php'),
                     __DIR__ . '/../stubs/tests/RefreshDatabase.stub.php' => base_path('tests/RefreshDatabase.php'),
                     __DIR__ . '/../stubs/tests/TestCase.stub.php' => base_path('tests/TestCase.php'),
+                    __DIR__ . '/../stubs/Http' => app_path('Http'),
                 ], 'nitm-api'
             );
         }

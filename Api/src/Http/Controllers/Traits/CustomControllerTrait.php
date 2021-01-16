@@ -82,7 +82,7 @@ trait CustomControllerTrait
      */
     public function sendResponse($result, $message, $code = 200)
     {
-        return Response::json(ResponseUtil::makeResponse($message, $result), $code);
+        return response()->json(ResponseUtil::makeResponse($message, $result), $code);
     }
 
     /**
@@ -95,7 +95,7 @@ trait CustomControllerTrait
      */
     public function sendError($result, $message, $code = 400)
     {
-        return Response::json(ResponseUtil::makeError($message, $result), $code);
+        return response()->json(ResponseUtil::makeError($message, $result), $code);
     }
 
     /**

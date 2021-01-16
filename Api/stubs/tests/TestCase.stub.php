@@ -20,7 +20,7 @@ abstract class TestCase extends BaseTestCase
 
     protected $apiBase = '/api/teams';
 
-    protected $usesTeams = true;
+    protected $usesTeams = false;
 
     use CreatesApplication, RefreshDatabase, WithoutMiddleware;
     /**
@@ -42,45 +42,6 @@ abstract class TestCase extends BaseTestCase
         parent::__construct($name, $data, $dataName);
         // $this->hotfixSqlite();
     }
-    // public function setUpTraits(): void
-    // {
-    //     parent::setUpTraits();
-
-    //     unset($this->app['middleware.disable']);
-    //     $this->withoutMiddleware([
-    //         'auth', 'auth.basic', 'resolvesTeam',
-    //         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
-    //         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-    //         \App\Http\Middleware\TrimStrings::class,
-    //         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-    //         \App\Http\Middleware\TrustProxies::class,
-    //         \Barryvdh\Cors\HandleCors::class,
-    //         \App\Http\Middleware\FrameHeadersMiddleware::class,
-    //         'auth',
-    //         'auth.basic',
-    //         'cache.headers',
-    //         'can',
-    //         'dev',
-    //         'guest',
-    //         'hasTeam',
-    //         'throttle',
-    //         'signed',
-    //         'subscribed',
-    //         'teamSubscribed',
-    //         'isAdmin',
-    //         'isMe',
-    //         'isMentor',
-    //         'isMentorOrAdmin',
-    //         'isStudent',
-    //         'isStudentOrMentor',
-    //         'isTeamMember',
-    //         'canSubmitData',
-    //         'resolvesTeam',
-    //         'fw-only-whitelisted',
-    //         'fw-block-blacklisted',
-    //         'fw-block-attacks'
-    //     ]);
-    // }
 
     /**
      *

@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Response;
 
 $DOC_CONTROLLER$
-class $MODEL_NAME$Controller extends ApiController
+class $MODEL_NAME$APIController extends ApiController
 {
     /**
      * Get the repository class
