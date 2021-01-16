@@ -14,7 +14,7 @@ use Illuminate\Routing\Controller as LaravelController;
 /**
  * @SWG\Swagger(
  *   basePath="/api/v1",
- *   @SWG\Info(
+ * @SWG\Info(
  *     title="WETHRIVE API DOCUMENTATION",
  *     version="1.0.0"
  *   )
@@ -29,7 +29,7 @@ use Illuminate\Routing\Controller as LaravelController;
  *   name="Authorization"
  * )
  * This class should be parent class for other API controllers
- * Class AppBaseController
+ * Class Controller
  */
 class Controller extends LaravelController
 {
@@ -42,7 +42,7 @@ class Controller extends LaravelController
     /**
      * Construct controller
      *
-     * @param Application $app
+     * @param Application    $app
      * @param BaseRepository $repository
      */
     public function __construct($repository = null)

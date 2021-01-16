@@ -28,7 +28,7 @@ use Illuminate\Routing\Controller as LaravelController;
  *   name="Authorization"
  * )
  * This class should be parent class for other controllers
- * Class AppBaseController
+ * Class BaseTeamController
  */
 class BaseTeamController extends LaravelController
 {
