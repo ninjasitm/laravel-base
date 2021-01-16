@@ -2,15 +2,17 @@
 
 namespace Nitm\Content\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Nitm\Content\Models\BaseModel as Model;
-use Nitm\Helpers\ImageHelper;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Nitm\Helpers\ImageHelper;
 use Nitm\Content\Traits\Sluggable;
+use Nitm\Content\Models\BaseModel as Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Class Post
+ *
  * @package Nitm\Content\Models
  * @version July 20, 2020, 1:28 am UTC
  *
@@ -89,18 +91,20 @@ class Post extends Model
     {
         parent::boot();
 
-        static::saving(function ($model) {
-            //Need to prevent the ability for frontend users to set post category to Featured
-            if ($model->getAttribute("published")) {
-                $model->published_at = \Carbon\Carbon::now();
+        static::saving(
+            function ($model) {
+                //Need to prevent the ability for frontend users to set post category to Featured
+                if ($model->getAttribute("published")) {
+                    $model->published_at = \Carbon\Carbon::now();
+                }
+                if (!Arr::get($model->getAttributes(), 'slug', false)) {
+                    $model->slug = \Auth::getUser()->username . '-' . str_slug($model->getAttribute("title"));
+                }
+                if (!Arr::get($model->attributes, 'excerpt', false)) {
+                    $model->excerpt = substr(strip_tags($model->getAttribute("content")), 0, 140);
+                }
             }
-            if (!Arr::get($model->getAttributes(), 'slug', false)) {
-                $model->slug = \Auth::getUser()->username . '-' . str_slug($model->getAttribute("title"));
-            }
-            if (!Arr::get($model->attributes, 'excerpt', false)) {
-                $model->excerpt = substr(strip_tags($model->getAttribute("content")), 0, 140);
-            }
-        });
+        );
     }
 
     /**
@@ -116,8 +120,7 @@ class Post extends Model
             'name' => $this->user ? $this->user->name : 'NITM',
             'image' => $this->user ? ($this->user->avatar ? $this->user->avatar->getPath() : $genericAvatar) : $genericAvatar
         ];
-        $attributes['isLocalImage'] = false;
-        $attributes['image'] = $this->images->count() ? $this->images->first()->getPath() : ImageHelper::getPlaceHolderBackground();
+        // $attributes['image'] = $this->images->count() ? $this->images->first()->getPath() : ImageHelper::getPlaceHolderBackground();
         if ($fullContent) {
             $attributes['text'] = $this->content;
             $attributes['html'] = $this->content_html;
@@ -137,10 +140,10 @@ class Post extends Model
     /**
      * Get the image attribute.
      */
-    public function getImageAttribute()
-    {
-        return Arr::get($this->images, 0, []);
-    }
+    // public function getImageAttribute()
+    // {
+    //     return Arr::get($this->images, 0, []);
+    // }
 
     public function getDateAttribute()
     {
@@ -174,30 +177,39 @@ class Post extends Model
     public function scopeFilterByCategory($query, $categories)
     {
         $categories = (array) $categories;
-        $query->where(function ($query) use ($categories) {
-            $class = PostCategory::class;
-            $query->whereIn('id', function ($query) use ($categories) {
-                $query->select('post_id')
-                    ->from('rainlab_blog_posts_categories')
-                    ->whereIn('category_id', function ($query) use ($categories) {
-                        $query->select('id')
-                            ->from('rainlab_blog_categories')
-                            ->whereIn('slug', $categories);
-                    });
-            });
-        });
+        $query->where(
+            function ($query) use ($categories) {
+                $class = PostCategory::class;
+                $query->whereIn(
+                    'id', function ($query) use ($categories) {
+                        $query->select('post_id')
+                            ->from('rainlab_blog_posts_categories')
+                            ->whereIn(
+                                'category_id', function ($query) use ($categories) {
+                                    $query->select('id')
+                                        ->from('rainlab_blog_categories')
+                                        ->whereIn('slug', $categories);
+                                }
+                            );
+                    }
+                );
+            }
+        );
     }
     /**
      * Allows filtering for specifc categories.
-     * @param  Illuminate\Query\Builder  $query      QueryBuilder
-     * @param  array                     $categories List of category ids
+     *
+     * @param  Illuminate\Query\Builder $query      QueryBuilder
+     * @param  array                    $categories List of category ids
      * @return Illuminate\Query\Builder              QueryBuilder
      */
     public function scopeFilterCategories($query, $categories)
     {
-        return $query->whereHas('categories', function ($q) use ($categories) {
-            $q->whereIn('id', $categories);
-        });
+        return $query->whereHas(
+            'categories', function ($q) use ($categories) {
+                $q->whereIn('id', $categories);
+            }
+        );
     }
 
     //
@@ -206,6 +218,7 @@ class Post extends Model
 
     /**
      * Used by "has_summary", returns true if this post uses a summary (more tag).
+     *
      * @return boolean
      */
     public function getHasSummaryAttribute()
@@ -257,8 +270,8 @@ class Post extends Model
      *     // Get the previous post, ordered by the ID attribute instead
      *     Post::applySibling(['direction' => -1, 'attribute' => 'id'])->first();
      *
-     * @param       $query
-     * @param array $options
+     * @param  $query
+     * @param  array $options
      * @return
      */
     public function scopeApplySibling($query, $options = [])
@@ -267,10 +280,14 @@ class Post extends Model
             $options = ['direction' => $options];
         }
 
-        extract(array_merge([
-            'direction' => 'next',
-            'attribute' => 'published_at'
-        ], $options));
+        extract(
+            array_merge(
+                [
+                'direction' => 'next',
+                'attribute' => 'published_at'
+                ], $options
+            )
+        );
 
         $isPrevious = in_array($direction, ['previous', -1]);
         $directionOrder = $isPrevious ? 'asc' : 'desc';
@@ -287,6 +304,7 @@ class Post extends Model
 
     /**
      * Returns the next post, if available.
+     *
      * @return self
      */
     public function nextPost()
@@ -296,6 +314,7 @@ class Post extends Model
 
     /**
      * Returns the previous post, if available.
+     *
      * @return self
      */
     public function previousPost()
