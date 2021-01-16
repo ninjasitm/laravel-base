@@ -1,8 +1,0 @@
-# ===================================
-#  Relation Behavior Config
-# ===================================
-eventhandler:
-    label: Event Handler
-    list: ~/plugins/nitm/api/models/eventhandler/columns.yaml
-    form: ~/plugins/nitm/api/models/eventhandler/fields.yaml
-    emptyMessage: backend::lang.list.no_records

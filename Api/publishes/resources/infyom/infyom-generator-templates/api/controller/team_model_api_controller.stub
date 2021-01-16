@@ -2,18 +2,19 @@
 
 namespace $NAMESPACE_API_CONTROLLER$;
 
+use Nitm\Api\Contracts\ImplementsTeams;
 use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
 use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
 use Illuminate\Http\Request;
-use $NAMESPACE_APP$\Http\Controllers\Controller;
+use $NAMESPACE_APP$\Http\Controllers\BaseTeamController;
 use Response;
 
 $DOC_CONTROLLER$
-class $MODEL_NAME$Controller extends Controller
+class $MODEL_NAME$Controller extends BaseTeamController
 {
     $DOC_INDEX$
-    public function index(Request $request)
+    public function index(Request $request, ImplementsTeams $team)
     {
         $query = $MODEL_NAME$::query();
 
@@ -30,7 +31,7 @@ class $MODEL_NAME$Controller extends Controller
     }
 
     $DOC_STORE$
-    public function store(Create$MODEL_NAME$APIRequest $request)
+    public function store(Request $request, ImplementsTeams $team)
     {
         $input = $request->all();
 
@@ -41,7 +42,7 @@ class $MODEL_NAME$Controller extends Controller
     }
 
     $DOC_SHOW$
-    public function show($id)
+    public function show(Request $request, ImplementsTeams $team, $id)
     {
         /** @var $MODEL_NAME$ $model */
         $model = $MODEL_NAME$::find($id);
@@ -54,7 +55,7 @@ class $MODEL_NAME$Controller extends Controller
     }
 
     $DOC_UPDATE$
-    public function update($id, Update$MODEL_NAME$APIRequest $request)
+    public function update(Request $request, ImplementsTeams $team, $id)
     {
         /** @var $MODEL_NAME$ $model */
         $model = $MODEL_NAME$::find($id);
@@ -70,7 +71,7 @@ class $MODEL_NAME$Controller extends Controller
     }
 
     $DOC_DESTROY$
-    public function destroy($id)
+    public function destroy(Request $request, ImplementsTeams $team, $id)
     {
         /** @var $MODEL_NAME$ $model */
         $model = $MODEL_NAME$::find($id);

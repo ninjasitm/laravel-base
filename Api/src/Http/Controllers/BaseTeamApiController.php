@@ -9,7 +9,7 @@ use Nitm\Api\Http\Controllers\Traits\ApiControllerTrait;
  *
  * @author Malcolm Paul <malcolm@ninjasitm.com>
  */
-abstract class BaseApiController extends BaseController
+abstract class BaseTeamApiController extends BaseController
 {
     use ApiControllerTrait;
 

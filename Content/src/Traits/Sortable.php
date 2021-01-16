@@ -1,6 +1,6 @@
 <?php
 
-namespace Nitm\Content\Database\Traits;
+namespace Nitm\Content\Traits;
 
 use Exception;
 use Nitm\Content\Database\SortableScope;
@@ -23,23 +23,25 @@ use Nitm\Content\Database\SortableScope;
  * You can change the sort field used by declaring:
  *
  *   const SORT_ORDER = 'my_sort_order';
- *
  */
 trait Sortable
 {
     /**
      * Boot the sortable trait for this model.
+     *
      * @return void
      */
     public static function bootSortable()
     {
-        static::created(function ($model) {
-            $sortOrderColumn = $model->getSortOrderColumn();
+        static::created(
+            function ($model) {
+                $sortOrderColumn = $model->getSortOrderColumn();
 
-            if (is_null($model->$sortOrderColumn)) {
-                $model->setSortableOrder($model->getKey());
+                if (is_null($model->$sortOrderColumn)) {
+                    $model->setSortableOrder($model->getKey());
+                }
             }
-        });
+        );
 
         static::addGlobalScope(new SortableScope);
     }
@@ -47,6 +49,7 @@ trait Sortable
     /**
      * Sets the sort order of records to the specified orders. If the orders is
      * undefined, the record identifier is used.
+     *
      * @param  mixed $itemIds
      * @param  array $itemOrders
      * @return void
@@ -73,6 +76,7 @@ trait Sortable
 
     /**
      * Get the name of the "sort order" column.
+     *
      * @return string
      */
     public function getSortOrderColumn()

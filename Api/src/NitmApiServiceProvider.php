@@ -2,13 +2,12 @@
 
 namespace Nitm\Api;
 
-use Illuminate\Foundation\AliasLoader;
-use Nitm\Api\Models\Configs as RestfulConfig;
-use Nitm\Api\Classes\Rest;
-use Nitm\Api\Classes\Trivet;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Nitm Api Service Provider
+ */
 class NitmApiServiceProvider extends ServiceProvider
 {
     /**
@@ -18,14 +17,14 @@ class NitmApiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->registerRoutes();
-        $this->registerMigrations();
+        // $this->registerRoutes();
+        // $this->registerMigrations();
         $this->registerPublishing();
 
-        $this->loadViewsFrom(
-            __DIR__ . '/../publishes/resources/views',
-            'nitm-api'
-        );
+        // $this->loadViewsFrom(
+        //     __DIR__ . '/../publishes/resources/views',
+        //     'nitm-api'
+        // );
     }
 
     /**
@@ -35,9 +34,11 @@ class NitmApiServiceProvider extends ServiceProvider
      */
     private function registerRoutes()
     {
-        Route::group($this->routeConfiguration(), function () {
-            $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
-        });
+        Route::group(
+            $this->routeConfiguration(), function () {
+                $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
+            }
+        );
     }
 
     /**
@@ -75,17 +76,30 @@ class NitmApiServiceProvider extends ServiceProvider
     private function registerPublishing()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__ . '/Database/migrations' => database_path('migrations'),
-            ], 'nitm-api-migrations');
+            // $this->publishes(
+            //     [
+            //     __DIR__ . '/Database/migrations' => database_path('migrations'),
+            //     ], 'nitm-api-migrations'
+            // );
 
             // $this->publishes([
             //     __DIR__ . '/../public' => public_path('vendor/nitm-api'),
             // ], 'nitm-api-assets');
 
-            $this->publishes([
+            $this->publishes(
+                [
                 __DIR__ . '/../publishes/config/nitm-api.php' => config_path('nitm-api.php'),
-            ], 'nitm-api-config');
+                ], 'nitm-api-config'
+            );
+
+            $this->publishes(
+                [
+                    __DIR__.'/../stubs/ApiController.stub.php' => app_path('Http/Controllers/BaseApiController.php'),
+                    __DIR__.'/../stubs/Controller.stub.php' => app_path('Http/Controllers/BaseController.php'),
+                    __DIR__.'/../stubs/TeamApiController.stub.php' => app_path('Http/Controllers/BaseTeamApiController.php'),
+                    __DIR__.'/../stubs/TeamController.stub.php' => app_path('Http/Controllers/BaseTeamController.php'),
+                ], 'nitm-api'
+            );
         }
     }
 
@@ -101,33 +115,14 @@ class NitmApiServiceProvider extends ServiceProvider
             'nitm-api'
         );
 
-        app()->singleton('nitm.api', function () {
-            return Rest::instance();
-        });
+        // app()->singleton(
+        //     'nitm.api', function () {
+        //         return Rest::instance();
+        //     }
+        // );
 
         // Register clearlogs console command
         // TODO: This functionality is not finished yet
-        $this->registerConsoleCommand('nitm.api-clearlogs', 'Nitm\Api\Console\ClearLogs');
-    }
-
-    /**
-     * The boot() method is called right before a request is routed.
-     */
-    public function boot()
-    {
-        if (app()->environment() != 'testing') {
-
-            // Checks and seeds settings for mismatches
-            RestfulConfig::seedSettings();
-
-            // Used for measuring script time passed
-            ini_set('precision', 8);
-
-            // Add event handler hooks for models
-            Trivet::instance()->handleEvents();
-        }
-        if (app()->environment() != 'production') {
-            trace_sql();
-        }
+        // $this->registerConsoleCommand('nitm.api-clearlogs', 'Nitm\Api\Console\ClearLogs');
     }
 }

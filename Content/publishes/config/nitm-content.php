@@ -2,6 +2,10 @@
 
 return [
     /**
+     * User model
+     */
+    'user_model' => env('NITM_CONTENT_USER_MODEL', 'App\User'),
+    /**
      * The domain for the app
      */
     'domain' => null,
