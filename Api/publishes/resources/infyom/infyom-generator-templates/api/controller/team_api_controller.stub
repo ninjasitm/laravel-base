@@ -27,11 +27,7 @@ class $MODEL_NAME$Controller extends TeamApiController
     $DOC_INDEX$
     public function index(Request $request, ImplementsTeams $team)
     {
-        $models = $this->getRepository()->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+        $models = $this->getRepository()->search($request->all());
 
         return $this->paginate($request, $models, '$MODEL_NAME_PLURAL_HUMAN$ retrieved successfully');
     }

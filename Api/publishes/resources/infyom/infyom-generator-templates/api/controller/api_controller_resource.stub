@@ -27,11 +27,7 @@ class $MODEL_NAME$Controller extends ApiController
     $DOC_INDEX$
     public function index(Request $request)
     {
-        $models = $this->getRepository()->all(
-            $request->except(['skip', 'limit']),
-            $request->get('skip'),
-            $request->get('limit')
-        );
+        $models = $this->getRepository()->search($request->all());
 
         return $this->paginate($request, $MODEL_NAME$Resource::collection($mode), '$MODEL_NAME_PLURAL_HUMAN$ retrieved successfully');
     }
