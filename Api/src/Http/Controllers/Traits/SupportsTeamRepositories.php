@@ -12,7 +12,7 @@ use Nitm\Content\Repositories\BaseRepository;
 use Nitm\Api\Contracts\ImplementsTeams;
 use Illuminate\Database\Eloquent\Model;
 
-trait SupportsRepositories
+trait SupportsTeamRepositories
 {
     /**
      * @var BaseRepository
