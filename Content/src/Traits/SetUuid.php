@@ -2,7 +2,7 @@
 
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;use Illuminate\Support\Str;
+use Illuminate\Support\Str;
 
 trait SetUuid
 {
