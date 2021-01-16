@@ -3,7 +3,6 @@
 namespace Tests;
 
 use Artisan;
-use App\User;
 use Illuminate\Contracts\Console\Kernel;
 
 trait CreatesApplication
@@ -30,11 +29,13 @@ trait CreatesApplication
         Artisan::call('cache:clear');
         // Artisan::call('migrate');
         Artisan::call('db:seed');
-        if($this->usesTeams) {
-            $this->setupTeam(factory(\App\Team::class)->create());
+        $teamClass = config('nitm-api.team_model') ?? config('nitm-content.team_model');
+        if($this->usesTeams && class_exists($teamClass)) {
+            $this->setupTeam(factory($teamClass)->create());
         }
 
-        auth()->login(User::first());
+        $userClass = config('nitm-api.user_model') ?? config('nitm-content.user_model');
+        auth()->login($userClass::first());
     }
 
     public function tearDown(): void

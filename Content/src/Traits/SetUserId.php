@@ -20,7 +20,7 @@ trait SetUserId
                 }
 
                 foreach ((array)$model->createdByAuthFields as $field) {
-                    $model->$field = auth()->id();
+                    $model->$field = $model->$field ?? auth()->id();
                 }
             }
         );
