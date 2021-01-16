@@ -23,19 +23,22 @@
         "fzaninotto/faker": "~1.4",
         "phpunit/phpunit": "~5.7",
         "phpunit/phpunit-selenium": "~1.2",
-        "phpdocumentor/reflection-docblock": "2.0.4"
+        "phpdocumentor/reflection-docblock": "2.0.4",
+        "infyomlabs/generator-builder": "dev-master",
+        "infyomlabs/laravel-generator": "8.0.x-dev",
+        "infyomlabs/swagger-generator": "dev-master"
     },
     "autoload": {
         "psr-4": {
             "Nitm\\Content\\": "Content/src",
-            "Nitm\\Api\\": "Api/src",
-            "Nitm\\Helpers\\": "Helpers/src"
+            "Nitm\\Api\\": "Api/src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Nitm\\Content\\NitmContentServiceProvider"
+                "Nitm\\Content\\NitmContentServiceProvider",
+                "Nitm\\Content\\NitmApiServiceProvider"
             ]
         }
     }
