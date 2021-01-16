@@ -5,10 +5,10 @@
 namespace $NAMESPACE_REPOSITORY$;
 
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
-use $NAMESPACE_APP$\Repositories\BaseRepository;
+use $NAMESPACE_APP$\Repositories\Repository;
 
 $DOCS$
-class $MODEL_NAME$Repository extends BaseRepository
+class $MODEL_NAME$Repository extends Repository
 {
     /**
      * @var array
