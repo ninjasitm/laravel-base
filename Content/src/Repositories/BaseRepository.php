@@ -31,4 +31,12 @@ abstract class BaseRepository implements RepositoryContract
         $this->app = $app;
         $this->makeModel();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldsSearchable(): array
+    {
+        return $this->model->getFillable();
+    }
 }
