@@ -19,6 +19,11 @@ trait SupportsRepositories
     protected $repository;
 
     /**
+     * @var Resource
+     */
+    protected $resource;
+
+    /**
      * Construct controller
      *
      * @param Application    $app
@@ -38,6 +43,25 @@ trait SupportsRepositories
     }
 
     /**
+     * Construct controller
+     *
+     * @param Application  $app
+     * @param BaseResource $resource
+     */
+    public function createResource($resource = null)
+    {
+        if ($resource instanceof BaseResource) {
+            $this->resource = $resource;
+        } else {
+            $resourceClass = $this->resource();
+            if ($resourceClass && class_exists($resourceClass)) {
+                $this->resource = app()->make($resourceClass);
+            }
+        }
+        return $this->resource;
+    }
+
+    /**
      * The repository class
      *
      * @return string
@@ -48,7 +72,17 @@ trait SupportsRepositories
     }
 
     /**
-     * Get the repository URL
+     * The resource class
+     *
+     * @return string
+     */
+    public function resource()
+    {
+        return null;
+    }
+
+    /**
+     * Get the repository
      *
      * @return BaseRepository
      */
@@ -60,6 +94,18 @@ trait SupportsRepositories
         return $this->repository;
     }
 
+    /**
+     * Get the resource
+     *
+     * @return BaseRepository
+     */
+    public function getResource()
+    {
+        if (!isset($this->resource)) {
+            $this->resource = $this->createResource();
+        }
+        return $this->resource;
+    }
 
     public function toggle(Request $request, Model $model)
     {

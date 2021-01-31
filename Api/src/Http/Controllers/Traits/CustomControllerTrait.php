@@ -38,24 +38,7 @@ trait CustomControllerTrait
 
         $paginator->status = 'ok';
 
-        $fields = $this->getMetaInput('_fields');
-        $relations = $this->getMetaInput('_relations');
-        $allFields = array_merge((array) $fields, (array) $relations);
-
         $this->beforePaginateTransform($request, $paginator);
-
-        if (!empty($allFields)) {
-            $paginator->getCollection()->transform(
-                function ($data) use ($allFields) {
-                    if ($data instanceof Model || is_array($data)) {
-                        $realData = $data instanceof Model ? $data->toArray() : $data;
-                        return Arr::only($realData, $allFields);
-                    } else {
-                        return $data;
-                    }
-                }
-            );
-        }
 
         return $paginator;
     }
@@ -70,6 +53,23 @@ trait CustomControllerTrait
      */
     protected function beforePaginateTransform(Request $request, LengthAwarePaginator $paginator)
     {
+        $fields = $this->getMetaInput('_fields');
+        $relations = $this->getMetaInput('_relations');
+        $allFields = array_merge((array) $fields, (array) $relations);
+
+        if (!empty($allFields)) {
+            $paginator->getCollection()->transform(
+                function ($data) use ($allFields) {
+                    if ($data instanceof Model || is_array($data)) {
+                        $realData = $data instanceof Model ? $data->toArray() : $data;
+                        return Arr::only($realData, $allFields);
+                    } else {
+                        return $data;
+                    }
+                }
+            );
+        }
+
     }
 
     /**
