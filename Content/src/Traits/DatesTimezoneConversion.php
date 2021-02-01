@@ -66,8 +66,8 @@ trait DatesTimezoneConversion
                 }
             } else {
                 /**
- * @var Nitm\Content\Models\Team $team
-*/
+                 * @var Nitm\Content\Models\Team $team
+                */
                 $team = request()->route('team') ?? ($user instanceof User ? ($user->team ?? $user->currentTeam) : null);
 
                 if ($team instanceof Team && $value) {
@@ -149,7 +149,7 @@ trait DatesTimezoneConversion
 
         if ($value instanceof Carbon && $user instanceof User && $user->timezone && $value->getTimezone() != $user->timezone) {
             $value->setTimezone($user->timezone);
-        } elseif (($user instanceof User) || ($user instanceof User && !$user->timezone)) {
+        } elseif (($user instanceof User) && $user->hasRelation('currentTeam') && !$user->timezone) {
             //Fallback to the user's team timezone only if their timezone is empty or there is no user
             /**
  * @var Nitm\Content\Models\Team $team
