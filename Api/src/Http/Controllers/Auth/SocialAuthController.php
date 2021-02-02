@@ -17,7 +17,6 @@ use MadWeb\SocialAuth\Events\SocialUserDetached;
 use MadWeb\SocialAuth\Exceptions\SocialUserAttachException;
 use MadWeb\SocialAuth\Exceptions\SocialGetUserInfoException;
 use MadWeb\SocialAuth\Controllers\SocialAuthController as BaseController;
-use App\Auth\SocialProviderManager;
 
 /**
  * Class SocialAuthController.
@@ -38,13 +37,14 @@ class SocialAuthController extends BaseController
         if (request()->route('social')) {
             $this->middleware(
                 function ($request, $next) {
-                    $this->manager = new SocialProviderManager($request->route('social'));
+                    $class = config('nitm-api.social_auth_provider', '\\Nitm\\Api\\Auth\\SocialProviderManager');
+                    $this->manager = new $class($request->route('social'));
 
                     return $next($request);
                 }
             );
         }
-        $this->middleware('auth:api');
+        $this->middleware(config('nitm-api.social_auth_middleware'));
     }
 
     public function refreshToken(SocialProvdier $social)
@@ -260,7 +260,7 @@ class SocialAuthController extends BaseController
     public function detachAccountCustom(Request $request, SocialProvider $social)
     {
         /**
- * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user 
+ * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user
 */
         $user = $request->user();
         // $userSocials = $user->socials();
