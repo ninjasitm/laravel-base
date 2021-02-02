@@ -22,7 +22,7 @@
     "suggest": {
         "mad-web/laravel-social-auth": "To support social auth",
         "infyomlabs/laravel-generator": "To support easy  scaffolding",
-        "infyomlabs/swagger-generator": "To support swagger annotations for models",
+        "infyomlabs/swagger-generator": "To support swagger annotations for models"
     },
     "require-dev": {
         "dms/phpunit-arraysubset-asserts": "^0.1.0",
