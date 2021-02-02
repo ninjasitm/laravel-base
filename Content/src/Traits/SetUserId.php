@@ -28,6 +28,6 @@ trait SetUserId
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(\Nitm\Content\Models\User::class, 'user_id');
+        return $this->belongsTo(config('nitm-content.user_model'), 'user_id');
     }
 }
