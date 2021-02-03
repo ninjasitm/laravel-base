@@ -2,10 +2,10 @@
 
 namespace Nitm\Content\Repositories;
 
-use Illuminate\Container\Container as Application;
 use Illuminate\Database\Eloquent\Model;
-use Nitm\Content\Contracts\Repository as RepositoryContract;
+use Illuminate\Container\Container as Application;
 use Nitm\Content\Traits\Repository as RepositoryTrait;
+use Nitm\Content\Contracts\Repository as RepositoryContract;
 
 abstract class BaseRepository implements RepositoryContract
 {

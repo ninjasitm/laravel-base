@@ -10,6 +10,16 @@ use Illuminate\Support\ServiceProvider;
  */
 class NitmApiServiceProvider extends ServiceProvider
 {
+
+    /**
+     * The controller namespace for the application.
+     *
+     * When present, controller route declarations will automatically be prefixed with this namespace.
+     *
+     * @var string|null
+     */
+    protected $namespace = 'Nitm\\Api\\Http\\Controllers';
+
     /**
      * Bootstrap any package services.
      *
@@ -17,7 +27,7 @@ class NitmApiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $this->registerRoutes();
+        $this->registerRoutes();
         // $this->registerMigrations();
         $this->registerPublishing();
 
@@ -25,34 +35,6 @@ class NitmApiServiceProvider extends ServiceProvider
         //     __DIR__ . '/../publishes/resources/views',
         //     'nitm-api'
         // );
-
-        if(config('nitm-api.enable_social_auth')) {
-            $this->registerSocialAuthRoutes();
-        }
-    }
-
-    /**
-     * Register Social Auth Routes
-     *
-     * @return void
-     */
-    public function registerSocialAuthRoutes()
-    {
-        Route::group(
-            [
-            'prefix' => config('nitm-api.social_auth_prefix', 'auth'),
-            'middleware' => config('nitm-api.social_auth_middleware')
-            ], function () {
-                // Connected Accounts
-                $namespace = config('nitm-api.social_auth_namesapce', 'Nitm\\Api\\Http\\Controllers');
-                Route::get('/connected-accounts', 'Auth\SocialAuthController@getAccounts')->name('auth.social.index');
-                Route::get('/connected-accounts/{social}', 'Auth\SocialAuthController@getAccountCustom')->name('auth.social.show');
-                Route::get('/connected-accounts/refresh/{social}', 'Auth\SocialAuthController@refreshToken')->name('auth.social.refresh');
-                Route::post('/connected-accounts/{social}/callback', 'Auth\SocialAuthController@callbackCustom')->name('auth.social.callback');
-                Route::post('/connected-accounts/{social}', 'Auth\SocialAuthController@callforward')->name('auth.social.callforward');
-                Route::delete('/connected-accounts/{social}', 'Auth\SocialAuthController@detachAccountCustom')->name('auth.social.detach');
-            }
-        );
     }
 
     /**
@@ -78,9 +60,7 @@ class NitmApiServiceProvider extends ServiceProvider
     {
         return [
             'domain' => config('nitm-api.domain', null),
-            'namespace' => 'Nitm\Content\Http\Controllers',
-            'prefix' => config('nitm-api.path', 'api'),
-            'middleware' => 'nitm-api',
+            'namespace' => config('nitm-api.social_auth_namesapce', '\Nitm\Api\Http\Controllers')
         ];
     }
 

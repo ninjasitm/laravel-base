@@ -27,8 +27,103 @@ use MadWeb\SocialAuth\Models\SocialProvider as BaseSocialProvider;
  * @method        static \Illuminate\Database\Query\Builder|\MadWeb\SocialAuth\Models\SocialProvider whereUpdatedAt($value)
  * @mixin         \Eloquent
  */
+
+/**
+ * @SWG\Definition(
+ *      definition="SocialProvider",
+ *      required={"label", "override_scopes", "stateless"},
+ * @SWG\Property(
+ *          property="id",
+ *          description="id",
+ *          type="integer",
+ *          format="int32"
+ *      ),
+ * @SWG\Property(
+ *          property="label",
+ *          description="label",
+ *          type="string"
+ *      ),
+ * @SWG\Property(
+ *          property="slug",
+ *          description="slug",
+ *          type="string"
+ *      ),
+ * @SWG\Property(
+ *          property="scopes",
+ *          description="scopes",
+ *          type="string"
+ *      ),
+ * @SWG\Property(
+ *          property="parameters",
+ *          description="parameters",
+ *          type="string"
+ *      ),
+ * @SWG\Property(
+ *          property="override_scopes",
+ *          description="override_scopes",
+ *          type="boolean"
+ *      ),
+ * @SWG\Property(
+ *          property="stateless",
+ *          description="stateless",
+ *          type="boolean"
+ *      ),
+ * @SWG\Property(
+ *          property="created_at",
+ *          description="created_at",
+ *          type="string",
+ *          format="date-time"
+ *      ),
+ * @SWG\Property(
+ *          property="updated_at",
+ *          description="updated_at",
+ *          type="string",
+ *          format="date-time"
+ *      )
+ * )
+ */
 class SocialProvider extends BaseSocialProvider
 {
+    public $fillable = [
+        'label',
+        'slug',
+        'scopes',
+        'parameters',
+        'override_scopes',
+        'stateless'
+    ];
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'id' => 'integer',
+        'label' => 'string',
+        'slug' => 'string',
+        'scopes' => 'array',
+        'parameters' => 'array',
+        'override_scopes' => 'boolean',
+        'stateless' => 'boolean'
+    ];
+
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public static $rules = [
+        'label' => 'required|string|max:255',
+        'slug' => 'nullable|string|max:255',
+        'scopes' => 'nullable|string',
+        'parameters' => 'nullable|string',
+        'override_scopes' => 'required|boolean',
+        'stateless' => 'required|boolean',
+        'created_at' => 'nullable',
+        'updated_at' => 'nullable'
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
@@ -40,6 +135,11 @@ class SocialProvider extends BaseSocialProvider
         );
     }
 
+    /**
+     * To Array
+     *
+     * @return void
+     */
     public function toArray()
     {
         $array = parent::toArray();

@@ -23,11 +23,12 @@ trait ApiTestTrait
      */
     public function getApiBase($url = '')
     {
+
         if ($this->usesTeams) {
             $teamId = $this->team ? "{$this->team->id}" : "";
-            return "/api/teams/{$teamId}/" . str_replace('/api', '', str_replace('api/', '', $url));
+            return "{$this->apiBase}/teams/{$teamId}/" . str_replace("{$this->apiBase}", '', str_replace(ltrim($this->apiBase, '/').'/', '', $url));
         }
-        return str_replace('/api/api', '/api', "/api/{$url}");
+        return str_replace("{$this->apiBase}{$this->apiBase}", $this->apiBase, "{$this->apiBase}/{$url}");
     }
 
     public function assertApiResponse(array $actualData)

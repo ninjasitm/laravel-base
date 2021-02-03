@@ -17,7 +17,8 @@ class UpdateMadWebAccountsTable extends Migration
         $table_names = config('social-auth.table_names');
 
         // Get teams table name
-        $teamModel = new App\Team;
+        $class = config('nitm-content.team_model', null);
+        $teamModel = new $class;
         $teamTable = $teamModel->getTable();
 
         Schema::create(
