@@ -2,7 +2,7 @@
 
 namespace Nitm\Content\Traits;
 
-use Nitm\Content\Models\Metadata\Metadata;
+use Nitm\Content\Models\Metadata;
 
 trait HasMetadata
 {
@@ -25,9 +25,11 @@ trait HasMetadata
      */
     public function deleteMetadata()
     {
-        return $this->metadata()->get()->reduce(function ($result, $metadata) {
-            return $metadata->delete() ? $result + 1 : $result;
-        }, 0);
+        return $this->metadata()->get()->reduce(
+            function ($result, $metadata) {
+                return $metadata->delete() ? $result + 1 : $result;
+            }, 0
+        );
     }
 
     public function metadata(): \Illuminate\Database\Eloquent\Relations\MorphMany

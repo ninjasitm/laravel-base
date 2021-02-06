@@ -365,6 +365,18 @@ trait Model
     }
 
     /**
+     * Has Trait
+     *
+     * @param  mixed $trait
+     * @return bool
+     */
+    public function hasTrait(string $trait): bool
+    {
+        $uses = is_callable('class_uses_recursive') ? class_uses_recursive($this) : class_uses($this);
+        return in_array(ltrim($trait, '\\'), $uses);
+    }
+
+    /**
      * @param array $relations
      * @param array $attributes
      *

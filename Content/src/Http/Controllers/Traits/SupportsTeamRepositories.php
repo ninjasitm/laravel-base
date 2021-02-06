@@ -4,110 +4,18 @@
  * Custom traits for APII controllers
  */
 
-namespace Nitm\Api\Http\Controllers\Traits;
+namespace Nitm\Content\Http\Controllers\Traits;
 
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Nitm\Content\Repositories\BaseRepository;
+use Nitm\Api\Contracts\ImplementsTeams;
 use Illuminate\Database\Eloquent\Model;
 
-trait SupportsRepositories
+trait SupportsTeamRepositories
 {
-    /**
-     * @var BaseRepository
-     */
-    protected $repository;
 
-    /**
-     * @var Resource
-     */
-    protected $resource;
-
-    /**
-     * Construct controller
-     *
-     * @param Application    $app
-     * @param BaseRepository $repository
-     */
-    public function createRepository($repository = null)
-    {
-        if ($repository instanceof BaseRepository) {
-            $this->repository = $repository;
-        } else {
-            $repositoryClass = $this->repository();
-            if ($repositoryClass && class_exists($repositoryClass)) {
-                $this->repository = app()->make($repositoryClass);
-            }
-        }
-        return $this->repository;
-    }
-
-    /**
-     * Construct controller
-     *
-     * @param Application  $app
-     * @param BaseResource $resource
-     */
-    public function createResource($resource = null)
-    {
-        if ($resource instanceof BaseResource) {
-            $this->resource = $resource;
-        } else {
-            $resourceClass = $this->resource();
-            if ($resourceClass && class_exists($resourceClass)) {
-                $this->resource = app()->make($resourceClass);
-            }
-        }
-        return $this->resource;
-    }
-
-    /**
-     * The repository class
-     *
-     * @return string
-     */
-    public function repository()
-    {
-        return null;
-    }
-
-    /**
-     * The resource class
-     *
-     * @return string
-     */
-    public function resource()
-    {
-        return null;
-    }
-
-    /**
-     * Get the repository
-     *
-     * @return BaseRepository
-     */
-    public function getRepository()
-    {
-        if (!isset($this->repository)) {
-            $this->repository = $this->createRepository();
-        }
-        return $this->repository;
-    }
-
-    /**
-     * Get the resource
-     *
-     * @return BaseRepository
-     */
-    public function getResource()
-    {
-        if (!isset($this->resource)) {
-            $this->resource = $this->createResource();
-        }
-        return $this->resource;
-    }
-
-    public function toggle(Request $request, Model $model)
+    public function toggle(Request $request, ImplementsTeams $team, Model $model)
     {
         $attributes = $model->toggle();
 
@@ -121,7 +29,7 @@ trait SupportsRepositories
      * @param  ImplementsTeams $team
      * @return void
      */
-    public function import(Request $request)
+    public function import(Request $request, ImplementsTeams $team)
     {
         $result = [
             'hasError' => true,
@@ -157,7 +65,7 @@ trait SupportsRepositories
      * @param  ImplementsTeams $team
      * @return void
      */
-    public function export(Request $request)
+    public function export(Request $request, ImplementsTeams $team)
     {
         $result = [
             'hasError' => true,
@@ -189,7 +97,7 @@ trait SupportsRepositories
      * @param Request         $request
      * @param ImplementsTeams $team
      */
-    public function indexConfig(Request $request)
+    public function indexConfig(Request $request, ImplementsTeams $team)
     {
         return $this->printSuccess($this->getRepository()->prepareIndexConfig($team, $request));
     }
@@ -200,7 +108,7 @@ trait SupportsRepositories
      * @param Request         $request
      * @param ImplementsTeams $team
      */
-    public function formConfig(Request $request)
+    public function formConfig(Request $request, ImplementsTeams $team)
     {
         return $this->printSuccess($this->getRepository()->prepareFormConfig($team, $request));
     }
