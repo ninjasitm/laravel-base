@@ -16,15 +16,15 @@ class PageConfig extends BaseModel
 
     public $items;
 
-    public $table = 'nitm_pages';
+    protected $table = 'nitm_pages';
 
-    public $jsonable = ['config'];
+    protected $jsonable = ['config'];
 
-    public $visible = ['config'];
+    protected $visible = ['config'];
 
-    public $fillable = ['config', 'modelName', 'page', 'namespace'];
+    protected $fillable = ['config', 'modelName', 'page', 'namespace'];
 
-    public $casts = [
+    protected $casts = [
         'config' => 'array'
     ];
 
