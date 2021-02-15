@@ -102,7 +102,7 @@ trait CustomControllerTrait
      */
     protected function printModelSuccess($model, $status = 'ok', int $code = 200)
     {
-        if (!empty($allWith = (array) request()->input('_with'))) {
+        if ($model instanceof Model && !empty($allWith = (array) request()->input('_with'))) {
             foreach ($allWith as $with) {
                 try {
                     $model->load($with);
@@ -110,9 +110,20 @@ trait CustomControllerTrait
                 }
             }
         } else {
-            if (method_exists($model, 'getCustomWith') || $model instanceof \Illuminate\Contracts\Support\Responsable) {
-                $model->load($model->getAllWith());
-                $model->loadCount($model->getAllWithCount());
+            if ($model instanceof Model && is_callable([$model, 'getCustomWith'])) {
+                try {
+                    $model->load($model->getAllWith());
+                    $model->loadCount($model->getAllWithCount());
+                } catch (\Exception $e) {
+
+                }
+            } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model  && is_callable([$model, 'getCustomWith'])) {
+                try {
+                    $model->load($model->getAllWith());
+                    $model->loadCount($model->getAllWithCount());
+                } catch (\Exception $e) {
+
+                }
             }
         }
 

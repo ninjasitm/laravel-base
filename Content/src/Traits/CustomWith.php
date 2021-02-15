@@ -20,7 +20,7 @@ trait CustomWith
             return $query;
         }
 
-        $query->with($this->buildWith($this->customWith));
+        $query->with($this->getCustomWith());
         if ($includeDefaultWith) {
             $query->with($this->buildWith($this->with));
         }

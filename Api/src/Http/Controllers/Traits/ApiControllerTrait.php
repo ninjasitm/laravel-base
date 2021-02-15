@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom traits for APII controllers
+ * Custom traits for API controllers
  */
 
 namespace Nitm\Api\Http\Controllers\Traits;

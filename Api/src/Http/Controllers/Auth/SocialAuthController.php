@@ -1,19 +1,18 @@
 <?php
 namespace Nitm\Api\Http\Controllers\Auth;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Google_Client;
-use Carbon\Carbon;
 use Exception;
+use Carbon\Carbon;
+use Google_Client;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\Response;
-use Laravel\Socialite\Contracts\User as SocialUser;
-use Laravel\Socialite\Contracts\Factory as Socialite;
 use Laravel\Socialite\Two\AbstractProvider;
 use MadWeb\SocialAuth\Models\SocialProvider;
 use MadWeb\SocialAuth\Events\SocialUserDetached;
+use Laravel\Socialite\Contracts\User as SocialUser;
+use Laravel\Socialite\Contracts\Factory as Socialite;
 use MadWeb\SocialAuth\Exceptions\SocialUserAttachException;
 use MadWeb\SocialAuth\Exceptions\SocialGetUserInfoException;
 use MadWeb\SocialAuth\Controllers\SocialAuthController as BaseController;
@@ -23,7 +22,7 @@ use MadWeb\SocialAuth\Controllers\SocialAuthController as BaseController;
  */
 class SocialAuthController extends BaseController
 {
-    use \Nitm\Api\Http\Controllers\Traits\CustomControllerTrait;
+    use \Nitm\Content\Http\Controllers\Traits\CustomControllerTrait;
 
     public function __construct(Guard $auth, Socialite $socialite)
     {
