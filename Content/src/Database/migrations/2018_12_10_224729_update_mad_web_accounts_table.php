@@ -18,32 +18,34 @@ class UpdateMadWebAccountsTable extends Migration
 
         // Get teams table name
         $class = config('nitm-content.team_model', null);
-        $teamModel = new $class;
-        $teamTable = $teamModel->getTable();
+        if(class_exists($class)) {
+            $teamModel = new $class;
+            $teamTable = $teamModel->getTable();
 
-        Schema::create(
-            'team_has_social_provider',
-            function (Blueprint $table) use ($teamTable, $table_names) {
-                $table->integer('team_id')->unsigned();
-                $table->integer('social_provider_id')->unsigned();
-                $table->string('token');
-                $table->string('offline_token')->nullable();
-                $table->string('social_id');
-                $table->timestamp('expires_in')->nullable();
+            Schema::create(
+                'team_has_social_provider',
+                function (Blueprint $table) use ($teamTable, $table_names) {
+                    $table->integer('team_id')->unsigned();
+                    $table->integer('social_provider_id')->unsigned();
+                    $table->string('token');
+                    $table->string('offline_token')->nullable();
+                    $table->string('social_id');
+                    $table->timestamp('expires_in')->nullable();
 
-                $table->foreign('team_id')
-                    ->references('id')
-                    ->on($teamTable)
-                    ->onDelete('cascade');
+                    $table->foreign('team_id')
+                        ->references('id')
+                        ->on($teamTable)
+                        ->onDelete('cascade');
 
-                $table->foreign('social_provider_id')
-                    ->references('id')
-                    ->on($table_names['social_providers'])
-                    ->onDelete('cascade');
+                    $table->foreign('social_provider_id')
+                        ->references('id')
+                        ->on($table_names['social_providers'])
+                        ->onDelete('cascade');
 
-                $table->primary(['team_id', 'social_provider_id']);
-            }
-        );
+                    $table->primary(['team_id', 'social_provider_id']);
+                }
+            );
+        }
         //Create initial social providers.
         // SocialProvider::firstOrCreate(['slug' => 'google', 'label' => 'Google']);
 
