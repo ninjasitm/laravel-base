@@ -3,6 +3,7 @@
 namespace Nitm\Content\Traits;
 
 use Illuminate\Support\Str;
+
 trait CustomWith
 {
     /**
@@ -89,13 +90,15 @@ trait CustomWith
                         $parts = explode(':', $params);
                         $scope = Str::studly(array_shift($parts));
                         $result[Str::camel($scope)] = function ($query) use ($scope, $parts) {
-                            if (method_exists($query->getModel(), 'scope'.$scope)) {
+                            if (method_exists($query->getModel(), 'scope' . $scope)) {
                                 $parts = !is_string($parts) ? explode(',', $parts) : [];
                                 $scope = Str::camel($scope);
                                 $query->$scope(...$parts);
                             }
                         };
                     }
+                } else if (is_string($with)) {
+                    $result[$with] = $scopes;
                 } else {
                     $result[] = is_numeric($with) ? $scopes : $with;
                 }
@@ -122,7 +125,8 @@ trait CustomWith
         $data = is_array($data) ? $data : [$data];
         $this->$property = array_filter(is_array($this->$property) ? $this->$property : [$this->$property]);
         $relationsOnly = array_filter(
-            $data, function ($d) {
+            $data,
+            function ($d) {
                 return is_string($d);
             }
         );
@@ -130,7 +134,8 @@ trait CustomWith
             $this->$property = array_unique(array_merge($this->$property, $relationsOnly));
         }
         $lambdasOnly = array_filter(
-            $data, function ($d) {
+            $data,
+            function ($d) {
                 return is_callable($d);
             }
         );
