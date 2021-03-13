@@ -3,17 +3,18 @@
 namespace Nitm\Content\Traits;
 
 use Nitm\Helpers\DbHelper;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Nitm\Helpers\ModelHelper;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 trait Search
 {
     /**
      * The search conditions
+     *
      * @param array
      */
     protected $searchConditions = [];
@@ -65,15 +66,10 @@ trait Search
      *
      * @method scopeSearch
      *
-     * @param Builder $query     [description]
-     * @param mixed   $params    Supports the following Formats
-     * string OR
-     * [
-     *   s => string,
-     *   filter => [
-     *     ...
-     *   ]
-     * ]
+     * @param Builder $query  [description]
+     * @param mixed   $params Supports the following Formats
+     *                        string OR [ s => string,
+     *                        filter => [ ... ] ]
      *
      * @return void [description]
      */
@@ -97,7 +93,10 @@ trait Search
                     unset($filter['query']);
                 }
 
-                if (!empty($filter)) {
+                $filter = is_array($filter) ? array_filter($filter) : $filter;
+                $isFilterable = is_array($filter);
+
+                if ($isFilterable && !empty($filter)) {
                     $query->exclusive()->directExclusivity()->filter($filter);
                 }
                 // $query->addSearchConditions($columns, $params);
@@ -110,7 +109,7 @@ trait Search
                 }
 
                 if (count($this->searchConditions)) {
-                    if (!empty($filter)) {
+                    if ($isFilterable && !empty($filter)) {
                         $query->exclusive()->cannotFilterRelations();
                     }
                     $query->applySearchConditions();
@@ -154,36 +153,53 @@ trait Search
      *
      * @method addStringSearchCondition
      *
-     * @param Builder  $query     [description]
-     * @param Column[] $columns   [description]
-     * @param string   $value     [description]
+     * @param Builder  $query   [description]
+     * @param Column[] $columns [description]
+     * @param string   $value   [description]
      */
     public function scopeAddStringSearchCondition($query, $columns, $value)
     {
         $method = $this->getClause($this->searchEnableDirectInclusivity);
 
-        $query->$method(function ($query) use ($columns, $value) {
-            foreach ($columns as $name => $column) {
-                //We will only match string columns to the search string
-                if (in_array($column->getType()->getName(), ['string', 'text'])) {
-                    $query->addSearchCondition($name, $value);
+        $query->$method(
+            function ($query) use ($columns, $value) {
+                foreach ($columns as $name => $column) {
+                    //We will only match string columns to the search string
+                    if (
+                        !is_numeric($value)
+                        && in_array($column->getType()->getName(), ['string', 'text'])
+                    ) {
+                        $query->addSearchCondition($name, $value);
+                    } else if (
+                        is_float($value)
+                        && in_array($column->getType()->getName(), ['double', 'float', 'decimal'])
+                    ) {
+                        $query->addSearchCondition($name, (float) $value);
+                    } else if (
+                        is_numeric($value)
+                        && in_array($column->getType()->getName(), ['integer', 'smallint', 'bigint'])
+                    ) {
+                        $query->addSearchCondition($name, (int) $value);
+                    }
                 }
-            }
 
-            if ($this->searchEnableRelationFiltering && !empty($value)) {
-                $class = get_class($query->getModel());
-                if (method_exists($query->getModel(), 'getFilterableRelations')) {
-                    $relations = $class::getFilterableRelations($class);
-                    if (is_array($relations) && !empty($relations)) {
-                        $query->orWhere(function ($query) use ($relations, $value) {
-                            foreach ($relations as $relation => $fields) {
-                                $query->searchFilterRelation(is_numeric($relation) ? $fields : $relation, $value, true, true);
-                            }
-                        });
+                if ($this->searchEnableRelationFiltering && !empty($value)) {
+                    $class = get_class($query->getModel());
+                    if (method_exists($query->getModel(), 'getFilterableRelations')) {
+                        $relations = $class::getFilterableRelations($class);
+                        if (is_array($relations) && !empty($relations)) {
+                            $query->orWhere(
+                                function ($query) use ($relations, $value) {
+                                    foreach ($relations as $relation => $fields) {
+                                        $query->searchFilterRelation(is_numeric($relation) ? $fields : $relation, $value, true, true);
+                                    }
+                                }
+                            );
+                        }
                     }
                 }
             }
-        });
+        );
     }
 
     /**
@@ -191,26 +207,28 @@ trait Search
      *
      * @method StringConditions
      *
-     * @param Builder  $query     [description]
-     * @param Column[] $columns   [description]
-     * @param array    $params    [description]
+     * @param  Builder  $query   [description]
+     * @param  Column[] $columns [description]
+     * @param  array    $params  [description]
      * @return void
      */
     public function scopeAddSearchConditions($query, array $columns, array $params)
     {
         $method = $this->getClause($this->searchEnableDirectInclusivity);
 
-        $query->$method(function ($query) use ($columns, $params) {
-            foreach ($params as $field => $value) {
-                if (array_key_exists($field, $columns)) {
-                    $type = $columns[$field]->getType()->getName();
-                    //Only add the condition of the datatype matches the column type
-                    if (gettype($value) == $type || is_array($value)) {
-                        $query->addSearchCondition($field, $value);
+        $query->$method(
+            function ($query) use ($columns, $params) {
+                foreach ($params as $field => $value) {
+                    if (array_key_exists($field, $columns)) {
+                        $type = $columns[$field]->getType()->getName();
+                        //Only add the condition of the datatype matches the column type
+                        if (gettype($value) == $type || is_array($value)) {
+                            $query->addSearchCondition($field, $value);
+                        }
                     }
                 }
             }
-        });
+        );
     }
 
     /**
@@ -218,9 +236,9 @@ trait Search
      *
      * @method addSearchCondition
      *
-     * @param Builder $query     [description]
-     * @param string  $column    [description]
-     * @param mixed   $value     [description]
+     * @param Builder $query  [description]
+     * @param string  $column [description]
+     * @param mixed   $value  [description]
      */
     public function scopeAddSearchCondition($query, $column, $value)
     {
@@ -244,13 +262,19 @@ trait Search
     protected static function convertSearchValue($value, $type)
     {
         if (is_array($value)) {
-            $value = array_map(function ($v) use ($type) {
-                return static::convertSearchValue($v, $type);
-            }, $value, array_fill(0, count($value), $type));
+            $value = array_map(
+                function ($v) use ($type) {
+                    return static::convertSearchValue($v, $type);
+                },
+                $value,
+                array_fill(0, count($value), $type)
+            );
         } elseif (($value instanceof \Illuminate\Support\Collection) || ($value instanceof \Illuminate\Database\Eloquent\Collection)) {
-            $value->transform(function ($v) use ($type) {
-                return static::convertSearchValue($v, $type);
-            });
+            $value->transform(
+                function ($v) use ($type) {
+                    return static::convertSearchValue($v, $type);
+                }
+            );
         } else {
             switch ($type) {
                 case "boolean":
@@ -259,13 +283,13 @@ trait Search
                 case "integer":
                 case 'smallint':
                 case 'bigint':
-                    $value = intval($value);
+                    $value = (int) $value;
                     break;
 
                 case "double":
                 case 'float':
                 case 'decimal':
-                    $value = floatval($value);
+                    $value = (float) $value;
                     break;
 
                 case "string":
@@ -273,7 +297,7 @@ trait Search
                 case 'datetime':
                 case 'date':
                 case 'time':
-                    $value = strval($value);
+                    $value = (string) $value;
                     break;
             }
         }
@@ -285,30 +309,32 @@ trait Search
      *
      * @method addSearchCondition
      *
-     * @param Builder $query     [description]
+     * @param  Builder $query [description]
      * @return void
      */
     public function scopeApplySearchConditions($query)
     {
         $method = $this->getClause(!$this->searchEnableStrictExclusivity && $this->searchEnableInclusivity || $this->searchEnableRelationFiltering);
-        $query->$method(function ($query) {
-            foreach ($this->searchConditions as $method => $group) {
-                foreach ($group as $params) {
-                    list($column, $value) = $params;
-                    if (is_numeric($value)) {
-                        $query->$method($column, $value);
-                    } elseif (is_array($value)) {
-                        $query->$method($column, $value);
-                    } elseif (is_string($value) && strlen($value)) {
-                        if ($this->searchEnableWildcardExpansion) {
-                            $query->$method(\DB::raw('lower(cast(' . $column . ' as text))'), 'like', '%' . strtolower($value) . '%');
-                        } else {
-                            $query->$method(\DB::raw('lower(cast(' . $column . ' as text))'), 'like', strtolower($value));
+        $query->$method(
+            function ($query) {
+                foreach ($this->searchConditions as $method => $group) {
+                    foreach ($group as $params) {
+                        list($column, $value) = $params;
+                        if (is_numeric($value)) {
+                            $query->$method($column, $value);
+                        } elseif (is_array($value)) {
+                            $query->$method($column, $value);
+                        } elseif (is_string($value) && strlen($value)) {
+                            if ($this->searchEnableWildcardExpansion) {
+                                $query->$method(\DB::raw('lower(cast(' . $column . ' as text))'), 'like', '%' . strtolower($value) . '%');
+                            } else {
+                                $query->$method(\DB::raw('lower(cast(' . $column . ' as text))'), 'like', strtolower($value));
+                            }
                         }
                     }
                 }
             }
-        });
+        );
     }
 
     /**
@@ -339,10 +365,11 @@ trait Search
      *
      * @param [type] $query  [description]
      * @param [type] $params [description]
+     * @param bool   $apply
      *
      * @return [type] [description]
      */
-    public function scopeFilter($query, $params = [])
+    public function scopeFilter($query, $params = [], $apply = false)
     {
         $params = $this->extractFilter($params) ?: $params;
         if (is_array($params) && count($params)) {
@@ -361,7 +388,7 @@ trait Search
                             $order = end($value) ?? Arr::pluck($value, 'order') ?? Arr::get($params, 'order', null);
                             $value = array_shift($value);
                             if (!is_string($order)) {
-                                $order = \Nitm\Helpers\ModelHelper::boolval($order) ? 'desc' : 'asc';
+                                $order = \App\Helpers\ModelHelper::boolval($order) ? 'desc' : 'asc';
                             } else {
                                 $order = $value[0] === '-' ? 'desc' : 'asc';
                             }
@@ -370,11 +397,21 @@ trait Search
                             $value = [$value => $order];
                         } else {
                             $filtered = [];
+                            $order = null;
                             $orders = (array) $orders;
                             foreach ($value as $k => $v) {
                                 $field = is_numeric($k) ? $v : $k;
+                                $order = null;
                                 if (is_numeric($k)) {
-                                    $order = \Nitm\Helpers\ModelHelper::boolval(Arr::get($orders, $k)) ? 'desc' : 'asc';
+                                    if (count($orders)) {
+                                        $order = Arr::get($orders, $k);
+                                    }
+
+                                    if (!$order) {
+                                        $order = \App\Helpers\ModelHelper::boolval(Arr::get($orders, $k)) ? 'desc' : 'asc';
+                                    } else if (is_string($order) && in_array($order, ['true', 'false'])) {
+                                        $order = \App\Helpers\ModelHelper::boolval($order) ? 'desc' : 'asc';
+                                    }
                                 } else {
                                     $order = $field[0] === '-' ? 'desc' : 'asc';
                                 }
@@ -395,7 +432,7 @@ trait Search
                         break;
 
                     case 'strict':
-                        if (\Nitm\Helpers\ModelHelper::boolval($value) == true) {
+                        if (\App\Helpers\ModelHelper::boolval($value) == true) {
                             $query->strictExclusivity();
                         } else {
                             $query->strictInclusivity();
@@ -410,7 +447,7 @@ trait Search
                         break;
 
                     default:
-                        if (is_array($value) && empty($value)) {
+                        if (empty($value)) {
                             break;
                         }
                         if ($this->searchEnableStrictExclusivity) {
@@ -428,9 +465,13 @@ trait Search
                         $type = Str::studly(str_replace(['.', '_'], '-', $type));
                         $filter = 'FilterBy' . $type;
                         $scopeFilter = 'scope' . $filter;
+                        $forFilter = 'for' . $type;
+                        $scopeForFilter = 'scope' . $forFilter;
                         $class = get_class($query->getModel());
                         if ($reflection->hasMethod($scopeFilter)) {
                             call_user_func_array([$query, Str::camel($filter)], [$value]);
+                        } elseif ($reflection->hasMethod($scopeForFilter)) {
+                            call_user_func_array([$query, Str::camel($forFilter)], [$value]);
                         } elseif (
                             $class::isFilterableRelation($type, $class)
                             && $reflection->hasMethod($type)
@@ -449,6 +490,9 @@ trait Search
                         break;
                 }
             }
+            if ($apply) {
+                $query->applySearchConditions();
+            }
         }
     }
 
@@ -456,9 +500,9 @@ trait Search
      * Simple filter relation helper
      *
      * @param Builder $query
-     * @param string $relation
-     * @param mixed $value
-     * @param string $property
+     * @param string  $relation
+     * @param mixed   $value
+     * @param string  $property
      *
      * @return void
      */
@@ -473,21 +517,24 @@ trait Search
             }
 
             if ($property === true) {
-                if (ModelHelper::usesTrait('Nitm\Content\Traits\Search', get_class($query->getModel()))) {
+                if (ModelHelper::usesTrait('App\Traits\Search', get_class($query->getModel()))) {
                     $query->cannotFilterRelations()->search($value);
                 }
             } else {
                 $qualifiedProperty = $query->qualifyColumn($property);
                 if (is_array($value)) {
-                    $ids = array_map(function ($v) use ($property) {
-                        if (is_object($v) && property_exists($v, $property)) {
-                            return $v->$property;
-                        } elseif (is_array($v)) {
-                            return Arr::get($v, $property);
-                        } else {
-                            return $v;
-                        }
-                    }, $value);
+                    $ids = array_map(
+                        function ($v) use ($property) {
+                            if (is_object($v) && property_exists($v, $property)) {
+                                return $v->$property;
+                            } elseif (is_array($v)) {
+                                return Arr::get($v, $property);
+                            } else {
+                                return $v;
+                            }
+                        },
+                        $value
+                    );
 
                     $query->whereIn($qualifiedProperty, array_filter($ids));
                 } elseif (is_object($value) && property_exists($value, $property)) {
@@ -548,7 +595,9 @@ trait Search
         $reflection = new \ReflectionClass($class);
         $parts = explode('.', $column);
         $relation = Str::camel(str_replace('_', "", array_shift($parts)));
-        $scopeSort = 'SortBy' . Str::studly(str_replace('.', '-', $column));
+        $columnBoundary = strpos($column, ':');
+        $columnWithBoundary = substr($column, 0, $columnBoundary !== false ? $columnBoundary : strlen($column));
+        $scopeSort = 'SortBy' . Str::studly(str_replace('.', '-', $columnWithBoundary));
         if ($reflection->hasMethod("scope$scopeSort")) {
             call_user_func_array([$query, $scopeSort], [$column, $direction]);
         } elseif (count($parts) && $reflection->hasMethod($relation) && $query->getModel()->$relation() instanceof Relation) {
@@ -572,9 +621,12 @@ trait Search
             $alias = $table . '_' . strtolower(Str::random(3));
             if (!DbHelper::isJoinedOn($query, $table)) {
                 if (is_callable($localKey)) {
-                    $query->join($table, function ($join) use ($alias, $localKey) {
-                        $localKey($query, $alias);
-                    });
+                    $query->join(
+                        $table,
+                        function ($join) use ($alias, $localKey) {
+                            $localKey($query, $alias);
+                        }
+                    );
                 } else {
                     $query->join(
                         $table,
@@ -596,6 +648,11 @@ trait Search
             }
             $query->getQuery()->orders = null;
             $query->orderBy($table . "." . $column, $direction);
+            if ($key = $model->getKeyName()) {
+                $query->orderBy($table . '.' . $key);
+            } else if (Schema::hasColumn($table, 'updated_at')) {
+                $query->orderBy($table . '.updated_at');
+            }
         } else {
             $query->addSearchOrderBy($column, $direction);
         }
@@ -605,7 +662,7 @@ trait Search
      * Order the results according to the provided field.
      *
      * @param Builder       $query     The query object
-     * @param string||array $column     The columns to order by
+     * @param string||array $column    The columns to order by
      * @param string        $direction The direction order by
      */
     public function scopeAddSearchOrderBy($query, $column = null, $direction = 'desc')
@@ -662,7 +719,7 @@ trait Search
     /**
      * Disable pagination
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeWithoutPagination($query)
@@ -674,7 +731,7 @@ trait Search
     /**
      * Enable pagination
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeWithPagination($query)
@@ -686,7 +743,7 @@ trait Search
     /**
      * Enable pagination
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeCanFilterRelations($query)
@@ -698,7 +755,7 @@ trait Search
     /**
      * Enable pagination
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeCannotFilterRelations($query)
@@ -711,7 +768,7 @@ trait Search
      * Enable  search inclusivity
      * Basically use Or clauses
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeInclusive($query)
@@ -724,7 +781,7 @@ trait Search
      * Disable search inclusivity
      * Basically DON'T use Or clauses
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeExclusive($query)
@@ -736,7 +793,7 @@ trait Search
     /**
      * Enable search wildcard inclusion
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeEnableWildcardExpansion($query)
@@ -748,7 +805,7 @@ trait Search
     /**
      * Disable search wildcard inclusion
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeDisableWildcardExpansion($query)
@@ -761,7 +818,7 @@ trait Search
      * Enable search  directinclusivity
      * Basically use Or clauses
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeDirectInclusivity($query)
@@ -788,7 +845,7 @@ trait Search
      * Enable search  directinclusivity
      * Basically use Or clauses
      *
-     * @param [type] $query
+     * @param  [type] $query
      * @return void
      */
     public function scopeStrictInclusivity($query)
