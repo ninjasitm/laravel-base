@@ -19,10 +19,10 @@ class Builder extends BaseBuilder
         if (!empty($with)) {
             foreach ($with as $name => $value) {
                 if (is_numeric($name)) {
-                    array_push(NitmBuilder::$$eagerLoads, $value);
-                    NitmBuilder::$$eagerLoads = array_unique(NitmBuilder::$$eagerLoads);
+                    array_push(NitmBuilder::$eagerLoads, $value);
+                    NitmBuilder::$eagerLoads = array_unique(NitmBuilder::$eagerLoads);
                 } else {
-                    NitmBuilder::$$eagerLoads[$name] = $value;
+                    NitmBuilder::$eagerLoads[$name] = $value;
                 }
             }
         }
@@ -30,9 +30,9 @@ class Builder extends BaseBuilder
 
     protected function parseAppendedEagerRelations()
     {
-        NitmBuilder::$$eagerLoads = $this->parseWithRelations(NitmBuilder::$$eagerLoads);
+        NitmBuilder::$eagerLoads = $this->parseWithRelations(NitmBuilder::$eagerLoads);
 
-        return NitmBuilder::$$eagerLoads;
+        return NitmBuilder::$eagerLoads;
     }
 
     /**
@@ -57,7 +57,7 @@ class Builder extends BaseBuilder
                 }
             }
         }
-        NitmBuilder::$$eagerLoads = [];
+        NitmBuilder::$eagerLoads = [];
 
         return (array) $models;
     }
@@ -85,7 +85,8 @@ class Builder extends BaseBuilder
             // of models which have been eagerly hydrated and are readied for return.
             $models = $relation->match(
                 $relation->initRelation($models, $name),
-                $relation->getEager(), $name
+                $relation->getEager(),
+                $name
             );
             //  echo "Eager loaded $name for ".get_class($this->getModel())."\n";
             //  print_r($models);
@@ -107,19 +108,19 @@ class Builder extends BaseBuilder
         $results = [];
         foreach ($relations as $name => $constraints) {
             // If the "relation" value is actually a numeric key, we can assume that no
-              // constraints have been specified for the eager load and we'll just put
-              // an empty Closure with the loader so that we can treat all the same.
+            // constraints have been specified for the eager load and we'll just put
+            // an empty Closure with the loader so that we can treat all the same.
             if (is_numeric($name)) {
                 $name = $constraints;
                 list($name, $constraints) = Str::contains($name, ':')
-                                  ? $this->createSelectWithConstraint($name)
-                                  : [$name, function () {
-                                  }];
+                    ? $this->createSelectWithConstraint($name)
+                    : [$name, function () {
+                    }];
             }
-              // We need to separate out any nested includes. Which allows the developers
-              // to load deep relationships using "dots" without stating each level of
-              // the relationship with its own key in the array of eager load names.
-              $results = $this->addNestedWiths($name, $results);
+            // We need to separate out any nested includes. Which allows the developers
+            // to load deep relationships using "dots" without stating each level of
+            // the relationship with its own key in the array of eager load names.
+            $results = $this->addNestedWiths($name, $results);
             $results[$name] = $constraints;
         }
 
@@ -137,9 +138,9 @@ class Builder extends BaseBuilder
     protected function addNestedWiths($name, $results)
     {
         $progress = [];
-         // If the relation has already been set on the result array, we will not set it
-         // again, since that would override any constraints that were already placed
-         // on the relationships. We will only set the ones that are not specified.
+        // If the relation has already been set on the result array, we will not set it
+        // again, since that would override any constraints that were already placed
+        // on the relationships. We will only set the ones that are not specified.
         foreach (explode('.', $name) as $segment) {
             $progress[] = $segment;
             if (!isset($results[$last = implode('.', $progress)])) {
