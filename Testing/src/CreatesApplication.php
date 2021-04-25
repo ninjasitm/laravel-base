@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Nitm\Testing;
 
 use Artisan;
 use Illuminate\Contracts\Console\Kernel;
@@ -44,7 +44,7 @@ trait CreatesApplication
         $this->registerServiceProviders();
 
         $teamClass = config('nitm-content.team_model');
-        if($this->usesTeams && class_exists($teamClass)) {
+        if ($this->usesTeams && class_exists($teamClass)) {
             $this->setupTeam(factory($teamClass)->create());
         }
 

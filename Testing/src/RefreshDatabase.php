@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Nitm\Testing;
 
 use Illuminate\Contracts\Console\Kernel;
 
