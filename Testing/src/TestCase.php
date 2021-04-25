@@ -9,12 +9,11 @@ use Illuminate\Database\SQLiteConnection;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Nitm\Testing\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
-    use ArraySubsetAsserts;
-    use CreatesApplication, RefreshDatabase;
+    use ArraySubsetAsserts, RefreshDatabase;
 
     public static $databaseSeeded = false;
 
