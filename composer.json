@@ -38,7 +38,8 @@
         "psr-4": {
             "Nitm\\Content\\": "Content/src",
             "Nitm\\Api\\": "Api/src",
-            "Nitm\\Helpers\\": "Helpers/src"
+            "Nitm\\Helpers\\": "Helpers/src",
+            "Nitm\\Testing\\": "Testing/src"
         }
     },
     "extra": {
