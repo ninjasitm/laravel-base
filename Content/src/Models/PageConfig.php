@@ -42,10 +42,10 @@ class PageConfig extends BaseModel
             function ($model) {
                 $class = $model->page;
                 $page = preg_replace('/[^a-zA-Z0-9]|pageconfig/', '_', class_basename($class));
-                $model->modelName = class_exists($class) ? class_basename($class) : $model->getGroupName().ucfirst(Str::camel($page));
-                $model->page = 'pageconfig'.preg_replace('/[^a-zA-Z0-9]|pageconfig/', '', strtolower($page));
+                $model->modelName = class_exists($class) ? class_basename($class) : $model->getGroupName() . ucfirst(Str::camel($page));
+                $model->page = 'pageconfig' . preg_replace('/[^a-zA-Z0-9]|pageconfig/', '', strtolower($page));
                 $model->namespace = $model->namesapce ?? (class_exists($class) ? (new \ReflectionClass($class))->getNamespaceName() : 'App\Models');
-                $model->modelClass = class_exists($class) ? $class : trim($model->namespace, '\\')."\\".trim($model->modelName, '\\');
+                $model->modelClass = class_exists($class) ? $class : trim($model->namespace, '\\') . "\\" . trim($model->modelName, '\\');
                 $model->config = [];
             }
         );
@@ -94,7 +94,7 @@ class PageConfig extends BaseModel
      */
     public static function getPage($id)
     {
-        $id = strpos($id, 'pageconfig') !== false ? $id : 'pageconfig'.$id;
+        $id = strpos($id, 'pageconfig') !== false ? $id : 'pageconfig' . $id;
 
         return static::query()->where(['page' => $id])->first();
     }
@@ -106,18 +106,38 @@ class PageConfig extends BaseModel
      * @param  [type] $params [description]
      * @return string         [description]
      */
-    protected static function getCacheKey($id=null, $params=[]): string
+    protected static function getCacheKey($id = null, $params = []): string
     {
         $id = $id ?: strtolower(class_basename(get_called_class()));
         $params = json_encode($params);
         return implode(
-            '-', array_merge(
-                (array)$params, [
-                md5(get_called_class()),
-                $id,
+            '-',
+            array_merge(
+                (array)$params,
+                [
+                    md5(get_called_class()),
+                    $id,
                 ]
             )
         );
+    }
+
+    /**
+     * Convert the raw page object to the underlying model if it exists
+     *
+     * @return PageConfig
+     */
+    public function morphPageToModel(): PageConfig
+    {
+        $modelClass = $this->modelClass;
+        if (class_exists($modelClass)) {
+            $model = new $modelClass();
+            $model->fill($this->attributes);
+            $model->config = is_array($model->config) ? $model->config : json_decode($model->config);
+            return $model;
+        } else {
+            return $this;
+        }
     }
 
     /**
@@ -128,11 +148,13 @@ class PageConfig extends BaseModel
     public static function getConfig($id = null, $options = []): array
     {
         $id = $id ?: strtolower(class_basename(get_called_class()));
-        $routeParams = $id != 'pageconfigglobal' ? \Route::current()->parameters() : [];
+        $routeParams = $id != 'pageconfigglobal' ? (\Route::current() ? \Route::current()->parameters() : []) : [];
         $key = static::getCacheKey($id, array_merge((array)$_GET, (array)$routeParams));
 
         return \Cache::remember(
-            $key, static::$duration, function () use ($id, $routeParams, $options) {
+            $key,
+            static::$duration,
+            function () use ($id, $routeParams, $options) {
                 $originalId = $id;
                 $id = strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $id));
                 $page = static::getPage($id);
@@ -146,8 +168,9 @@ class PageConfig extends BaseModel
 
                         $ret_val = array_merge(
                             [
-                            'id' => $originalId,
-                            ], (array) call_user_func_array([$model, 'prepareConfig'], $args)
+                                'id' => $originalId,
+                            ],
+                            (array) call_user_func_array([$model, 'prepareConfig'], $args)
                         );
                         return $ret_val;
                     } else {
@@ -166,12 +189,14 @@ class PageConfig extends BaseModel
     protected function getNavigation(): array
     {
         $ret_val = [];
-        if (!$this->result || ($this->result && !in_array(
-            get_class($this->result), [
-            'Illuminate\Pagination\LengthAwarePaginator',
-            'Illuminate\Pagination\Paginator',
-            ]
-        ))
+        if (
+            !$this->result || ($this->result && !in_array(
+                get_class($this->result),
+                [
+                    'Illuminate\Pagination\LengthAwarePaginator',
+                    'Illuminate\Pagination\Paginator',
+                ]
+            ))
         ) {
             return $ret_val;
         }
@@ -194,7 +219,8 @@ class PageConfig extends BaseModel
     protected function getPagination($items = null): array
     {
         $items = $items ?: $this->items;
-        if (!is_null($items)
+        if (
+            !is_null($items)
             && !$items instanceof \Illuminate\Pagination\LengthAwarePaginator
             || $items instanceof \Illuminate\Pagination\Paginator
         ) {
@@ -220,17 +246,18 @@ class PageConfig extends BaseModel
         extract($config);
 
         return array_merge(
-            $config, array_filter(
+            $config,
+            array_filter(
                 [
-                'title' => @$title,
-                'isEvent' => @$isEvent,
-                'isShowcase' => @$isShowcase,
-                'isFeatured' => @$isFeatured,
-                'featureTitle' => @$featureTitle,
-                'pageTitle' => @$pageTitle,
-                'image' => @$image,
-                'isLocalImage' => @$isLocalImage,
-                'description' => @$description,
+                    'title' => @$title,
+                    'isEvent' => @$isEvent,
+                    'isShowcase' => @$isShowcase,
+                    'isFeatured' => @$isFeatured,
+                    'featureTitle' => @$featureTitle,
+                    'pageTitle' => @$pageTitle,
+                    'image' => @$image,
+                    'isLocalImage' => @$isLocalImage,
+                    'description' => @$description,
                 ]
             )
         );
@@ -262,16 +289,18 @@ class PageConfig extends BaseModel
      */
     public function getPageModelOptions($directory = 'Models', $namespace = 'App\Models'): array
     {
-        $files = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(app_path($directory)));
+        $files = preg_grep('/^' . static::getGroupName() . '(\w+).php/', scandir(app_path($directory)));
         $values = array_map(
             function ($model) use ($namespace) {
-                return $namespace.'\\'.substr($model, 0, strpos($model, '.'));
-            }, $files
+                return $namespace . '\\' . substr($model, 0, strpos($model, '.'));
+            },
+            $files
         );
         $models = array_map(
             function ($model) {
                 return str_replace('PageConfig', '', class_basename($model));
-            }, $values
+            },
+            $values
         );
 
         return array_combine($values, $models);
@@ -284,16 +313,18 @@ class PageConfig extends BaseModel
      */
     public function getPageOptions($directory = 'Models'): array
     {
-        $files = preg_grep('/^'.static::getGroupName().'(\w+).php/', scandir(app_path($directory)));
+        $files = preg_grep('/^' . static::getGroupName() . '(\w+).php/', scandir(app_path($directory)));
         $values = array_map(
             function ($model) {
                 return strtolower(substr($model, 0, strpos($model, '.')));
-            }, $files
+            },
+            $files
         );
         $models = array_map(
             function ($model) {
                 return str_replace(static::getGroupName(), '', substr($model, 0, strpos($model, '.')));
-            }, $files
+            },
+            $files
         );
 
         return array_combine($values, $models);
@@ -426,7 +457,7 @@ class PageConfig extends BaseModel
      */
     public function prepareConfig($config = [], $routeParameters = []): array
     {
-        throw new \Exception(__FUNCTION__.' needs to be defined by all sub classes');
+        throw new \Exception(__FUNCTION__ . ' needs to be defined by all sub classes');
     }
 
     /**
