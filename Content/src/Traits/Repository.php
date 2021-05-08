@@ -190,7 +190,9 @@ trait Repository
      */
     public function create($input)
     {
-        $model = $this->model->newInstance($input);
+        $model = $this->model->newInstance();
+
+        $model->fill(Arr::only($input, $model->getFillable()));
 
         $model->save();
 
@@ -231,8 +233,8 @@ trait Repository
             $query->where($id);
         } else if (is_numeric($id)) {
             $query->where('id', $id);
-        } else if(is_string($id)) {
-            if($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
                 $query->where('id', (int)$id);
@@ -265,8 +267,8 @@ trait Repository
             $query->where($id);
         } else if (is_numeric($id)) {
             $query->where($key, $id);
-        } else if(is_string($id)) {
-            if($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
                 $query->where($key, (int)$id);
@@ -292,8 +294,8 @@ trait Repository
         $id = is_object($id) ? $id->id : $id;
         if (is_numeric($id)) {
             $query->where($key, $id);
-        } else if(is_string($id)) {
-            if($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
                 $query->where($key, (int)$id);
@@ -349,8 +351,8 @@ trait Repository
         $id = is_object($id) ? $id->id : $id;
         if (is_numeric($id)) {
             $query->where($key, $id);
-        } else if(is_string($id)) {
-            if($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
                 $query->where($key, $id);
