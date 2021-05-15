@@ -117,7 +117,7 @@ trait NestedTree
      */
     public function children()
     {
-        return $this->belongsTo(get_class($this), $this->getParentColumnName())->orderBy($this->getLeftColumnName());
+        return $this->hasMany(get_class($this), $this->getParentColumnName())->orderBy($this->getLeftColumnName());
     }
 
     /**
@@ -958,9 +958,9 @@ trait NestedTree
             )
             ->update(
                 [
-                $leftColumn => $connection->raw($leftSql),
-                $rightColumn => $connection->raw($rightSql),
-                $parentColumn => $connection->raw($parentSql)
+                    $leftColumn => $connection->raw($leftSql),
+                    $rightColumn => $connection->raw($rightSql),
+                    $parentColumn => $connection->raw($parentSql)
                 ]
             );
 
@@ -1021,17 +1021,17 @@ trait NestedTree
     {
         $primaryBoundary = null;
         switch ($position) {
-        case 'child':
-            $primaryBoundary = $target->getRight();
-            break;
+            case 'child':
+                $primaryBoundary = $target->getRight();
+                break;
 
-        case 'left':
-            $primaryBoundary = $target->getLeft();
-            break;
+            case 'left':
+                $primaryBoundary = $target->getLeft();
+                break;
 
-        case 'right':
-            $primaryBoundary = $target->getRight() + 1;
-            break;
+            case 'right':
+                $primaryBoundary = $target->getRight() + 1;
+                break;
         }
 
         return ($primaryBoundary > $node->getRight())
