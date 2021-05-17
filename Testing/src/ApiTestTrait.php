@@ -59,6 +59,26 @@ trait ApiTestTrait
     }
 
     /**
+     * Dump the response Json
+     *
+     * @return void
+     */
+    public function dumpResponseJson()
+    {
+        dump($this->response->json());
+    }
+
+    /**
+     * Dump the response
+     *
+     * @return void
+     */
+    public function dumpResponse()
+    {
+        dump($this->response);
+    }
+
+    /**
      * @return string]
      */
     public function getApiBase($url = '')

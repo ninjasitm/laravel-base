@@ -5,8 +5,9 @@ namespace Nitm\Content\Traits;
 use Nitm\Helpers\DbHelper;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use Nitm\Helpers\ModelHelper;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -388,7 +389,7 @@ trait Search
                             $order = end($value) ?? Arr::pluck($value, 'order') ?? Arr::get($params, 'order', null);
                             $value = array_shift($value);
                             if (!is_string($order)) {
-                                $order = \App\Helpers\ModelHelper::boolval($order) ? 'desc' : 'asc';
+                                $order = ModelHelper::boolval($order) ? 'desc' : 'asc';
                             } else {
                                 $order = $value[0] === '-' ? 'desc' : 'asc';
                             }
@@ -408,9 +409,9 @@ trait Search
                                     }
 
                                     if (!$order) {
-                                        $order = \App\Helpers\ModelHelper::boolval(Arr::get($orders, $k)) ? 'desc' : 'asc';
+                                        $order = ModelHelper::boolval(Arr::get($orders, $k)) ? 'desc' : 'asc';
                                     } else if (is_string($order) && in_array($order, ['true', 'false'])) {
-                                        $order = \App\Helpers\ModelHelper::boolval($order) ? 'desc' : 'asc';
+                                        $order = ModelHelper::boolval($order) ? 'desc' : 'asc';
                                     }
                                 } else {
                                     $order = $field[0] === '-' ? 'desc' : 'asc';
@@ -432,7 +433,7 @@ trait Search
                         break;
 
                     case 'strict':
-                        if (\App\Helpers\ModelHelper::boolval($value) == true) {
+                        if (ModelHelper::boolval($value) == true) {
                             $query->strictExclusivity();
                         } else {
                             $query->strictInclusivity();
@@ -508,73 +509,76 @@ trait Search
      */
     public function scopeSearchFilterRelation($query, string $relation, $value, $property = 'id')
     {
-        $relationQuery = $query->getModel()->$relation();
-        $filter = function ($query) use ($property, $value) {
-            $primaryKey = $query->getModel()->getKeyName();
+        $relation = Str::studly(str_replace(['.', '_'], '-', $relation));
+        if (method_exists($query->getModel(), $relation)) {
+            $relationQuery = $query->getModel()->$relation();
+            $filter = function ($query) use ($property, $value) {
+                $primaryKey = $query->getModel()->getKeyName();
 
-            if ($query->getModel()->hasColumn($primaryKey)) {
-                $query->selectRaw($query->qualifyColumn($primaryKey));
-            }
-
-            if ($property === true) {
-                if (ModelHelper::usesTrait('App\Traits\Search', get_class($query->getModel()))) {
-                    $query->cannotFilterRelations()->search($value);
+                if ($query->getModel()->hasColumn($primaryKey)) {
+                    $query->selectRaw($query->qualifyColumn($primaryKey));
                 }
-            } else {
-                $qualifiedProperty = $query->qualifyColumn($property);
-                if (is_array($value)) {
-                    $ids = array_map(
-                        function ($v) use ($property) {
-                            if (is_object($v) && property_exists($v, $property)) {
-                                return $v->$property;
-                            } elseif (is_array($v)) {
-                                return Arr::get($v, $property);
+
+                if ($property === true) {
+                    if (ModelHelper::usesTrait('App\Traits\Search', get_class($query->getModel()))) {
+                        $query->cannotFilterRelations()->search($value);
+                    }
+                } else {
+                    $qualifiedProperty = $query->qualifyColumn($property);
+                    if (is_array($value)) {
+                        $ids = array_map(
+                            function ($v) use ($property) {
+                                if (is_object($v) && property_exists($v, $property)) {
+                                    return $v->$property;
+                                } elseif (is_array($v)) {
+                                    return Arr::get($v, $property);
+                                } else {
+                                    return $v;
+                                }
+                            },
+                            $value
+                        );
+
+                        $query->whereIn($qualifiedProperty, array_filter($ids));
+                    } elseif (is_object($value) && property_exists($value, $property)) {
+                        $property = $qualifiedProperty;
+                        if (is_string($value) && !is_numeric($value)) {
+                            if ($this->searchEnableWildcardExpansion) {
+                                $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "%{$value->$property}%");
                             } else {
-                                return $v;
+                                $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "{$value->$property}");
                             }
-                        },
-                        $value
-                    );
-
-                    $query->whereIn($qualifiedProperty, array_filter($ids));
-                } elseif (is_object($value) && property_exists($value, $property)) {
-                    $property = $qualifiedProperty;
-                    if (is_string($value) && !is_numeric($value)) {
-                        if ($this->searchEnableWildcardExpansion) {
-                            $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "%{$value->$property}%");
                         } else {
-                            $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "{$value->$property}");
+                            $query->where($qualifiedProperty, $value->$property);
                         }
-                    } else {
-                        $query->where($qualifiedProperty, $value->$property);
+                    } elseif (is_array($value)) {
+                        $query->where($qualifiedProperty, Arr::get($value, $property));
+                    } elseif (is_string($value) && !is_numeric($value)) {
+                        if ($this->searchEnableWildcardExpansion) {
+                            return $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "%{$value}%");
+                        } else {
+                            return $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "{$value}");
+                        }
+                    } elseif (is_scalar($value)) {
+                        return $query->where($qualifiedProperty, $value);
                     }
-                } elseif (is_array($value)) {
-                    $query->where($qualifiedProperty, Arr::get($value, $property));
-                } elseif (is_string($value) && !is_numeric($value)) {
-                    if ($this->searchEnableWildcardExpansion) {
-                        return $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "%{$value}%");
-                    } else {
-                        return $query->where(\DB::raw("lower($qualifiedProperty)"), 'like', "{$value}");
-                    }
-                } elseif (is_scalar($value)) {
-                    return $query->where($qualifiedProperty, $value);
                 }
-            }
-        };
+            };
 
-        if ($relationQuery instanceof MorphTo) {
-            $method = $this->searchEnableInclusivity ? 'orWhereHasMorph' : 'whereHasMorph';
-            $query->$method(
-                $relation,
-                '*',
-                $filter
-            );
-        } else {
-            $method = $this->searchEnableInclusivity ? 'orWhereHas' : 'whereHas';
-            $query->$method(
-                $relation,
-                $filter
-            );
+            if ($relationQuery instanceof MorphTo) {
+                $method = $this->searchEnableInclusivity ? 'orWhereHasMorph' : 'whereHasMorph';
+                $query->$method(
+                    $relation,
+                    '*',
+                    $filter
+                );
+            } else {
+                $method = $this->searchEnableInclusivity ? 'orWhereHas' : 'whereHas';
+                $query->$method(
+                    $relation,
+                    $filter
+                );
+            }
         }
     }
 
