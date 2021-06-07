@@ -51,6 +51,13 @@ trait CustomControllerTrait
             );
         }
 
+        $chunk = intval(request()->input('_chunk'));
+        if ($chunk > 1) {
+            $paginator->setCollection($paginator->getCollection()->chunk($chunk)->map(function ($group) {
+                return $group->values();
+            }));
+        }
+
         return $paginator;
     }
 
@@ -115,14 +122,12 @@ trait CustomControllerTrait
                     $model->load($model->getAllWith());
                     $model->loadCount($model->getAllWithCount());
                 } catch (\Exception $e) {
-
                 }
             } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model  && is_callable([$model, 'getCustomWith'])) {
                 try {
                     $model->load($model->getAllWith());
                     $model->loadCount($model->getAllWithCount());
                 } catch (\Exception $e) {
-
                 }
             }
         }
@@ -180,7 +185,7 @@ trait CustomControllerTrait
      */
     protected function userOwnsOrFail(Authenticatable $user, Model $model, string $property = null)
     {
-        if(!$this->userOwns($user, $model, $property)) {
+        if (!$this->userOwns($user, $model, $property)) {
             abort(403);
         }
         return true;
@@ -197,7 +202,7 @@ trait CustomControllerTrait
     protected function userOwns(Authenticatable $user, Model $model, string $property = null)
     {
         $property = $property ?? (property_exists($model, 'author_id') ? 'author_id' : 'user_id');
-        if($user->id == $model->$property) {
+        if ($user->id == $model->$property) {
             return true;
         }
         return false;
