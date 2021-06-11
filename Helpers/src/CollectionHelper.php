@@ -2,8 +2,8 @@
 
 namespace Nitm\Helpers;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * This class provides configuration helper functions for config variables.
@@ -42,5 +42,15 @@ class CollectionHelper
             'previous' => $previous,
             'current' => $collection->currentPage(),
         ];
+    }
+
+    /**
+     * @param mixed $item
+     *
+     * @return bool
+     */
+    public static function isCollection($item): bool
+    {
+        return $item instanceof Collection || $item instanceof EloquentCollection;
     }
 }
