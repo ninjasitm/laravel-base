@@ -197,8 +197,8 @@ trait Repository
      */
     public function create($input)
     {
-        if($this->updateExisting) {
-            $model = $this->model->firstOrCreate(Arr::only($input, $this->model->getFillable());
+        if ($this->updateExisting) {
+            $model = $this->model->firstOrCreate(Arr::only($input, $this->model->getFillable()));
         } else {
             $model = $this->model->newInstance($input);
         }
