@@ -18,7 +18,7 @@ interface Repository
      *
      * @return array
      */
-    public function getFieldsSearchable(): array;
+    public function getFieldsSearchable();
 
     /**
      * Configure the Model

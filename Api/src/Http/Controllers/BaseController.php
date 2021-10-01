@@ -2,8 +2,8 @@
 namespace Nitm\Api\Http\Controllers;
 
 use Nitm\Content\Repositories\BaseRepository;
-use Nitm\Api\Http\Controllers\Traits\CustomControllerTrait;
-use Nitm\Api\Http\Controllers\Traits\SupportsRepositories;
+use Nitm\Content\Http\Controllers\Traits\CustomControllerTrait;
+use Nitm\Content\Http\Controllers\Traits\SupportsRepositories;
 use Illuminate\Container\Container as Application;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;

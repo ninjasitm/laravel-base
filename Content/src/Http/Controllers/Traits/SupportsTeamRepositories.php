@@ -4,7 +4,7 @@
  * Custom traits for APII controllers
  */
 
-namespace Nitm\Api\Http\Controllers\Traits;
+namespace Nitm\Content\Http\Controllers\Traits;
 
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -14,53 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 
 trait SupportsTeamRepositories
 {
-    /**
-     * @var BaseRepository
-     */
-    protected $repository;
-
-    /**
-     * Construct controller
-     *
-     * @param Application    $app
-     * @param BaseRepository $repository
-     */
-    public function createRepository($repository = null)
-    {
-        if ($repository instanceof BaseRepository) {
-            $this->repository = $repository;
-        } else {
-            $repositoryClass = $this->repository();
-            if ($repositoryClass && class_exists($repositoryClass)) {
-                $this->repository = app()->make($repositoryClass);
-            }
-        }
-        return $this->repository;
-    }
-
-    /**
-     * The repository class
-     *
-     * @return string
-     */
-    public function repository()
-    {
-        return null;
-    }
-
-    /**
-     * Get the repository URL
-     *
-     * @return BaseRepository
-     */
-    public function getRepository()
-    {
-        if (!isset($this->repository)) {
-            $this->repository = $this->createRepository();
-        }
-        return $this->repository;
-    }
-
 
     public function toggle(Request $request, ImplementsTeams $team, Model $model)
     {

@@ -12,8 +12,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use InfyOm\Generator\Utils\ResponseUtil;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait CustomControllerTrait
 {
@@ -50,6 +51,13 @@ trait CustomControllerTrait
             );
         }
 
+        $chunk = intval(request()->input('_chunk'));
+        if ($chunk > 1) {
+            $paginator->setCollection($paginator->getCollection()->chunk($chunk)->map(function ($group) {
+                return $group->values();
+            }));
+        }
+
         return $paginator;
     }
 
@@ -57,7 +65,7 @@ trait CustomControllerTrait
      * Do some custom pagination for paginated data
      *
      * @param Request $request
-     * @param mixed $paginator
+     * @param mixed   $paginator
      *
      * @return [type]
      */
@@ -101,7 +109,7 @@ trait CustomControllerTrait
      */
     protected function printModelSuccess($model, $status = 'ok', int $code = 200)
     {
-        if (!empty($allWith = (array) request()->input('_with'))) {
+        if ($model instanceof Model && !empty($allWith = (array) request()->input('_with'))) {
             foreach ($allWith as $with) {
                 try {
                     $model->load($with);
@@ -109,9 +117,18 @@ trait CustomControllerTrait
                 }
             }
         } else {
-            if (method_exists($model, 'getCustomWith')) {
-                $model->load($model->getAllWith());
-                $model->loadCount($model->getAllWithCount());
+            if ($model instanceof Model && is_callable([$model, 'getCustomWith'])) {
+                try {
+                    $model->load($model->getAllWith());
+                    $model->loadCount($model->getAllWithCount());
+                } catch (\Exception $e) {
+                }
+            } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model  && is_callable([$model, 'getCustomWith'])) {
+                try {
+                    $model->load($model->getAllWith());
+                    $model->loadCount($model->getAllWithCount());
+                } catch (\Exception $e) {
+                }
             }
         }
 
@@ -134,10 +151,10 @@ trait CustomControllerTrait
     /**
      * Helper method to fail if a key doesn't exist in a collection
      *
-     * @param Builder $builder
+     * @param Builder          $builder
      * @param Model|string|int $model
-     * @param string $key
-     * @param boolean $silently
+     * @param string           $key
+     * @param boolean          $silently
      *
      * @return bool
      */
@@ -156,5 +173,38 @@ trait CustomControllerTrait
         }
 
         return true;
+    }
+
+    /**
+     * User Owns Or Fail
+     *
+     * @param  mixed $user
+     * @param  mixed $model
+     * @param  mixed $property
+     * @return void
+     */
+    protected function userOwnsOrFail(Authenticatable $user, Model $model, string $property = null)
+    {
+        if (!$this->userOwns($user, $model, $property)) {
+            abort(403);
+        }
+        return true;
+    }
+
+    /**
+     * User Owns Or Fail
+     *
+     * @param  mixed $user
+     * @param  mixed $model
+     * @param  mixed $property
+     * @return void
+     */
+    protected function userOwns(Authenticatable $user, Model $model, string $property = null)
+    {
+        $property = $property ?? (property_exists($model, 'author_id') ? 'author_id' : 'user_id');
+        if ($user->id == $model->$property) {
+            return true;
+        }
+        return false;
     }
 }

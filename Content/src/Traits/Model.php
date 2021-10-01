@@ -2,11 +2,12 @@
 
 namespace Nitm\Content\Traits;
 
-use Nitm\Content\Models\User;
-use Nitm\Content\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Nitm\Content\Models\Team;
+use Nitm\Content\Models\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 /**
@@ -350,6 +351,29 @@ trait Model
                 }
             );
         }
+    }
+
+    /**
+     * Has Relation
+     *
+     * @param  mixed $name
+     * @return bool
+     */
+    public function hasRelation(string $name): bool
+    {
+        return method_exists($this, $name) && $this->$name() instanceof Relation;
+    }
+
+    /**
+     * Has Trait
+     *
+     * @param  mixed $trait
+     * @return bool
+     */
+    public function hasTrait(string $trait): bool
+    {
+        $uses = is_callable('class_uses_recursive') ? class_uses_recursive($this) : class_uses($this);
+        return in_array(ltrim($trait, '\\'), $uses);
     }
 
     /**

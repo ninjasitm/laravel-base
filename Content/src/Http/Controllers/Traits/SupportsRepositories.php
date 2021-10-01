@@ -9,16 +9,24 @@ namespace Nitm\Content\Http\Controllers\Traits;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Nitm\Content\Repositories\BaseRepository;
+use Illuminate\Database\Eloquent\Model;
 
 trait SupportsRepositories
 {
-    /** @var BaseRepository */
+    /**
+     * @var BaseRepository
+     */
     protected $repository;
+
+    /**
+     * @var Resource
+     */
+    protected $resource;
 
     /**
      * Construct controller
      *
-     * @param Application $app
+     * @param Application    $app
      * @param BaseRepository $repository
      */
     public function createRepository($repository = null)
@@ -35,6 +43,25 @@ trait SupportsRepositories
     }
 
     /**
+     * Construct controller
+     *
+     * @param Application  $app
+     * @param BaseResource $resource
+     */
+    public function createResource($resource = null)
+    {
+        if ($resource instanceof BaseResource) {
+            $this->resource = $resource;
+        } else {
+            $resourceClass = $this->resource();
+            if ($resourceClass && class_exists($resourceClass)) {
+                $this->resource = app()->make($resourceClass);
+            }
+        }
+        return $this->resource;
+    }
+
+    /**
      * The repository class
      *
      * @return string
@@ -45,7 +72,17 @@ trait SupportsRepositories
     }
 
     /**
-     * Get the repository URL
+     * The resource class
+     *
+     * @return string
+     */
+    public function resource()
+    {
+        return null;
+    }
+
+    /**
+     * Get the repository
      *
      * @return BaseRepository
      */
@@ -57,6 +94,18 @@ trait SupportsRepositories
         return $this->repository;
     }
 
+    /**
+     * Get the resource
+     *
+     * @return BaseRepository
+     */
+    public function getResource()
+    {
+        if (!isset($this->resource)) {
+            $this->resource = $this->createResource();
+        }
+        return $this->resource;
+    }
 
     public function toggle(Request $request, Model $model)
     {
@@ -68,7 +117,8 @@ trait SupportsRepositories
     /**
      * General import method
      *
-     * @param Request $request
+     * @param  Request         $request
+     * @param  ImplementsTeams $team
      * @return void
      */
     public function import(Request $request)
@@ -81,7 +131,7 @@ trait SupportsRepositories
         try {
             if (count($request->all()) > env('IMPORT_QUEUE_THRESHOLD', 25)) {
                 $class = $this->getRepository()->getImportJobClass();
-                $class::dispatch($this->repository(), $request)->onQueue('high');
+                $class::dispatch($this->repository(), $request, $team)->onQueue('high');
                 $result = [
                     'hasError' => false,
                     'isQueued' => true,
@@ -89,7 +139,7 @@ trait SupportsRepositories
                     'models' => []
                 ];
             } else {
-                $result = $this->getRepository()->import($request->all())['models'];
+                $result = $this->getRepository()->import($request->all(), $team)['models'];
             }
         } catch (\Exception $e) {
             if (!app()->environment('production')) {
@@ -103,7 +153,8 @@ trait SupportsRepositories
     /**
      * General export method
      *
-     * @param Request $request
+     * @param  Request         $request
+     * @param  ImplementsTeams $team
      * @return void
      */
     public function export(Request $request)
@@ -115,7 +166,8 @@ trait SupportsRepositories
         ];
         $class = $this->getRepository()->getExportJobClass();
         try {
-            $class::dispatch($this->repository(), $request)->onQueue('high');
+            // $this->getRepository()->export($request->all(), $team);
+            $class::dispatch($this->repository(), $request, $team)->onQueue('high');
             $result = [
                 'hasError' => false,
                 'isQueued' => true,
@@ -134,22 +186,22 @@ trait SupportsRepositories
     /**
      * Get the configration for the index
      *
-     * @param Request $request
-     * @param Team $team
+     * @param Request         $request
+     * @param ImplementsTeams $team
      */
     public function indexConfig(Request $request)
     {
-        return $this->printSuccess($this->getRepository()->prepareIndexConfig($request));
+        return $this->printSuccess($this->getRepository()->prepareIndexConfig($team, $request));
     }
 
     /**
      * Get the configration for the form
      *
-     * @param Request $request
-     * @param Team $team
+     * @param Request         $request
+     * @param ImplementsTeams $team
      */
     public function formConfig(Request $request)
     {
-        return $this->printSuccess($this->getRepository()->prepareFormConfig($request));
+        return $this->printSuccess($this->getRepository()->prepareFormConfig($team, $request));
     }
 }

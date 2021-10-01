@@ -4,7 +4,6 @@ namespace Nitm\Content\Repositories;
 
 use Nitm\Content\Models\User;
 use Nitm\Content\Repositories\BaseRepository;
-use App\Traits\Repository as RepositoryTrait;
 use Nitm\Content\Traits\RepositoryProfile;
 
 /**
@@ -15,30 +14,22 @@ use Nitm\Content\Traits\RepositoryProfile;
 
 class UserRepository extends BaseRepository
 {
+    use RepositoryProfile;
+
     /**
      * @var array
      */
     protected $fieldSearchable = [
         'name',
         'email',
-        'password'
     ];
-
-    /**
-     * Return searchable fields
-     *
-     * @return array
-     */
-    public function getFieldsSearchable(): array
-    {
-        return $this->fieldSearchable;
-    }
 
     /**
      * Configure the Model
      **/
     public function model(): string
     {
-        return User::class;
+        $class = config('nitm-content.user_model');
+        return $class;
     }
 }

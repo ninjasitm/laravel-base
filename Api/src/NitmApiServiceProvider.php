@@ -10,6 +10,16 @@ use Illuminate\Support\ServiceProvider;
  */
 class NitmApiServiceProvider extends ServiceProvider
 {
+
+    /**
+     * The controller namespace for the application.
+     *
+     * When present, controller route declarations will automatically be prefixed with this namespace.
+     *
+     * @var string|null
+     */
+    protected $namespace = 'Nitm\\Api\\Http\\Controllers';
+
     /**
      * Bootstrap any package services.
      *
@@ -17,7 +27,7 @@ class NitmApiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // $this->registerRoutes();
+        $this->registerRoutes();
         // $this->registerMigrations();
         $this->registerPublishing();
 
@@ -50,9 +60,7 @@ class NitmApiServiceProvider extends ServiceProvider
     {
         return [
             'domain' => config('nitm-api.domain', null),
-            'namespace' => 'Nitm\Content\Http\Controllers',
-            'prefix' => config('nitm-api.path', 'api'),
-            'middleware' => 'nitm-api',
+            'namespace' => config('nitm-api.social_auth_namesapce', '\Nitm\Api\Http\Controllers')
         ];
     }
 

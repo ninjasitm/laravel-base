@@ -1,27 +1,19 @@
 <?php
 namespace Nitm\Api\Http\Controllers\Auth;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Config;
-use Google_Client;
-use Carbon\Carbon;
 use Exception;
-use App\Team;
+use Carbon\Carbon;
+use Google_Client;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Auth\Guard;
 use App\Models\SocialProvider;
 use App\Auth\SocialProviderManager;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Foundation\Auth\RedirectsUsers;
+use Illuminate\Contracts\Auth\Guard;
+use Laravel\Socialite\Two\AbstractProvider;
 use MadWeb\SocialAuth\Events\SocialUserDetached;
 use Laravel\Socialite\Contracts\User as SocialUser;
 use Laravel\Socialite\Contracts\Factory as Socialite;
-use Laravel\Socialite\Two\AbstractProvider;
-use MadWeb\SocialAuth\Events\SocialUserAuthenticated;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use MadWeb\SocialAuth\Exceptions\SocialUserAttachException;
 use MadWeb\SocialAuth\Exceptions\SocialGetUserInfoException;
 use MadWeb\SocialAuth\Controllers\SocialAuthController as BaseController;
@@ -45,16 +37,17 @@ class TeamSocialAuthController extends BaseController
         if (request()->route('social')) {
             $this->middleware(
                 function ($request, $next) {
-                    $this->manager = new SocialProviderManager($request->route('social'));
+                    $class = config('nitm-api.social_auth_provider', '\\Nitm\\Api\\Auth\\SocialProviderManager');
+                    $this->manager = new $class($request->route('social'));
 
                     return $next($request);
                 }
             );
         }
-        $this->middleware('auth:api');
+        $this->middleware(config('nitm-api.social_auth_middleware'));
     }
 
-    public function refreshToken(Team $team, SocialProvdier $social)
+    public function refreshToken($team, SocialProvdier $social)
     {
         $provider = $this->socialite->driver($social->slug);
         $account = $team->socials()->whereSocialProviderId($social->id)->first();
@@ -75,7 +68,7 @@ class TeamSocialAuthController extends BaseController
      * @param  SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
-    public function getAccounts(Team $team)
+    public function getAccounts($team)
     {
         $accounts = $team->socials()->get()->map(
             function ($account) {
@@ -94,7 +87,7 @@ class TeamSocialAuthController extends BaseController
      * @param  SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
-    public function getAccountCustom(Team $team, SocialProvider $social)
+    public function getAccountCustom($team, SocialProvider $social)
     {
         $provider = $this->socialite->driver($social->slug);
 
@@ -110,7 +103,7 @@ class TeamSocialAuthController extends BaseController
         return $this->printSuccess($account);
     }
 
-    protected function getTeamAccount(Team $team, SocialProvider $social)
+    protected function getTeamAccount($team, SocialProvider $social)
     {
         $account = $team->socials()->whereSocialProviderId($social->id)->first();
         $provider = $this->socialite->driver($social->slug);
@@ -128,7 +121,7 @@ class TeamSocialAuthController extends BaseController
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
      */
-    public function callbackCustom(Request $request, Team $team, SocialProvider $social)
+    public function callbackCustom(Request $request, $team, SocialProvider $social)
     {
         $provider = $this->socialite->driver($social->slug);
 
@@ -188,7 +181,7 @@ class TeamSocialAuthController extends BaseController
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
      */
-    public function callforward(Request $request, Team $team, SocialProvider $social)
+    public function callforward(Request $request, $team, SocialProvider $social)
     {
         $type = $request->input('type');
         $provider = $this->socialite->driver($type);
@@ -247,10 +240,10 @@ class TeamSocialAuthController extends BaseController
      * @return array
      * @throws SocialUserAttachException
      */
-    public function detachAccountCustom(Request $request, Team $team, SocialProvider $social)
+    public function detachAccountCustom(Request $request, $team, SocialProvider $social)
     {
         /**
- * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user 
+ * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user
 */
         $user = $request->user();
         // $userSocials = $user->socials();
@@ -283,7 +276,7 @@ class TeamSocialAuthController extends BaseController
      * @param  SocialUser     $socialUser
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    protected function processDataCustom(Request $request, Team $team, SocialProvider $social, SocialUser $socialUser)
+    protected function processDataCustom(Request $request, $team, SocialProvider $social, SocialUser $socialUser)
     {
         //Checks by socialProvider identifier if user exists
         $existingUser = $this->manager->getUserByKey($socialUser->getId());
@@ -401,7 +394,7 @@ class TeamSocialAuthController extends BaseController
      */
     protected function checkToken(AbstractProvider $provider, SocialProvider $account = null)
     {
-        if ($account && (            !$account->token->expires_in 
+        if ($account && (            !$account->token->expires_in
             || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in))))
         ) {
             $token = null;
@@ -431,7 +424,7 @@ class TeamSocialAuthController extends BaseController
      * @param  SocialProvider $account
      * @return void
      */
-    protected function deleteToken(SocialProvider $social, Team $team)
+    protected function deleteToken(SocialProvider $social, $team)
     {
         switch ($social->slug) {
         case 'google':
@@ -447,7 +440,7 @@ class TeamSocialAuthController extends BaseController
      * @param  Team           $team
      * @return bool
      */
-    protected function deleteGoogleToken(SocialProvider $social, Team $team)
+    protected function deleteGoogleToken(SocialProvider $social, $team)
     {
         $account = $team->socials()->whereSocialProviderId($social->id)->first();
         if($account) {
@@ -462,7 +455,7 @@ class TeamSocialAuthController extends BaseController
             $client->setClientId($client_id);
             $client->setClientSecret($client_secret);
             $token = $account->token->token;
-            if(!$account->token->expires_in 
+            if(!$account->token->expires_in
                 || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in)))
             ) {
                 $token = Arr::get($this->refreshGoogleToken($account), 'access_token');

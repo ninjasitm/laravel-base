@@ -199,10 +199,11 @@ trait Repository
     {
         if($this->updateExisting) {
             $model = $this->model->firstOrCreate(Arr::only($input, $this->model->getFillable());
-            $model->fill($input);
         } else {
             $model = $this->model->newInstance($input);
         }
+
+        $model->fill(Arr::only($input, $model->getFillable()));
 
         $model->save();
 
@@ -243,6 +244,12 @@ trait Repository
             $query->where($id);
         } else if (is_numeric($id)) {
             $query->where('id', $id);
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+                $query->whereUuid($id);
+            } else {
+                $query->where('id', (int)$id);
+            }
         } elseif (is_array($id) || is_callable($id)) {
             $query->where($id);
         }
@@ -263,11 +270,24 @@ trait Repository
 
         $exists = $this->existsOrFail($id, $key, $silently);
 
-        if (!$exists) {
+        if (!$exists && $silently) {
             return false;
         }
 
-        return $query->find($id, $columns);
+        if (is_callable($id)) {
+            $query->where($id);
+        } else if (is_numeric($id)) {
+            $query->where($key, $id);
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+                $query->whereUuid($id);
+            } else {
+                $query->where($key, (int)$id);
+            }
+        } elseif (is_array($id) || is_callable($id)) {
+            $query->where($id);
+        }
+        return $query->get($columns)->first();
     }
 
     /**
@@ -283,8 +303,14 @@ trait Repository
         $query = $this->model->newQuery();
 
         $id = is_object($id) ? $id->id : $id;
-        if (is_scalar($id)) {
+        if (is_numeric($id)) {
             $query->where($key, $id);
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+                $query->whereUuid($id);
+            } else {
+                $query->where($key, (int)$id);
+            }
         } elseif (is_array($id)) {
             $query->where($id);
         } else {
@@ -334,8 +360,14 @@ trait Repository
         $query = $this->model->newQuery()->withTrashed();
 
         $id = is_object($id) ? $id->id : $id;
-        if (is_scalar($id)) {
+        if (is_numeric($id)) {
             $query->where($key, $id);
+        } else if (is_string($id)) {
+            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+                $query->whereUuid($id);
+            } else {
+                $query->where($key, $id);
+            }
         } elseif (is_array($id)) {
             $query->where($id);
         } else {

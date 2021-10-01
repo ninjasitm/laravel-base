@@ -19,6 +19,11 @@
         "php": ">=7.3.0",
         "laravel/framework": "7.*|8.*"
     },
+    "suggest": {
+        "mad-web/laravel-social-auth": "To support social auth",
+        "infyomlabs/laravel-generator": "To support easy  scaffolding",
+        "infyomlabs/swagger-generator": "To support swagger annotations for models"
+    },
     "require-dev": {
         "dms/phpunit-arraysubset-asserts": "^0.1.0",
         "fzaninotto/faker": "~1.4",
@@ -33,7 +38,8 @@
         "psr-4": {
             "Nitm\\Content\\": "Content/src",
             "Nitm\\Api\\": "Api/src",
-            "Nitm\\Helpers\\": "Helpers/src"
+            "Nitm\\Helpers\\": "Helpers/src",
+            "Nitm\\Testing\\": "Testing/src"
         }
     },
     "extra": {

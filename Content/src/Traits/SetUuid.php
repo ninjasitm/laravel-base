@@ -3,7 +3,7 @@
 namespace Nitm\Content\Traits;
 
 use Illuminate\Support\Str;
-use Nitm\Content\Traits\SetUuid;
+use Nitm\Content\Database\Eloquent\UuidBuilder;
 
 trait SetUuid
 {
@@ -26,31 +26,13 @@ trait SetUuid
     }
 
     /**
-     * Find a model by its primary key.
+     * Create a new Eloquent query builder for the model.
      *
-     * @param  mixed $id
-     * @param  array $columns
-     * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|static[]|static|null
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder|static
      */
-    public static function find($id, $columns = ['*'])
+    public function newEloquentBuilder($query)
     {
-        $query = new static;
-        if (is_array($id) || $id instanceof Arrayable) {
-            return $query->findMany($id, $columns);
-        }
-
-        if(is_string($id)
-            && !is_numeric($id)
-            && in_array(SetUuid::class, class_uses(get_class($query->getModel())))
-            && property_exists($query->getModel(), 'uuidFields')
-            && !empty($query->getModel()->uuidFields)
-        ) {
-            foreach($query->getModel()->uuidFields as $field) {
-                $query->orWhere($field, $id);
-            }
-            return $query->first();
-        }
-
-        return $query->whereKey($id)->first($columns);
+        return new UuidBuilder($query);
     }
 }
