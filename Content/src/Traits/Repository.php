@@ -22,6 +22,13 @@ trait Repository
     use RepositorySyncsRelations;
 
     /**
+     * Update the existing if it already exists
+     *
+     * @var bool
+     */
+    protected $updateExisting = true;
+
+    /**
      * Allow the user to define the fields to be returned
      *
      * @return void
@@ -190,7 +197,12 @@ trait Repository
      */
     public function create($input)
     {
-        $model = $this->model->newInstance($input);
+        if($this->updateExisting) {
+            $model = $this->model->firstOrCreate(Arr::only($input, $this->model->getFillable());
+            $model->fill($input);
+        } else {
+            $model = $this->model->newInstance($input);
+        }
 
         $model->save();
 

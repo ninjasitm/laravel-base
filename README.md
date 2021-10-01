@@ -29,5 +29,23 @@ To Publish the infyom templates
 ```
 php artisan vendor:publish  --tag=nitm-api-infyom
 ```
+## Swagger
+Be sure to add the following to the top of your base API controller:
+
+```
+/**
+ * @SWG\Swagger(
+ *   @SWG\Info(
+ *     title="Site Title",
+ *     version="1.0",
+ *     description="Site description",
+ *     @SWG\Contact(
+ *         email="xyz@xyz.com"
+ *     )
+ *   )
+ * )
+ */
+ class Controller {
+ ```
 ## Dependedncies
  - `infyom/laravel-generator` for API and model generation support
