@@ -2,11 +2,14 @@
 
 namespace Nitm\Content\Models;
 
-use Parsedown;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Parsedown;
 
 class Announcement extends Model
 {
+    use HasFactory;
+
     /**
      * The database table used by the model.
      *

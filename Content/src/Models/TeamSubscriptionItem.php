@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Cashier\Concerns\Prorates;
 use Laravel\Cashier\Exceptions\SubscriptionUpdateFailure;
@@ -12,7 +13,7 @@ use Stripe\SubscriptionItem as StripeSubscriptionItem;
  */
 class TeamSubscriptionItem extends Model
 {
-    use Prorates;
+    use Prorates, HasFactory;
 
     /**
      * The table associated with the model.
@@ -64,10 +65,10 @@ class TeamSubscriptionItem extends Model
 
         $options = array_merge(
             [
-            'plan' => $plan,
-            'quantity' => $this->quantity,
-            'proration_behavior' => $this->prorateBehavior(),
-            'tax_rates' => $this->subscription->getPlanTaxRatesForPayload($plan),
+                'plan'               => $plan,
+                'quantity'           => $this->quantity,
+                'proration_behavior' => $this->prorateBehavior(),
+                'tax_rates'          => $this->subscription->getPlanTaxRatesForPayload($plan),
             ], $options
         );
 
@@ -79,16 +80,16 @@ class TeamSubscriptionItem extends Model
 
         $this->fill(
             [
-            'stripe_plan' => $plan,
-            'quantity' => $item->quantity,
+                'stripe_plan' => $plan,
+                'quantity'    => $item->quantity,
             ]
         )->save();
 
         if ($this->subscription->hasSinglePlan()) {
             $this->subscription->fill(
                 [
-                'stripe_plan' => $plan,
-                'quantity' => $item->quantity,
+                    'stripe_plan' => $plan,
+                    'quantity'    => $item->quantity,
                 ]
             )->save();
         }

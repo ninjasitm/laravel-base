@@ -2,10 +2,13 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Laravel\Cashier\Subscription as CashierSubscription;
 
 class Subscription extends CashierSubscription
 {
+    use HasFactory;
+
     protected $table = "billing_subscriptions";
 
     /**

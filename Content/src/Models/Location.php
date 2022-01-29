@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Model;
 use Rainlab\Location\Models\Country;
 use Rainlab\Location\Models\State;
@@ -11,27 +12,28 @@ use Rainlab\Location\Models\State;
  */
 class Location extends Model
 {
+    use HasFactory;
     use \October\Rain\Database\Traits\Validation;
     use \Nitm\Content\Traits\Model;
 
     /*
-    * Validation
-    */
+     * Validation
+     */
     public $rules = [
         'address' => 'required',
     ];
 
     public $fillable = [
-        'title', 'city', 'zip', 'address', 'name', 'latitude', 'longitude', 'setLocation', 'state', 'country', 'description'
+        'title', 'city', 'zip', 'address', 'name', 'latitude', 'longitude', 'setLocation', 'state', 'country', 'description',
     ];
     public $visible = [
-        'id', 'city', 'zip', 'address', 'title', 'name', 'latitude', 'longitude', 'type'
+        'id', 'city', 'zip', 'address', 'title', 'name', 'latitude', 'longitude', 'type',
     ];
 
     /*
-    * Disable timestamps by default.
-    * Remove this line if timestamps are defined in the database table.
-    */
+     * Disable timestamps by default.
+     * Remove this line if timestamps are defined in the database table.
+     */
     public $timestamps = false;
 
     /**
@@ -41,10 +43,10 @@ class Location extends Model
 
     public $hasOne = [
         'image' => File::class,
-        'type' => [
+        'type'  => [
             LocationType::class,
-            'key' => 'type_id'
-        ]
+            'key' => 'type_id',
+        ],
     ];
 
     public $with = ['country', 'state'];
@@ -56,10 +58,10 @@ class Location extends Model
         unset($this->attributes['street']);
         if (!isset($this->attributes['name'])) {
             unset($this->attributes['street']);
-            $this->attributes['name'] = array_get($this->attributes, 'location_name', array_get($this->attributes, 'name'), array_get($this->attributes, 'address'));
-            $this->attributes['name'] = $this->attributes['name'] ?: $this->attributes['address'];
-            $this->attributes['title'] = array_get($this->attributes, 'title', $this->attributes['name']);
-            $this->attributes['title'] = $this->attributes['title'] ?: $this->attributes['name'];
+            $this->attributes['name']        = array_get($this->attributes, 'location_name', array_get($this->attributes, 'name'), array_get($this->attributes, 'address'));
+            $this->attributes['name']        = $this->attributes['name'] ?: $this->attributes['address'];
+            $this->attributes['title']       = array_get($this->attributes, 'title', $this->attributes['name']);
+            $this->attributes['title']       = $this->attributes['title'] ?: $this->attributes['name'];
             $this->attributes['description'] = @$this->attributes['description'] ?: $this->attributes['name'];
         }
     }
@@ -88,7 +90,7 @@ class Location extends Model
         if (!($country instanceof Country)) {
             if (!$country = Country::whereCode($code)
                 ->orWhere([
-                    'id' => intval($code)
+                    'id' => intval($code),
                 ])->first()) {
                 return;
             }
@@ -106,7 +108,7 @@ class Location extends Model
         if (!($state instanceof State)) {
             if (!$state = State::whereCode($code)
                 ->orWhere([
-                    'id' => intval($code)
+                    'id' => intval($code),
                 ])->first()) {
                 return;
             }

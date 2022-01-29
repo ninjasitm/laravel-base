@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Model;
 use Nitm\Content\Observers\BaseObserver;
 
@@ -13,14 +14,14 @@ use Nitm\Content\Observers\BaseObserver;
  */
 class Activity extends Model
 {
-    use \October\Rain\Database\Traits\Validation, \Nitm\Content\Traits\Model;
+    use \October\Rain\Database\Traits\Validation, \Nitm\Content\Traits\Model, HasFactory;
 
     /*
      * Validation
      */
     public $rules = [
         'object' => 'required',
-        'actor' => 'required',
+        'actor'  => 'required',
     ];
 
     public $with = [
@@ -39,7 +40,7 @@ class Activity extends Model
 
     public $casts = [
         'object' => 'array',
-        'actor' => 'array',
+        'actor'  => 'array',
         'target' => 'array',
     ];
 
@@ -50,18 +51,18 @@ class Activity extends Model
     ];
 
     public $hasOne = [
-        'watched' => [
+        'watched'      => [
             'Nitm\Content\Models\ContentView',
-            'key' => 'id',
+            'key'      => 'id',
             'otherKey' => 'content_id',
-            'scope' => 'watchedContent',
+            'scope'    => 'watchedContent',
         ],
         'watchedCount' => [
             'Nitm\Content\Models\ContentView',
-            'key' => 'id',
+            'key'      => 'id',
             'otherKey' => 'content_id',
-            'scope' => 'watchedContent',
-            'count' => true,
+            'scope'    => 'watchedContent',
+            'count'    => true,
         ],
     ];
 
@@ -75,15 +76,15 @@ class Activity extends Model
     {
         $remote = is_object($observer->getModel()) ? $observer->formatObject($observer->getModel()) : $observer->getModel();
         static::create([
-            'verb' => $observer->getActionName(),
-            'actor' => $observer->getActor(),
-            'object' => $observer->getObject(),
-            'title' => $observer->getTitleString(),
-            'target' => $observer->getTarget(),
+            'verb'            => $observer->getActionName(),
+            'actor'           => $observer->getActor(),
+            'object'          => $observer->getObject(),
+            'title'           => $observer->getTitleString(),
+            'target'          => $observer->getTarget(),
             'is_admin_action' => $observer->getIsAdminAction(),
-            'remote_type' => $remote['type'],
-            'remote_class' => @$remote['_model']['class'],
-            'remote_id' => @$remote['_model']['id'],
+            'remote_type'     => $remote['type'],
+            'remote_class'    => @$remote['_model']['class'],
+            'remote_id'       => @$remote['_model']['id'],
         ]);
         $observer->finish();
     }
@@ -95,20 +96,20 @@ class Activity extends Model
      */
     public function getDataAttribute($attribute = 'object')
     {
-        $attribute = $attribute ?: 'object';
-        $data = $this->{$attribute};
+        $attribute  = $attribute ?: 'object';
+        $data       = $this->{$attribute};
         $modelClass = array_get($data, '_model.class', null);
         if (class_exists($modelClass) && strpos($modelClass, 'Related') === false) {
-            $parts = explode('\\', $modelClass);
+            $parts                    = explode('\\', $modelClass);
             $parts[count($parts) - 1] = 'Related' . $parts[count($parts) - 1];
-            $relatedModelClass = implode('\\', $parts);
+            $relatedModelClass        = implode('\\', $parts);
             if (class_exists($relatedModelClass)) {
                 $modelClass = $relatedModelClass;
             }
         }
         $dataId = explode('/', $data['id']);
-        $id = array_get($data, '_model.id', array_pop($dataId));
-        $type = $data['type'];
+        $id     = array_get($data, '_model.id', array_pop($dataId));
+        $type   = $data['type'];
 
         $ret_val = $this->{$type} ? $this->{$type}->toArray() : [];
         //   if (empty($ret_val)) {
@@ -144,7 +145,7 @@ class Activity extends Model
     public function getWatched()
     {
         return (new ContentView())->newQuery()->where([
-            'content_id' => $this->id,
+            'content_id'   => $this->id,
             'content_type' => $this->is,
         ])->get();
     }
@@ -152,7 +153,7 @@ class Activity extends Model
     public function getWatchedCount()
     {
         return (new ContentView())->newQuery()->where([
-            'content_id' => $this->id,
+            'content_id'   => $this->id,
             'content_type' => $this->is,
         ])->count();
     }
@@ -259,7 +260,7 @@ class Activity extends Model
         $attributes = array_reverse(parent::toArray());
         //Disabling this as it causes timeouts. Need to figure out better way to store this info.
         //   $attributes['watchedCount'] = $this->getWatchedCount();
-        $target = !empty($attributes['target']) ? $attributes['target'] : $attributes['object'];
+        $target             = !empty($attributes['target']) ? $attributes['target'] : $attributes['object'];
         $attributes['type'] = 'feed';
 
         unset($attributes['actor']['_model'], $attributes['target']['_model'], $attributes['object']['_model']);
@@ -271,9 +272,9 @@ class Activity extends Model
                 'type' => null,
             ]));
             $attributes['object']['id'] = $this->getFixedPublicId($attributes['object']['id'], $attributes['object']['type']);
-            $attributes['id'] = array_get($data, 'id', $attributes['object']['id']);
-            $type = $this->objectType;
-            $attributes = array_filter($attributes);
+            $attributes['id']           = array_get($data, 'id', $attributes['object']['id']);
+            $type                       = $this->objectType;
+            $attributes                 = array_filter($attributes);
             if (isset($attributes[$type])) {
                 unset($attributes[$type]);
             }
@@ -316,7 +317,7 @@ class Activity extends Model
     protected function getImage($type)
     {
         $result = [];
-        $item = $this->{$type};
+        $item   = $this->{$type};
         if (!$item) {
             return [];
         }

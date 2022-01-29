@@ -1,6 +1,7 @@
 <?php
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Arr;
 use MadWeb\SocialAuth\Models\SocialProvider as BaseSocialProvider;
 
@@ -84,13 +85,15 @@ use MadWeb\SocialAuth\Models\SocialProvider as BaseSocialProvider;
  */
 class SocialProvider extends BaseSocialProvider
 {
+    use HasFactory;
+
     public $fillable = [
         'label',
         'slug',
         'scopes',
         'parameters',
         'override_scopes',
-        'stateless'
+        'stateless',
     ];
 
     /**
@@ -99,13 +102,13 @@ class SocialProvider extends BaseSocialProvider
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'label' => 'string',
-        'slug' => 'string',
-        'scopes' => 'array',
-        'parameters' => 'array',
+        'id'              => 'integer',
+        'label'           => 'string',
+        'slug'            => 'string',
+        'scopes'          => 'array',
+        'parameters'      => 'array',
         'override_scopes' => 'boolean',
-        'stateless' => 'boolean'
+        'stateless'       => 'boolean',
     ];
 
     /**
@@ -114,14 +117,14 @@ class SocialProvider extends BaseSocialProvider
      * @var array
      */
     public static $rules = [
-        'label' => 'required|string|max:255',
-        'slug' => 'nullable|string|max:255',
-        'scopes' => 'nullable|string',
-        'parameters' => 'nullable|string',
+        'label'           => 'required|string|max:255',
+        'slug'            => 'nullable|string|max:255',
+        'scopes'          => 'nullable|string',
+        'parameters'      => 'nullable|string',
         'override_scopes' => 'required|boolean',
-        'stateless' => 'required|boolean',
-        'created_at' => 'nullable',
-        'updated_at' => 'nullable'
+        'stateless'       => 'required|boolean',
+        'created_at'      => 'nullable',
+        'updated_at'      => 'nullable',
     ];
 
     /**
@@ -142,7 +145,7 @@ class SocialProvider extends BaseSocialProvider
      */
     public function toArray()
     {
-        $array = parent::toArray();
+        $array          = parent::toArray();
         $array['token'] = Arr::only(Arr::get($array, 'token', []), ['token', 'expires_in']);
         return $array;
     }

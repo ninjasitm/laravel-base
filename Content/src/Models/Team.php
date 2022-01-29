@@ -2,11 +2,13 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 
 class Team extends Model
 {
+    use HasFactory;
     use Notifiable;
 
     /**
@@ -47,7 +49,7 @@ class Team extends Model
      * @var array
      */
     protected $casts = [
-        'owner_id' => 'int',
+        'owner_id'      => 'int',
         'trial_ends_at' => 'datetime',
     ];
 
@@ -126,8 +128,8 @@ class Team extends Model
     public function getPhotoUrlAttribute($value)
     {
         return empty($value)
-                ? 'https://www.gravatar.com/avatar/'.md5($this->name.'@spark.laravel.com').'.jpg?s=200&d=identicon'
-                : url($value);
+        ? 'https://www.gravatar.com/avatar/' . md5($this->name . '@spark.laravel.com') . '.jpg?s=200&d=identicon'
+        : url($value);
     }
 
     /**
@@ -139,16 +141,16 @@ class Team extends Model
     {
         $this->makeVisible(
             [
-            'card_brand',
-            'card_last_four',
-            'card_country',
-            'billing_address',
-            'billing_address_line_2',
-            'billing_city',
-            'billing_state',
-            'billing_zip',
-            'billing_country',
-            'extra_billing_information',
+                'card_brand',
+                'card_last_four',
+                'card_country',
+                'billing_address',
+                'billing_address_line_2',
+                'billing_city',
+                'billing_state',
+                'billing_zip',
+                'billing_country',
+                'extra_billing_information',
             ]
         );
     }

@@ -2,10 +2,13 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LocalInvoice extends Model
 {
+    use HasFactory;
+
     /**
      * The database table used by the model.
      *
