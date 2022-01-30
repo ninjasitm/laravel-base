@@ -5,7 +5,7 @@ namespace Nitm\Content\Repositories;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Nitm\Content\NitmContent;
-use App\Traits\Repository as RepositoryTrait;
+use Nitm\Content\Traits\Repository as RepositoryTrait;
 use Nitm\Content\Traits\RepositoryProfile;
 use Nitm\Content\Events\PaymentMethod\VatIdUpdated;
 use Nitm\Content\Events\PaymentMethod\BillingAddressUpdated;

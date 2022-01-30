@@ -27,6 +27,7 @@
     "require-dev": {
         "dms/phpunit-arraysubset-asserts": "^0.1.0",
         "fzaninotto/faker": "~1.4",
+        "orchestra/testbench": "^6.22",
         "phpunit/phpunit": "~5.7",
         "phpunit/phpunit-selenium": "~1.2",
         "phpdocumentor/reflection-docblock": "2.0.4",

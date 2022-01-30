@@ -2,7 +2,7 @@
 
 namespace Nitm\Api\Http\Middleware;
 
-use App\Team;
+use Nitm\Content\Team;
 
 class EnablesTrashed
 {

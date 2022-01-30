@@ -11,12 +11,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Class Category
  *
- * @package App\Models
+ * @package Nitm\Content\Models
  * @version July 20, 2020, 1:25 am UTC
  *
- * @property \App\Models\User $author
- * @property \App\Models\User $editor
- * @property \App\Models\User $deleter
+ * @property \Nitm\Content\Models\User $author
+ * @property \Nitm\Content\Models\User $editor
+ * @property \Nitm\Content\Models\User $deleter
  * @property \Illuminate\Database\Eloquent\Collection $projects
  * @property \Illuminate\Database\Eloquent\Collection $people
  * @property \Illuminate\Database\Eloquent\Collection $project3s
@@ -267,7 +267,7 @@ class Category extends Model
      **/
     public function author()
     {
-        return $this->belongsTo(\App\Models\User::class, 'author_id');
+        return $this->belongsTo(\Nitm\Content\Models\User::class, 'author_id');
     }
 
     /**
@@ -275,7 +275,7 @@ class Category extends Model
      **/
     public function editor()
     {
-        return $this->belongsTo(\App\Models\User::class, 'editor_id');
+        return $this->belongsTo(\Nitm\Content\Models\User::class, 'editor_id');
     }
 
     /**
@@ -283,7 +283,7 @@ class Category extends Model
      **/
     public function deleter()
     {
-        return $this->belongsTo(\App\Models\User::class, 'deleter_id');
+        return $this->belongsTo(\Nitm\Content\Models\User::class, 'deleter_id');
     }
 
     /**
@@ -291,7 +291,7 @@ class Category extends Model
      **/
     public function projects()
     {
-        return $this->hasMany(\App\Models\Project::class, 'type_id');
+        return $this->hasMany(\Nitm\Content\Models\Project::class, 'type_id');
     }
 
     /**
@@ -299,7 +299,7 @@ class Category extends Model
      **/
     public function people()
     {
-        return $this->hasMany(\App\Models\Person::class, 'position_id');
+        return $this->hasMany(\Nitm\Content\Models\Person::class, 'position_id');
     }
 
     /**
@@ -332,7 +332,7 @@ class Category extends Model
      */
     public function scopeBindToType($query)
     {
-        if (get_called_class() !== 'App\Models\Category') {
+        if (get_called_class() !== 'Nitm\Content\Models\Category') {
             if (!$this->id) {
                 $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
                 $model = \DB::table($this->getTable())->where(

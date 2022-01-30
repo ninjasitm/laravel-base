@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace Nitm\Content\Traits;
 
 trait SetTeamId
 {
@@ -24,7 +24,7 @@ trait SetTeamId
                     $team = request()->route()->team;
                 }
 
-                if($team instanceof \App\Team) {
+                if($team instanceof \Nitm\Content\Team) {
                     foreach ((array)$model->createdByTeamFields as $field) {
                         $model->$field = $model->$field ?? $team->id;
                     }

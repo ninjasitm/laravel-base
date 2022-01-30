@@ -520,7 +520,7 @@ trait Search
                 }
 
                 if ($property === true) {
-                    if (ModelHelper::usesTrait('App\Traits\Search', get_class($query->getModel()))) {
+                    if (ModelHelper::usesTrait('Nitm\Content\Traits\Search', get_class($query->getModel()))) {
                         $query->cannotFilterRelations()->search($value);
                     }
                 } else {

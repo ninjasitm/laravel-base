@@ -202,7 +202,7 @@ class FileDownloadController extends Controller
      */
     protected function prepareMetadataFile($id, $fingerprint): array
     {
-        $model = app(\App\Repositories\Metadata\MetadataRepository::class)->findOrFail($id);
+        $model = app(\Nitm\Content\Repositories\Metadata\MetadataRepository::class)->findOrFail($id);
         $metadataFileFingerprint = Arr::get($model->rawValueArray, 'fingerprint');
         $metadataFileUrl = Arr::get($model->rawValueArray, 'url');
         $metadataFileName = Arr::get($model->rawValueArray, 'name');
@@ -248,7 +248,7 @@ class FileDownloadController extends Controller
      */
     protected function prepareMetadataFileFromFilename($id, $fileName = null): array
     {
-        $model = app(\App\Repositories\Metadata\MetadataRepository::class)->findOrFail($id);
+        $model = app(\Nitm\Content\Repositories\Metadata\MetadataRepository::class)->findOrFail($id);
         $fileName = $fileName ?? Arr::get($model->rawValueArray, 'name');
         $file = $this->getRepository()->search([
             'filter' => [

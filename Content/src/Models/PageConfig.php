@@ -44,7 +44,7 @@ class PageConfig extends BaseModel
                 $page = preg_replace('/[^a-zA-Z0-9]|pageconfig/', '_', class_basename($class));
                 $model->modelName = class_exists($class) ? class_basename($class) : $model->getGroupName() . ucfirst(Str::camel($page));
                 $model->page = 'pageconfig' . preg_replace('/[^a-zA-Z0-9]|pageconfig/', '', strtolower($page));
-                $model->namespace = $model->namesapce ?? (class_exists($class) ? (new \ReflectionClass($class))->getNamespaceName() : 'App\Models');
+                $model->namespace = $model->namesapce ?? (class_exists($class) ? (new \ReflectionClass($class))->getNamespaceName() : 'Nitm\Content\Models');
                 $model->modelClass = class_exists($class) ? $class : trim($model->namespace, '\\') . "\\" . trim($model->modelName, '\\');
                 $model->config = [];
             }
@@ -287,7 +287,7 @@ class PageConfig extends BaseModel
      *
      * @return array
      */
-    public function getPageModelOptions($directory = 'Models', $namespace = 'App\Models'): array
+    public function getPageModelOptions($directory = 'Models', $namespace = 'Nitm\Content\Models'): array
     {
         $files = preg_grep('/^' . static::getGroupName() . '(\w+).php/', scandir(app_path($directory)));
         $values = array_map(

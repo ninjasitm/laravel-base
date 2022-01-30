@@ -9,7 +9,7 @@ class Timezone
     /**
      * The current logged in user instance
      *
-     * @var App\User
+     * @var Nitm\Content\User
      */
     protected $user;
 

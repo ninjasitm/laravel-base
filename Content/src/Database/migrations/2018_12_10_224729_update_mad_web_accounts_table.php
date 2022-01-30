@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use App\Models\SocialProvider;
+use Nitm\Content\Models\SocialProvider;
 
 class UpdateMadWebAccountsTable extends Migration
 {

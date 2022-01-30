@@ -3,7 +3,7 @@ namespace Nitm\Api\Http\Controllers\Auth;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\User;
+use Nitm\Content\User;
 use Nitm\Api\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -62,7 +62,7 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  array $data
-     * @return \App\User
+     * @return \Nitm\Content\User
      */
     protected function create(array $data)
     {

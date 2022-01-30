@@ -19,8 +19,8 @@ use MadWeb\SocialAuth\Models\SocialProvider as BaseSocialProvider;
  * @property      bool $stateless
  * @property      string $created_at
  * @property      string $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Team[] $teams
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Nitm\Content\User[] $users
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Nitm\Content\Team[] $teams
  * @method        static \Illuminate\Database\Query\Builder|\MadWeb\SocialAuth\Models\SocialProvider whereId($value)
  * @method        static \Illuminate\Database\Query\Builder|\MadWeb\SocialAuth\Models\SocialProvider whereLabel($value)
  * @method        static \Illuminate\Database\Query\Builder|\MadWeb\SocialAuth\Models\SocialProvider whereSlug($value)
@@ -133,7 +133,7 @@ class SocialProvider extends BaseSocialProvider
     public function teams()
     {
         return $this->belongsToMany(
-            config('nitm-content.team_model', '\\App\\Team'),
+            config('nitm-content.team_model', '\\Nitm\Content\\Team'),
             'team_has_social_provider'
         );
     }

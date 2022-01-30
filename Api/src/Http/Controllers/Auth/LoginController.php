@@ -4,7 +4,7 @@ namespace Nitm\Api\Http\Controllers\Auth;
 
 use Nitm\Api\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use App\Services\FacebookService;
+use Nitm\Content\Services\FacebookService;
 
 class LoginController extends Controller
 {

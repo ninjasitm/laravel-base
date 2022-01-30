@@ -10,7 +10,7 @@ use Nitm\Content\Repositories\BaseRepository;
 /**
  * Class PageConfigRepository
  *
- * @package App\Repositories
+ * @package Nitm\Content\Repositories
  * @version December 5, 2020, 10:41 pm UTC
  */
 

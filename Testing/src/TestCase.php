@@ -2,14 +2,14 @@
 
 namespace Nitm\Testing;
 
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\SQLiteBuilder;
+use Illuminate\Database\SQLiteConnection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\SQLiteConnection;
-use Illuminate\Database\Schema\SQLiteBuilder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -18,7 +18,7 @@ abstract class TestCase extends BaseTestCase
     public static $databaseSeeded = false;
 
     /**
-     * @var App\Team
+     * @var Nitm\Content\Team
      */
     protected $team;
 
@@ -26,7 +26,6 @@ abstract class TestCase extends BaseTestCase
     {
         $this->team = $team;
     }
-
 
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
@@ -45,20 +44,20 @@ abstract class TestCase extends BaseTestCase
             'sqlite',
             function ($connection, $database, $prefix, $config) {
                 return new class($connection, $database, $prefix, $config) extends SQLiteConnection
-                {
+            {
                     public function getSchemaBuilder()
-                    {
+                {
                         if ($this->schemaGrammar === null) {
                             $this->useDefaultSchemaGrammar();
                         }
                         return new class($this) extends SQLiteBuilder
-                        {
+                    {
                             protected function createBlueprint($table, \Closure $callback = null)
-                            {
+                        {
                                 return new class($table, $callback) extends Blueprint
-                                {
+                            {
                                     public function dropForeign($index)
-                                    {
+                                {
                                         return new Fluent();
                                     }
                                 };
@@ -83,7 +82,7 @@ abstract class TestCase extends BaseTestCase
         $factory = factory($class, $count);
         if (is_array($options)) {
             if ($states = Arr::get($options, 'states')) {
-                call_user_func_array([$factory, 'states'], (array)$states);
+                call_user_func_array([$factory, 'states'], (array) $states);
             }
         }
         return $factory;
@@ -102,7 +101,7 @@ abstract class TestCase extends BaseTestCase
         $factory = factory($class, $count);
         if (is_array($options)) {
             if ($states = Arr::get($options, 'states')) {
-                call_user_func_array([$factory, 'states'], (array)$states);
+                call_user_func_array([$factory, 'states'], (array) $states);
             }
         }
         return $factory;
@@ -123,7 +122,7 @@ abstract class TestCase extends BaseTestCase
     {
         return [
             is_null($count) ? $this->generateModel($class, $options) : $this->generateModels($class, $options, $count),
-            $this->getFactoryRelation($options)
+            $this->getFactoryRelation($options),
         ];
     }
 }

@@ -4,11 +4,11 @@ namespace Nitm\Content\Models;
 
 use File as FileFacade;
 use Illuminate\Support\Arr;
-use App\Helpers\StringHelper;
-use App\Repositories\FileRepository as File;
+use Nitm\Content\Helpers\StringHelper;
+use Nitm\Content\Repositories\FileRepository as File;
 use Illuminate\Http\UploadedFile;
 use Nitm\Content\Models\BaseModel as Model;
-use App\Repositories\Files\FileRepository;
+use Nitm\Content\Repositories\Files\FileRepository;
 use Illuminate\Http\Testing\File as UploadedTestFile;
 
 /**
