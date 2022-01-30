@@ -4,7 +4,9 @@ namespace Nitm\Testing;
 
 use Illuminate\Support\Arr;
 use Nitm\Content\Models\Team;
+use Nitm\Content\Models\User;
 use Illuminate\Support\Fluent;
+use Nitm\Content\Models\TeamUser;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Database\Schema\SQLiteBuilder;
