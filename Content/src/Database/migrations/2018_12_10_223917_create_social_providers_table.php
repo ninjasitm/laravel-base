@@ -13,8 +13,8 @@ class CreateSocialProvidersTable extends Migration
      */
     public function up()
     {
-        $tableNames  = config('social-auth.tableNames');
-        $foreignKeys = config('social-auth.foreignKeys');
+        $tableNames  = config('social-auth.table_names');
+        $foreignKeys = config('social-auth.foreign_keys');
         $modelName   = config('social-auth.models.user');
 
         if (!empty($modelName)) {
@@ -70,7 +70,7 @@ class CreateSocialProvidersTable extends Migration
      */
     public function down()
     {
-        $tableNames = config('social-auth.tableNames');
+        $tableNames = config('social-auth.table_names');
         if (!empty($tableNames)) {
 
             Schema::dropIfExists($tableNames['user_has_social_provider']);
