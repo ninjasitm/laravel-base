@@ -5,6 +5,7 @@ namespace Nitm\Content\Models;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Nitm\Content\NitmContent;
+use Nitm\Content\Traits\SetUserId;
 
 /**
  *    @SWG\Definition(
@@ -14,11 +15,15 @@ use Nitm\Content\NitmContent;
  */
 class Role extends Model
 {
+    use SetUserId;
+
     public $timestamps = false;
 
     protected $table = "roles";
 
     protected $fillable = ['name'];
+
+    public $createdByAuthFields = ['created_by_id'];
 
     // protected $hidden = ["id"];
 
