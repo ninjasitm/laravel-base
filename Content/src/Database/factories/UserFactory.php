@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories\Nitm\Content\Models;
+namespace Nitm\Content\Database\Factories;
 
 use CloudCreativity\LaravelStripe\Facades\Stripe;
 use Illuminate\Database\Eloquent\Factories\Factory;

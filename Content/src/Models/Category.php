@@ -2,12 +2,12 @@
 
 namespace Nitm\Content\Models;
 
-use Database\Factories\Nitm\Content\Models\CategoryFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use Nitm\Content\Models\BaseModel as Model;
-use Nitm\Content\Traits\NestedTree;
 use Nitm\Content\Traits\Sluggable;
+use Nitm\Content\Traits\NestedTree;
+use Nitm\Content\Models\BaseModel as Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Nitm\Content\Database\Factories\CategoryFactory;
 
 /**
  * Class Category
@@ -363,6 +363,6 @@ class Category extends Model
      */
     public static function newFactory()
     {
-        return CategoryFactory::new ();
+        return CategoryFactory::new();
     }
 }

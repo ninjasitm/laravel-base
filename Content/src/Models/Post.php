@@ -3,13 +3,13 @@
 namespace Nitm\Content\Models;
 
 use Carbon\Carbon;
-use Database\Factories\Nitm\Content\Models\PostFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Arr;
-use Nitm\Content\Models\BaseModel as Model;
-use Nitm\Content\Traits\Sluggable;
 use Nitm\Helpers\ImageHelper;
+use Nitm\Content\Traits\Sluggable;
+use Nitm\Content\Models\BaseModel as Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Nitm\Content\Database\Factories\PostFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * Class Post
@@ -180,11 +180,13 @@ class Post extends Model
             function ($query) use ($categories) {
                 $class = PostCategory::class;
                 $query->whereIn(
-                    'id', function ($query) use ($categories) {
+                    'id',
+                    function ($query) use ($categories) {
                         $query->select('post_id')
                             ->from('rainlab_blog_posts_categories')
                             ->whereIn(
-                                'category_id', function ($query) use ($categories) {
+                                'category_id',
+                                function ($query) use ($categories) {
                                     $query->select('id')
                                         ->from('rainlab_blog_categories')
                                         ->whereIn('slug', $categories);
@@ -205,7 +207,8 @@ class Post extends Model
     public function scopeFilterCategories($query, $categories)
     {
         return $query->whereHas(
-            'categories', function ($q) use ($categories) {
+            'categories',
+            function ($q) use ($categories) {
                 $q->whereIn('id', $categories);
             }
         );
@@ -284,7 +287,8 @@ class Post extends Model
                 [
                     'direction' => 'next',
                     'attribute' => 'published_at',
-                ], $options
+                ],
+                $options
             )
         );
 
@@ -328,6 +332,6 @@ class Post extends Model
      */
     public static function newFactory()
     {
-        return PostFactory::new ();
+        return PostFactory::new();
     }
 }

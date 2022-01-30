@@ -6,8 +6,8 @@ use Nitm\Content\Traits\Model;
 use Nitm\Content\Traits\Search;
 use Nitm\Content\Traits\Feature;
 use Illuminate\Notifications\Notifiable;
+use Nitm\Content\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Database\Factories\Nitm\Content\Models\UserFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
