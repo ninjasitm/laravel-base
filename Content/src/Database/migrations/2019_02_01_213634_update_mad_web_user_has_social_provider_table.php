@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateMadWebUserHasSocialProviderTable extends Migration
 {
@@ -13,10 +12,12 @@ class UpdateMadWebUserHasSocialProviderTable extends Migration
      */
     public function up()
     {
-        //
-        Schema::table('user_has_social_provider', function ($table) {
-            $table->string('offline_token')->nullable();
-        });
+        if (Schema::hasTable('user_has_social_provider')) {
+            Schema::table('user_has_social_provider', function ($table) {
+                $table->string('offline_token')->nullable();
+            });
+        }
+
     }
 
     /**
@@ -26,10 +27,11 @@ class UpdateMadWebUserHasSocialProviderTable extends Migration
      */
     public function down()
     {
-        //
-        Schema::table('user_has_social_provider', function ($table) {
-            $table->dropColumn('offline_token');
-        });
+        if (Schema::hasTable('user_has_social_provider')) {
+            Schema::table('user_has_social_provider', function ($table) {
+                $table->dropColumn('offline_token');
+            });
+        }
 
     }
 }
