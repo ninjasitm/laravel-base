@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Nitm\Content\NitmContent;
 
 class UpdateUserActivity implements ShouldQueue
 {
@@ -32,7 +33,7 @@ class UpdateUserActivity implements ShouldQueue
      */
     public function handle()
     {
-        $class = config('nitm-content.user_model');
+        $class = NitmContent::userModel();
         if (!class_exists($class)) {
             throw new \Exception('User model not found');
         }

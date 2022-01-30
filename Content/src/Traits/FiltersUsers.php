@@ -2,9 +2,9 @@
 
 namespace Nitm\Content\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
 use Nitm\Content\Models\User;
 use Nitm\Helpers\AttachedUsersHelper;
-use Illuminate\Database\Eloquent\Builder;
 
 trait FiltersUsers
 {
@@ -62,7 +62,8 @@ trait FiltersUsers
     public function scopeHasUser($query, $user, $property = 'id')
     {
         $query->whereHas(
-            'users', function ($query) use ($user, $property) {
+            'users',
+            function ($query) use ($user, $property) {
                 $query->select('users.id');
                 static::filterUsers($query, $user, $property);
             }
@@ -81,7 +82,8 @@ trait FiltersUsers
     public function scopeHasMentor($query, $user, $property = 'id')
     {
         $query->whereHas(
-            'mentors', function ($query) use ($user, $property) {
+            'mentors',
+            function ($query) use ($user, $property) {
                 $query->select('users.id');
                 static::filterUsers($query, $user, $property);
             }
@@ -100,7 +102,8 @@ trait FiltersUsers
     public function scopeHasStudent($query, $user, $property = 'id')
     {
         $query->whereHas(
-            'students', function ($query) use ($user, $property) {
+            'students',
+            function ($query) use ($user, $property) {
                 $query->select('users.id');
 
                 static::filterUsers($query, $user, $property);
@@ -120,7 +123,8 @@ trait FiltersUsers
     public function scopeHasOrganizationAdmin($query, $user, $property = 'id')
     {
         $query->whereHas(
-            'organizationAdmins', function ($query) use ($user, $property) {
+            'organizationAdmins',
+            function ($query) use ($user, $property) {
                 $query->select('users.id');
                 static::filterUsers($query, $user, $property);
             }

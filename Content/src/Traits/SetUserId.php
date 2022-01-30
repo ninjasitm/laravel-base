@@ -2,9 +2,7 @@
 
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use NitmContent;
+use Nitm\Content\NitmContent;
 
 trait SetUserId
 {
@@ -28,6 +26,6 @@ trait SetUserId
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(config('nitm-content.user_model'), 'user_id');
+        return $this->belongsTo(NitmContent::userModel(), 'user_id');
     }
 }

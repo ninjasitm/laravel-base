@@ -4,6 +4,7 @@ namespace Nitm\Content\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Nitm\Content\NitmContent;
 
 class Invitation extends Model
 {
@@ -47,7 +48,7 @@ class Invitation extends Model
      */
     public function team()
     {
-        return $this->belongsTo(config('nitm-content.team_model'), 'team_id');
+        return $this->belongsTo(NitmContent::teamModel(), 'team_id');
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Nitm\Content\Repositories;
 
 use Nitm\Content\Models\User;
+use Nitm\Content\NitmContent;
 use Nitm\Content\Repositories\BaseRepository;
 use Nitm\Content\Traits\RepositoryProfile;
 
@@ -29,7 +30,7 @@ class UserRepository extends BaseRepository
      **/
     public function model(): string
     {
-        $class = config('nitm-content.user_model');
+        $class = NitmContent::userModel();
         return $class;
     }
 }
