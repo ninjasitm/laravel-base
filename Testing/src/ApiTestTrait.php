@@ -3,6 +3,7 @@
 namespace Nitm\Testing;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 
 trait ApiTestTrait
 {
@@ -76,6 +77,27 @@ trait ApiTestTrait
     public function dumpResponse()
     {
         dump($this->response);
+    }
+
+    /**
+     * Dump the currently defined routes
+     *
+     * @return void
+     */
+    public function dumpRoutes()
+    {
+        $routes = collect(array_map(function (\Illuminate\Routing\Route $route) {
+            return [
+                "method" => $route->methods[0],
+                // 'action' => $route->action,
+                'controller' => $route->action['controller'],
+                "uri" => $route->uri,
+                'as' => Arr::get($route->action, 'as'),
+                'middleware' => Arr::get($route->action, 'middleware'),
+            ];
+        }, (array) Route::getRoutes()->getIterator()))->keyBy('uri');
+
+        dump($routes->toArray());
     }
 
     /**
