@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Support\Str;
 use Nitm\Content\NitmContent;
 use Nitm\Content\Models\Invitation;
 use Illuminate\Database\Eloquent\Model;
