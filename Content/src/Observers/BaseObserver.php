@@ -171,7 +171,7 @@ abstract class BaseObserver
 
     public function getActor()
     {
-        return $this->actor;
+        return $this->actor ?: auth()->user();
     }
 
     public function getObject()
@@ -186,20 +186,23 @@ abstract class BaseObserver
 
     protected function recordActivity()
     {
-        if (config('nitm-content.use_legacy_activity_logging')) {
-            $result = Activity::recordActivity($this);
-        } else {
-            $result = activity()
-                ->performedOn($this->target ?: $this->object)
-                ->casuedBy($this->actor)
-                ->withProperties([
-                    'action' => $this->getActionName(),
-                    'object' => $this->object,
-                ])->log($this->getTitleString());
-        }
-        $this->finish();
+        if (config('activitylog.enabled')) {
+            if (config('nitm-content.use_legacy_activity_logging')) {
+                $result = Activity::recordActivity($this);
+            } else {
+                $result = activity()
+                    ->performedOn($this->target ?: $this->object)
+                    ->casuedBy($this->getActor())
+                    ->withProperties([
+                        'action' => $this->getActionName(),
+                        'object' => $this->object,
+                    ])->log($this->getTitleString());
+            }
+            $this->finish();
 
-        return $result;
+            return $result;
+        }
+        return optional();
     }
 
     /**
