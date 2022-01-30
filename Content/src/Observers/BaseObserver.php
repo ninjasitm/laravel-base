@@ -2,9 +2,10 @@
 
 namespace Nitm\Content\Observers;
 
-use Nitm\Content\Models\BaseModel;
 use Nitm\Helpers\ImageHelper;
 use Nitm\Helpers\ModelHelper;
+use Nitm\Content\Models\Activity;
+use Nitm\Content\Models\BaseModel;
 
 abstract class BaseObserver
 {
@@ -185,9 +186,17 @@ abstract class BaseObserver
 
     protected function recordActivity()
     {
-        $ap = \App::make('Nitm\ActivityProvider');
-
-        $result = $ap->recordActivity($this);
+        if (config('nitm-content.use_legacy_activity_logging')) {
+            $result = Activity::recordActivity($this);
+        } else {
+            $result = activity()
+                ->performedOn($this->target ?: $this->object)
+                ->casuedBy($this->actor)
+                ->withProperties([
+                    'action' => $this->getActionName(),
+                    'object' => $this->object,
+                ])->log($this->getTitleString());
+        }
         $this->finish();
 
         return $result;
