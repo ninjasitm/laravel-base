@@ -2,9 +2,10 @@
 
 namespace Nitm\Content\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Nitm\Content\Database\Factories\TeamFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Team extends Model
 {
@@ -77,7 +78,10 @@ class Team extends Model
     public function users()
     {
         return $this->belongsToMany(
-            NitmContent::userModel(), 'team_users', 'team_id', 'user_id'
+            NitmContent::userModel(),
+            'team_users',
+            'team_id',
+            'user_id'
         )->withPivot('role');
     }
 
@@ -128,8 +132,8 @@ class Team extends Model
     public function getPhotoUrlAttribute($value)
     {
         return empty($value)
-        ? 'https://www.gravatar.com/avatar/' . md5($this->name . '@spark.laravel.com') . '.jpg?s=200&d=identicon'
-        : url($value);
+            ? 'https://www.gravatar.com/avatar/' . md5($this->name . '@spark.laravel.com') . '.jpg?s=200&d=identicon'
+            : url($value);
     }
 
     /**
@@ -185,5 +189,15 @@ class Team extends Model
         $array = parent::toArray();
 
         return $array;
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public static function newFactory()
+    {
+        return TeamFactory::new();
     }
 }
