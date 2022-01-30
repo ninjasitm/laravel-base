@@ -183,6 +183,41 @@ class Team extends Model
     }
 
     /**
+     * Resolve Role to a supported role
+     *
+     * @param  mixed $role
+     * @return string
+     */
+    public function resolveRole(string $role): string
+    {
+        $roles = \Cache::rememberForever(
+            'user-roles',
+            function () {
+                return Role::where("name", "!=", "Super Admin")->get();
+            }
+        );
+        $role = Str::slug($role);
+        return in_array($role, collect($roles->toArray())->pluck('id')->all()) ? $role : 'student';
+    }
+
+    /**
+     * Retrieve the model for a bound value.
+     *
+     * @param  mixed $value
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($value instanceof Team) {
+            return $value;
+        }
+
+        $value = is_array($value) ? $value['id'] : $value;
+        $key = is_numeric($value) ? 'id' : 'slug';
+        return $this->where($key, $value)->setEagerLoads([])->first() ?? abort(404);
+    }
+
+    /**
      * Convert the model instance to an array.
      *
      * @return array
