@@ -23,12 +23,6 @@ abstract class TestCase extends BaseTestCase
      */
     protected $team;
 
-    public function __construct(?string $name = null, array $data = [], string $dataName = '')
-    {
-        ini_set('memory_limit', '2G');
-        parent::__construct($name, $data, $dataName);
-    }
-
     protected function setupTeam($team)
     {
         $this->team = $team;
@@ -36,6 +30,7 @@ abstract class TestCase extends BaseTestCase
 
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
+        ini_set('memory_limit', '2G');
         if (class_exists('Laravel\Cashier\Cashier')) {
             \Laravel\Cashier\Cashier::ignoreMigrations();
         }
