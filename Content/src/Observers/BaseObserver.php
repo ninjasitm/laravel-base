@@ -246,7 +246,7 @@ abstract class BaseObserver
                     'id'     => $model->publicId,
                     'type'   => $model->is,
                     'url'    => $model->publicId,
-                    'name'   => $model instanceof BaseModel ? $model->title() : $model->title ?: $model->name,
+                    'name'   => $model instanceof BaseModel ? $model->title() : ($model->title ?: $model->name),
                     'image'  => [
                         'type' => 'link',
                         'url'  => $model->image ? ImageHelper::createOrGetThumbnail($model->image, 256, 256) : '',
