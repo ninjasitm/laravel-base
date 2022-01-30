@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Database\Factories\Nitm\Content\Models\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -54,4 +55,14 @@ class User extends Authenticatable
     public $appends = ['profile', 'fullName'];
 
     public $eagerWith = [];
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    function newFactory()
+    {
+        return UserFactory::new ();
+    }
 }

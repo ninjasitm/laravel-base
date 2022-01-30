@@ -3,12 +3,13 @@
 namespace Nitm\Content\Models;
 
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
-use Nitm\Helpers\ImageHelper;
-use Nitm\Content\Traits\Sluggable;
-use Nitm\Content\Models\BaseModel as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Database\Factories\Nitm\Content\Models\PostFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Nitm\Content\Models\BaseModel as Model;
+use Nitm\Content\Traits\Sluggable;
+use Nitm\Helpers\ImageHelper;
 
 /**
  * Class Post
@@ -35,9 +36,7 @@ class Post extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-
     protected $dates = ['deleted_at'];
-
 
     public $fillable = [
         'user_id',
@@ -47,7 +46,7 @@ class Post extends Model
         'content',
         'content_html',
         'published_at',
-        'published'
+        'published',
     ];
 
     /**
@@ -56,15 +55,15 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'user_id' => 'integer',
-        'title' => 'string',
-        'slug' => 'string',
-        'excerpt' => 'string',
-        'content' => 'string',
+        'id'           => 'integer',
+        'user_id'      => 'integer',
+        'title'        => 'string',
+        'slug'         => 'string',
+        'excerpt'      => 'string',
+        'content'      => 'string',
         'content_html' => 'string',
         'published_at' => 'datetime',
-        'published' => 'boolean'
+        'published'    => 'boolean',
     ];
 
     /**
@@ -73,11 +72,11 @@ class Post extends Model
      * @var array
      */
     public static $rules = [
-        'title' => 'required'
+        'title' => 'required',
     ];
 
     public $createdByAuthFields = [
-        'user_id'
+        'user_id',
     ];
 
     protected $slugs = [
@@ -114,11 +113,11 @@ class Post extends Model
      */
     public function toArray($fullContent = false): array
     {
-        $attributes = parent::toArray();
-        $genericAvatar = ImageHelper::getPlaceHolderAvatar();
+        $attributes           = parent::toArray();
+        $genericAvatar        = ImageHelper::getPlaceHolderAvatar();
         $attributes['author'] = [
-            'name' => $this->user ? $this->user->name : 'NITM',
-            'image' => $this->user ? ($this->user->avatar ? $this->user->avatar->getPath() : $genericAvatar) : $genericAvatar
+            'name'  => $this->user ? $this->user->name : 'NITM',
+            'image' => $this->user ? ($this->user->avatar ? $this->user->avatar->getPath() : $genericAvatar) : $genericAvatar,
         ];
         // $attributes['image'] = $this->images->count() ? $this->images->first()->getPath() : ImageHelper::getPlaceHolderBackground();
         if ($fullContent) {
@@ -134,7 +133,7 @@ class Post extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(PostCategory::class,  'posts_categories', 'post_id',  'category_id');
+        return $this->belongsToMany(PostCategory::class, 'posts_categories', 'post_id', 'category_id');
     }
 
     /**
@@ -283,14 +282,14 @@ class Post extends Model
         extract(
             array_merge(
                 [
-                'direction' => 'next',
-                'attribute' => 'published_at'
+                    'direction' => 'next',
+                    'attribute' => 'published_at',
                 ], $options
             )
         );
 
-        $isPrevious = in_array($direction, ['previous', -1]);
-        $directionOrder = $isPrevious ? 'asc' : 'desc';
+        $isPrevious        = in_array($direction, ['previous', -1]);
+        $directionOrder    = $isPrevious ? 'asc' : 'desc';
         $directionOperator = $isPrevious ? '>' : '<';
 
         $query->where('id', '<>', $this->id);
@@ -320,5 +319,15 @@ class Post extends Model
     public function previousPost()
     {
         return self::isPublished()->applySibling(-1)->first();
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return PostFactory::new ();
     }
 }

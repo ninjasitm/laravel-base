@@ -2,11 +2,12 @@
 
 namespace Nitm\Content\Models;
 
-use Illuminate\Support\Str;
-use Nitm\Content\Traits\Sluggable;
-use Nitm\Content\Traits\NestedTree;
-use Nitm\Content\Models\BaseModel as Model;
+use Database\Factories\Nitm\Content\Models\CategoryFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Str;
+use Nitm\Content\Models\BaseModel as Model;
+use Nitm\Content\Traits\NestedTree;
+use Nitm\Content\Traits\Sluggable;
 
 /**
  * Class Category
@@ -136,9 +137,7 @@ class Category extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-
     protected $dates = ['deleted_at'];
-
 
     public $fillable = [
         'title',
@@ -151,7 +150,7 @@ class Category extends Model
         'parent_id',
         'nest_left',
         'nest_right',
-        'nest_depth'
+        'nest_depth',
     ];
 
     /**
@@ -160,18 +159,18 @@ class Category extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'title' => 'string',
-        'slug' => 'string',
+        'id'          => 'integer',
+        'title'       => 'string',
+        'slug'        => 'string',
         'description' => 'string',
-        'photo_url' => 'string',
-        'author_id' => 'integer',
-        'editor_id' => 'integer',
-        'deleter_id' => 'integer',
-        'parent_id' => 'integer',
-        'nest_left' => 'integer',
-        'nest_right' => 'integer',
-        'nest_depth' => 'integer'
+        'photo_url'   => 'string',
+        'author_id'   => 'integer',
+        'editor_id'   => 'integer',
+        'deleter_id'  => 'integer',
+        'parent_id'   => 'integer',
+        'nest_left'   => 'integer',
+        'nest_right'  => 'integer',
+        'nest_depth'  => 'integer',
     ];
 
     /**
@@ -180,9 +179,9 @@ class Category extends Model
      * @var array
      */
     public static $rules = [
-        'title' => 'required',
+        'title'       => 'required',
         'description' => 'sometimes',
-        'author_id' => 'sometimes'
+        'author_id'   => 'sometimes',
     ];
 
     protected $slugs = [
@@ -317,7 +316,7 @@ class Category extends Model
         if ($slug != 'category') {
             $query->where(
                 [
-                'slug' => $slug,
+                    'slug' => $slug,
                 ]
             );
         }
@@ -334,14 +333,14 @@ class Category extends Model
     {
         if (get_called_class() !== 'Nitm\Content\Models\Category') {
             if (!$this->id) {
-                $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
+                $slug  = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
                 $model = \DB::table($this->getTable())->where(
                     [
-                    'slug' => $slug,
+                        'slug' => $slug,
                     ]
                 )->first();
                 if ($model) {
-                    $this->fill((array)$model);
+                    $this->fill((array) $model);
                     $query->allChildren();
                 }
             }
@@ -355,5 +354,15 @@ class Category extends Model
             $query->bindToType();
         }
         return $query;
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory()
+    {
+        return CategoryFactory::new ();
     }
 }

@@ -40,7 +40,8 @@
             "Nitm\\Content\\": "Content/src",
             "Nitm\\Api\\": "Api/src",
             "Nitm\\Helpers\\": "Helpers/src",
-            "Nitm\\Testing\\": "Testing/src"
+            "Nitm\\Testing\\": "Testing/src",
+            "Nitm\\Content\\Database\\Factories\\": "database/factories/"
         }
     },
     "extra": {
