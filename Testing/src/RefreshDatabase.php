@@ -36,6 +36,7 @@ trait RefreshDatabase
             throw new \Exception("Not in testing environment!");
         }
 
+        $this->artisan('config:clear');
         $this->artisan('migrate:refresh');
 
         $this->app[Kernel::class]->setArtisan(null);

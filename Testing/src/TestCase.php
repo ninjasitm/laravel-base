@@ -2,14 +2,15 @@
 
 namespace Nitm\Testing;
 
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Schema\SQLiteBuilder;
-use Illuminate\Database\SQLiteConnection;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
+use Nitm\Content\Models\Team;
 use Illuminate\Support\Fluent;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\SQLiteConnection;
+use Illuminate\Database\Schema\SQLiteBuilder;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -21,6 +22,12 @@ abstract class TestCase extends BaseTestCase
      * @var Nitm\Content\Team
      */
     protected $team;
+
+    public function __construct(?string $name = null, array $data = [], string $dataName = '')
+    {
+        ini_set('memory_limit', '2G');
+        parent::__construct($name, $data, $dataName);
+    }
 
     protected function setupTeam($team)
     {
@@ -36,6 +43,44 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Use as the given role for the specified team
+     *
+     * @param  mixed $role
+     * @param  mixed $team
+     * @return void
+     */
+    protected function useAs($role, $team = null)
+    {
+        $team = $team ?: $this->team ?: Team::factory()->create();
+        $user = User::factory()->create();
+        $teamUser = TeamUser::firstOrCreate(['team_id' => $team->id, 'role' => $role, 'user_id' => $user->id, 'is_approved' => true]);
+        auth()->login($user);
+        return $user;
+    }
+
+    /**
+     * useAsUser
+     *
+     * @param  mixed $team
+     * @return void
+     */
+    protected function useAsUser($team = null)
+    {
+        return $this->useAs(User::ROLE_USER, $team);
+    }
+
+    /**
+     * useAsAdmin
+     *
+     * @param  mixed $team
+     * @return void
+     */
+    protected function useAsAdmin($team = null)
+    {
+        return $this->useAs(User::ROLE_ADMIN, $team);
+    }
+
+    /**
      * Hotfix for SQLite
      */
     public function hotfixSqlite()
@@ -44,20 +89,20 @@ abstract class TestCase extends BaseTestCase
             'sqlite',
             function ($connection, $database, $prefix, $config) {
                 return new class($connection, $database, $prefix, $config) extends SQLiteConnection
-            {
-                    public function getSchemaBuilder()
                 {
+                    public function getSchemaBuilder()
+                    {
                         if ($this->schemaGrammar === null) {
                             $this->useDefaultSchemaGrammar();
                         }
                         return new class($this) extends SQLiteBuilder
-                    {
-                            protected function createBlueprint($table, \Closure $callback = null)
                         {
-                                return new class($table, $callback) extends Blueprint
+                            protected function createBlueprint($table, \Closure $callback = null)
                             {
-                                    public function dropForeign($index)
+                                return new class($table, $callback) extends Blueprint
                                 {
+                                    public function dropForeign($index)
+                                    {
                                         return new Fluent();
                                     }
                                 };
@@ -124,5 +169,28 @@ abstract class TestCase extends BaseTestCase
             is_null($count) ? $this->generateModel($class, $options) : $this->generateModels($class, $options, $count),
             $this->getFactoryRelation($options),
         ];
+    }
+
+    public function setUpTraits(): void
+    {
+        parent::setUpTraits();
+
+        unset($this->app['middleware.disable']);
+        $this->withoutMiddleware([
+            \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+            \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+            \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+            // 'auth',
+            'auth.basic',
+            'cache.headers',
+            'can',
+            'dev',
+            'guest',
+            'throttle',
+            'signed',
+            'fw-only-whitelisted',
+            'fw-block-blacklisted',
+            'fw-block-attacks'
+        ]);
     }
 }
