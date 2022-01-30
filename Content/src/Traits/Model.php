@@ -394,4 +394,20 @@ trait Model
 
         return $model;
     }
+
+    /**
+     * Return the title for this model
+     *
+     * @return string
+     */
+    public function title(): string
+    {
+        if (property_exists($this, 'title')) {
+            return $this->title;
+        }
+        if (property_exists($this, 'name')) {
+            return $this->name;
+        }
+        return '(not set)';
+    }
 }

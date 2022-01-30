@@ -2,8 +2,9 @@
 
 namespace Nitm\Content\Observers;
 
-use Nitm\Content\Models\BaseContent;
-use Nitm\Content\Classes\ImageHelper;
+use Nitm\Content\Models\BaseModel;
+use Nitm\Helpers\ImageHelper;
+use Nitm\Helpers\ModelHelper;
 
 abstract class BaseObserver
 {
@@ -12,7 +13,7 @@ abstract class BaseObserver
     /**
      * The model being observed.
      *
-     * @var \Nitm\BaseContent model
+     * @var \Nitm\BaseModel model
      */
     protected $model;
 
@@ -69,8 +70,8 @@ abstract class BaseObserver
     protected function setupActivity($action, $object, $actor = null, $target = null)
     {
         $this->action = $action;
-        $this->model = $object;
-        $this->actor = $this->formatActor($actor ?: static::getUser());
+        $this->model  = $object;
+        $this->actor  = $this->formatActor($actor ?: static::getUser());
         $this->object = $this->formatObject($object);
         if ($target) {
             $this->target = $this->formatTarget($target);
@@ -96,7 +97,7 @@ abstract class BaseObserver
 
     public function getActionName()
     {
-        $action = $this->action;
+        $action   = $this->action;
         $endsWith = substr($action, strlen($action) - 1);
         if (in_array($endsWith, ['e'])) {
             return $action . 'd';
@@ -195,7 +196,7 @@ abstract class BaseObserver
     /**
      * Format the activity object.
      *
-     * @param BaseContent $model The target
+     * @param BaseModel $model The target
      * @param bool        $force Should we force formatting?
      *
      * @return array the formatted activity object
@@ -212,7 +213,7 @@ abstract class BaseObserver
     /**
      * Format the activity target.
      *
-     * @param BaseContent $model The target
+     * @param BaseModel $model The target
      * @param bool        $force Should we force formatting?
      *
      * @return array the formatted activity target
@@ -229,7 +230,7 @@ abstract class BaseObserver
     /**
      * Format the activity object.
      *
-     * @param BaseContent $model The object
+     * @param BaseModel $model The object
      *
      * @return array the formatted activity object
      */
@@ -242,16 +243,16 @@ abstract class BaseObserver
                 return $model;
             } elseif (is_object($model)) {
                 return [
-                    'id' => $model->publicId,
-                    'type' => $model->is,
-                    'url' => $model->publicId,
-                    'name' => $model->title(),
-                    'image' => [
+                    'id'     => $model->publicId,
+                    'type'   => $model->is,
+                    'url'    => $model->publicId,
+                    'name'   => $model instanceof BaseModel ? $model->title() : $model->title ?: $model->name,
+                    'image'  => [
                         'type' => 'link',
-                        'url' => $model->image ? ImageHelper::createOrGetThumbnail($model->image, 256, 256) : '',
+                        'url'  => $model->image ? ImageHelper::createOrGetThumbnail($model->image, 256, 256) : '',
                     ],
                     '_model' => [
-                        'id' => $model->id,
+                        'id'    => $model->id,
                         'class' => get_class($model),
                     ],
                 ];
@@ -290,20 +291,20 @@ abstract class BaseObserver
         if (is_array($model)) {
             return $model;
         } elseif (is_object($model)) {
-            $id = $model->login ?: $model->username;
+            $id = $model->login ?: $model->username ?: $model->id;
 
             return [
-                'id' => 'user/' . $id,
-                'type' => 'user',
-                'url' => '/user/' . $id,
-                'image' => [
+                'id'          => 'user/' . $id,
+                'type'        => 'user',
+                'url'         => '/user/' . $id,
+                'image'       => [
                     'type' => 'link',
-                    'url' => $model->avatar ? $model->avatar->getPath() : '',
+                    'url'  => $model->avatar ? $model->avatar->getPath() : '',
                 ],
-                'name' => $id,
+                'name'        => $id,
                 'displayName' => $model->displayName,
-                '_model' => [
-                    'id' => $model->id,
+                '_model'      => [
+                    'id'    => $model->id,
                     'class' => get_class($model),
                 ],
             ];
