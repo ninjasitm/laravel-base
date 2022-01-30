@@ -2,8 +2,11 @@
 
 namespace Nitm\Content\Models;
 
+use Nitm\Content\NitmContent;
+use Nitm\Content\Models\Invitation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Nitm\Content\Models\TeamSubscription;
 use Nitm\Content\Database\Factories\TeamFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
