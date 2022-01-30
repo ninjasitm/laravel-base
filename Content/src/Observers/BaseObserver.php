@@ -16,12 +16,12 @@ abstract class BaseObserver
      */
     protected $model;
 
-     /**
-      * The action that is currently being observed.
-      *
-      * @var [type]
-      */
-     protected $action;
+    /**
+     * The action that is currently being observed.
+     *
+     * @var [type]
+     */
+    protected $action;
 
     /**
      * The object that is acting.
@@ -48,7 +48,7 @@ abstract class BaseObserver
 
     protected static function getUser()
     {
-        return \Nitm\Content\Models\BaseContent::getCurrentUser();
+        return auth()->user();
     }
 
     public function created($model)
@@ -91,7 +91,7 @@ abstract class BaseObserver
 
     public function resolveId($type, $id)
     {
-        return \Nitm\Content\Classes\ModelHelper::resolveId($type, $id, '\\Nitm\\Content\\Models', ['withDeleted' => true]);
+        return \Nitm\Helpers\ModelHelper::resolveId($type, $id, '\\Nitm\\Content\\Models', ['withDeleted' => true]);
     }
 
     public function getActionName()
@@ -99,27 +99,27 @@ abstract class BaseObserver
         $action = $this->action;
         $endsWith = substr($action, strlen($action) - 1);
         if (in_array($endsWith, ['e'])) {
-            return $action.'d';
+            return $action . 'd';
         } elseif (in_array($endsWith, ['y'])) {
-            return substr($action, 0, strlen($action) - 1).'ied';
+            return substr($action, 0, strlen($action) - 1) . 'ied';
         } elseif (in_array($endsWith, ['d'])) {
             return $action;
         } else {
-            return $action.'ed';
+            return $action . 'ed';
         }
     }
 
     protected function getActionString()
     {
         switch ($this->getActionName()) {
-         case 'created':
-         return $this->getActionName().' new';
-         break;
+            case 'created':
+                return $this->getActionName() . ' new';
+                break;
 
-         default:
-         return $this->getActionName();
-         break;
-      }
+            default:
+                return $this->getActionName();
+                break;
+        }
     }
 
     public function getTitleString()
@@ -132,20 +132,20 @@ abstract class BaseObserver
         $objectType = array_get($this->object, 'type');
 
         if ($objectType == 'user') {
-            $objectName = '@'.array_get($this->object, 'name');
+            $objectName = '@' . array_get($this->object, 'name');
         } else {
             $objectName = array_get($this->object, 'displayName');
             if (!$objectName) {
                 $objectName = array_get($this->object, 'name');
             }
-            $objectName = '#'.$objectName;
+            $objectName = '#' . $objectName;
         }
 
         $actorName = array_get($this->actor, 'name', array_get($this->actor, 'id'));
         if ($this->actor['type'] == 'user') {
-            $actorName = '@'.$actorName;
+            $actorName = '@' . $actorName;
         } else {
-            $actorName = '#'.$actorName;
+            $actorName = '#' . $actorName;
         }
 
         $parts = [
@@ -242,19 +242,19 @@ abstract class BaseObserver
                 return $model;
             } elseif (is_object($model)) {
                 return [
-                   'id' => $model->publicId,
-                   'type' => $model->is,
-                   'url' => $model->publicId,
-                   'name' => $model->title(),
-                   'image' => [
-                      'type' => 'link',
-                      'url' => $model->image ? ImageHelper::createOrGetThumbnail($model->image, 256, 256) : '',
-                   ],
-                   '_model' => [
-                      'id' => $model->id,
-                      'class' => get_class($model),
-                   ],
-               ];
+                    'id' => $model->publicId,
+                    'type' => $model->is,
+                    'url' => $model->publicId,
+                    'name' => $model->title(),
+                    'image' => [
+                        'type' => 'link',
+                        'url' => $model->image ? ImageHelper::createOrGetThumbnail($model->image, 256, 256) : '',
+                    ],
+                    '_model' => [
+                        'id' => $model->id,
+                        'class' => get_class($model),
+                    ],
+                ];
             }
         }
     }
@@ -293,9 +293,9 @@ abstract class BaseObserver
             $id = $model->login ?: $model->username;
 
             return [
-                'id' => 'user/'.$id,
+                'id' => 'user/' . $id,
                 'type' => 'user',
-                'url' => '/user/'.$id,
+                'url' => '/user/' . $id,
                 'image' => [
                     'type' => 'link',
                     'url' => $model->avatar ? $model->avatar->getPath() : '',
@@ -303,10 +303,10 @@ abstract class BaseObserver
                 'name' => $id,
                 'displayName' => $model->displayName,
                 '_model' => [
-                   'id' => $model->id,
-                   'class' => get_class($model),
+                    'id' => $model->id,
+                    'class' => get_class($model),
                 ],
-             ];
+            ];
         }
     }
 
