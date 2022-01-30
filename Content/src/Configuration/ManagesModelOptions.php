@@ -29,6 +29,7 @@ trait ManagesModelOptions
     public static function useUserModel($userModel)
     {
         static::$userModel = $userModel;
+        config(['nitm-content.user_model' => $userModel]);
     }
 
     /**
@@ -60,6 +61,7 @@ trait ManagesModelOptions
     public static function useTeamModel($teamModel)
     {
         static::$teamModel = $teamModel;
+        config(['nitm-content.team_model' => $teamModel]);
     }
 
     /**
