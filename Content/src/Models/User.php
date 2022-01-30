@@ -2,14 +2,24 @@
 
 namespace Nitm\Content\Models;
 
-use Database\Factories\Nitm\Content\Models\UserFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Nitm\Content\Traits\Feature;
 use Nitm\Content\Traits\Model;
 use Nitm\Content\Traits\Search;
+use Nitm\Content\Traits\Feature;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Database\Factories\Nitm\Content\Models\UserFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
+/**
+ * Class User
+ *
+ * @package Nitm\Content\Models
+ * @version July 20, 2020, 1:28 am UTC
+ *
+ * @property integer $id
+ * @property string $username
+ * @property string $name
+ */
 class User extends Authenticatable
 {
     use Notifiable, Search, Model, Feature, HasFactory;
@@ -61,8 +71,8 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    function newFactory()
+    public static function newFactory()
     {
-        return UserFactory::new ();
+        return UserFactory::new();
     }
 }

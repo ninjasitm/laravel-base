@@ -361,7 +361,7 @@ class Category extends Model
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    protected static function newFactory()
+    public static function newFactory()
     {
         return CategoryFactory::new ();
     }
