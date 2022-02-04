@@ -10,13 +10,12 @@ use Nitm\Content\Models\TeamUser;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Database\Schema\SQLiteBuilder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Orchestra\Testbench\TestCase as BaseTestCase;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
-abstract class TestCase extends BaseTestCase
+abstract class PackageTestCase extends BaseTestCase
 {
-    use ArraySubsetAsserts, RefreshDatabase;
+    use ArraySubsetAsserts;
 
     public static $databaseSeeded = false;
 
