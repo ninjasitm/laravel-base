@@ -16,7 +16,7 @@ use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 abstract class TestCase extends BaseTestCase
 {
-    use ArraySubsetAsserts, RefreshDatabase;
+    use ArraySubsetAsserts, RefreshDatabase, CreatesApplication;
 
     public static $databaseSeeded = false;
 
