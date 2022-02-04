@@ -11,12 +11,11 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\SQLiteConnection;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use Orchestra\Testbench\TestCase as BaseTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 
 abstract class TestCase extends BaseTestCase
 {
-    use ArraySubsetAsserts, RefreshDatabase;
+    use ArraySubsetAsserts;
 
     public static $databaseSeeded = false;
 
