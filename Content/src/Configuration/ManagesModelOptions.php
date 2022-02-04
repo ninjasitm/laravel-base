@@ -21,6 +21,13 @@ trait ManagesModelOptions
     public static $teamModel = 'Nitm\Content\Team';
 
     /**
+     * The category model class name.
+     *
+     * @var string
+     */
+    public static $categoryModel = 'Nitm\Content\Category';
+
+    /**
      * Set the user model class name.
      *
      * @param  string $userModel
@@ -92,5 +99,27 @@ trait ManagesModelOptions
     public static function team()
     {
         return new static::$teamModel;
+    }
+
+    /**
+     * Set the category model class name.
+     *
+     * @param  string $categoryModel
+     * @return void
+     */
+    public static function useCategoryModel($categoryModel)
+    {
+        static::$categoryModel = $categoryModel;
+        config(['nitm-content.category_model' => $categoryModel]);
+    }
+
+    /**
+     * Get the category model class name.
+     *
+     * @return string
+     */
+    public static function categoryModel()
+    {
+        return config('nitm-content.category_model') ?? static::$categoryModel;
     }
 }
