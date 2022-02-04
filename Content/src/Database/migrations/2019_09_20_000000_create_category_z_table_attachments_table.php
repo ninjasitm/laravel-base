@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCategoryZTableAttachments extends Migration
+class CreateCategoryZTableAttachmentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,7 @@ class CreateCategoryZTableAttachments extends Migration
     {
         Schema::create('attached_categories', function (Blueprint $table) {
             $table->integer('category_id')->unsigned();
-            $table->morph('entity');
+            $table->morphs('entity');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
