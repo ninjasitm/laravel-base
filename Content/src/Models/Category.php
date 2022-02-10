@@ -7,6 +7,7 @@ use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Traits\NestedTree;
 use Nitm\Content\Models\BaseModel as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Nitm\Content\Database\Factories\CategoryFactory;
 
 /**
@@ -231,6 +232,16 @@ class Category extends Model
      *
      * @return [type]
      */
+    public function setParentAttribute($value)
+    {
+        $this->attributes['parent_id'] = $value instanceof EloquentModel ? $value->id : $value;
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return [type]
+     */
     public function setEditorIdAttribute($value)
     {
         if (!$value) {
@@ -338,7 +349,7 @@ class Category extends Model
                     [
                         'slug' => $slug,
                     ]
-                )->first();
+                )->orderBy('id', 'asc')->limit(1)->first();
                 if ($model) {
                     $this->fill((array) $model);
                     $query->allChildren();
