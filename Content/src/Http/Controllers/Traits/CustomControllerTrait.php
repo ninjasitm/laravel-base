@@ -119,14 +119,28 @@ trait CustomControllerTrait
         } else {
             if ($model instanceof Model && is_callable([$model, 'getCustomWith'])) {
                 try {
-                    $model->load($model->getAllWith());
-                    $model->loadCount($model->getAllWithCount());
+                    $allWith = $model->getAllWith();
+                    if (!empty($allWith)) {
+                        $model->load($allWith);
+                    }
+
+                    $allWithCount = $model->getAllWithCount();
+                    if (!empty($allWithCount)) {
+                        $model->loadCount($allWithCount);
+                    }
                 } catch (\Exception $e) {
                 }
             } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model  && is_callable([$model, 'getCustomWith'])) {
                 try {
-                    $model->load($model->getAllWith());
-                    $model->loadCount($model->getAllWithCount());
+                    $allWith = $model->getAllWith();
+                    if (!empty($allWith)) {
+                        $model->load($allWith);
+                    }
+
+                    $allWithCount = $model->getAllWithCount();
+                    if (!empty($allWithCount)) {
+                        $model->loadCount($allWithCount);
+                    }
                 } catch (\Exception $e) {
                 }
             }
