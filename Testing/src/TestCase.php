@@ -2,18 +2,18 @@
 
 namespace Nitm\Testing;
 
-use Illuminate\Support\Arr;
-use Nitm\Content\Models\Team;
-use Nitm\Content\Models\User;
-use Illuminate\Support\Fluent;
-use Nitm\Content\Models\TeamUser;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\SQLiteConnection;
 use Illuminate\Database\Schema\SQLiteBuilder;
+use Illuminate\Database\SQLiteConnection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Nitm\Content\NitmContentServiceProvider;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Fluent;
+use Nitm\Content\Models\Team;
+use Nitm\Content\Models\TeamUser;
+use Nitm\Content\Models\User;
+use Nitm\Content\NitmContent;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -49,9 +49,9 @@ abstract class TestCase extends BaseTestCase
      */
     protected function useAs($role, $team = null)
     {
-        $team = $team ?: $this->team ?: Team::factory()->create();
-        $class = NitmContentServiceProvider::userModel();
-        $user = $class::factory()->create();
+        $team     = $team ?: $this->team ?: Team::factory()->create();
+        $class    = NitmContent::userModel();
+        $user     = $class::factory()->create();
         $teamUser = TeamUser::firstOrCreate(['team_id' => $team->id, 'role' => $role, 'user_id' => $user->id, 'is_approved' => true]);
         auth()->login($user);
         return $user;
@@ -189,7 +189,7 @@ abstract class TestCase extends BaseTestCase
             'signed',
             'fw-only-whitelisted',
             'fw-block-blacklisted',
-            'fw-block-attacks'
+            'fw-block-attacks',
         ]);
     }
 }
