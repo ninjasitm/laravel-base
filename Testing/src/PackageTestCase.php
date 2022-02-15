@@ -48,7 +48,8 @@ abstract class PackageTestCase extends BaseTestCase
     protected function useAs($role, $team = null)
     {
         $team = $team ?: $this->team ?: Team::factory()->create();
-        $user = User::factory()->create();
+        $class = NitmContentServiceProvider::userModel();
+        $user = $class::factory()->create();
         $teamUser = TeamUser::firstOrCreate(['team_id' => $team->id, 'role' => $role, 'user_id' => $user->id, 'is_approved' => true]);
         auth()->login($user);
         return $user;
