@@ -13,6 +13,7 @@ use Illuminate\Database\Schema\SQLiteBuilder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
+use Nitm\Content\NitmContentServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -49,7 +50,8 @@ abstract class TestCase extends BaseTestCase
     protected function useAs($role, $team = null)
     {
         $team = $team ?: $this->team ?: Team::factory()->create();
-        $user = User::factory()->create();
+        $class = NitmContentServiceProvider::userModel();
+        $user = $class::factory()->create();
         $teamUser = TeamUser::firstOrCreate(['team_id' => $team->id, 'role' => $role, 'user_id' => $user->id, 'is_approved' => true]);
         auth()->login($user);
         return $user;
