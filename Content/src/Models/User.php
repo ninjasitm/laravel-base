@@ -28,6 +28,10 @@ class User extends Authenticatable
         \Nitm\Content\Traits\User::apiQuery insteadof \Nitm\Content\Traits\Model;
     }
 
+    const ROLE_USER = 'user';
+    const ROLE_ADMIN = 'admin';
+    const ROLE_VIEWER = 'viewer';
+
     public $table = 'users';
 
     /**
