@@ -266,6 +266,14 @@ trait Repository
      */
     public function findOrFail($id, $columns = ['*'], $key = 'id', $silently = false)
     {
+        if ($id instanceof Model && $id->exists) {
+            return $id;
+        }
+
+        if ($id instanceof Model) {
+            $id = $id->id;
+        }
+
         $query = $this->model->newQuery();
 
         $exists = $this->existsOrFail($id, $key, $silently);

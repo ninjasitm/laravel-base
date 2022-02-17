@@ -15,7 +15,7 @@ class TeamUser extends Model
 
     public $timestamps = false;
     //
-    protected $table = 'team_users';
+    protected $table = 'team_user';
 
     protected $with = ['team'];
 
