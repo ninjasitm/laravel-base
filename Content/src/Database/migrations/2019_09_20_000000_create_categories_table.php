@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCategoriesTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
@@ -34,4 +34,4 @@ class CreateCategoriesTable extends Migration
         Schema::drop('post_categories');
         Schema::drop('posts_categories');
     }
-}
+};

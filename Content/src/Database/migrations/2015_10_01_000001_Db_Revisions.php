@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 
-class DbRevisions extends Migration
+return new class extends Migration
 {
 
     public function up()
@@ -26,4 +26,4 @@ class DbRevisions extends Migration
     {
         Schema::dropIfExists('revisions');
     }
-}
+};

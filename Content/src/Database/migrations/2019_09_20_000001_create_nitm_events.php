@@ -5,13 +5,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNitmEvents extends Migration
+return new class extends Migration
 {
     public function up()
     {
         if (!Schema::hasTable('nitm_events')) {
             Schema::create(
-                'nitm_events', function ($table) {
+                'nitm_events',
+                function ($table) {
                     $table->engine = 'InnoDB';
                     $table->increments('id');
                     $table->boolean('is_free')->default(1);
@@ -38,17 +39,17 @@ class CreateNitmEvents extends Migration
 
             \Nitm\Content\Models\Category::create(
                 [
-                'title' => 'Event Type',
-                'description' => 'Event Type',
-                'author_id' => 1,
+                    'title' => 'Event Type',
+                    'description' => 'Event Type',
+                    'author_id' => 1,
                 ]
             );
 
             \Nitm\Content\Models\Category::create(
                 [
-                'title' => 'Event Category',
-                'description' => 'Event Category',
-                'author_id' => 1,
+                    'title' => 'Event Category',
+                    'description' => 'Event Category',
+                    'author_id' => 1,
                 ]
             );
         }
@@ -58,4 +59,4 @@ class CreateNitmEvents extends Migration
     {
         Schema::dropIfExists('nitm_events');
     }
-}
+};

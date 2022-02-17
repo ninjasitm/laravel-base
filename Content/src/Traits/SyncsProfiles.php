@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 use Nitm\Content\Repositories\FileRepository as File;
 use Illuminate\Http\UploadedFile;
 
-trait Profile
+trait SyncsProfile
 {
     /**
      * Sync the avatar for a user

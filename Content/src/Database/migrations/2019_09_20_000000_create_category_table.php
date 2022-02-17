@@ -3,13 +3,14 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCategoryTable extends Migration
+return new class extends Migration
 {
     public function up()
     {
         if (!Schema::hasTable('categories')) {
             Schema::create(
-                'categories', function ($table) {
+                'categories',
+                function ($table) {
                     $table->engine = 'InnoDB';
                     $table->increments('id');
                     $table->text('title')->nullable();
@@ -40,4 +41,4 @@ class CreateCategoryTable extends Migration
     {
         Schema::dropIfExists('categories');
     }
-}
+};

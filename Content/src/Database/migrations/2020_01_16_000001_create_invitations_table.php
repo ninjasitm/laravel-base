@@ -4,7 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInvitationsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,8 @@ class CreateInvitationsTable extends Migration
     public function up()
     {
         Schema::create(
-            'invitations', function (Blueprint $table) {
+            'invitations',
+            function (Blueprint $table) {
                 $table->string('id')->primary();
                 $table->unsignedBigInteger('team_id')->nullable()->index();
                 $table->unsignedBigInteger('user_id')->nullable()->index();
@@ -35,4 +36,4 @@ class CreateInvitationsTable extends Migration
     {
         Schema::drop('invitations');
     }
-}
+};

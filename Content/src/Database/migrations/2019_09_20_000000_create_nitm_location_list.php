@@ -4,7 +4,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNitmLocationList extends Migration
+return new class extends Migration
 {
     public function up()
     {
@@ -23,4 +23,4 @@ class CreateNitmLocationList extends Migration
     public function down()
     {
     }
-}
+};

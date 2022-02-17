@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attached_categories', function (Blueprint $table) {
-            $table->integer('category_id')->unsigned();
-            $table->morphs('entity');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+        Schema::create('profiles', function (Blueprint $table) {
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->primary(['user_id']);
+            $table->text('bio');
+            $table->timestamps();
         });
     }
 
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attached_categories');
+        Schema::dropIfExists('profiles');
     }
 };

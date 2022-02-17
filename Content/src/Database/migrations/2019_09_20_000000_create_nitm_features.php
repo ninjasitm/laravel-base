@@ -5,13 +5,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNitmFeatures extends Migration
+return new class extends Migration
 {
     public function up()
     {
         if (!Schema::hasTable('nitm_features')) {
             Schema::create(
-                'nitm_features', function ($table) {
+                'nitm_features',
+                function ($table) {
                     $table->engine = 'InnoDB';
                     $table->increments('id');
                     $table->string('title', 140);
@@ -27,11 +28,11 @@ class CreateNitmFeatures extends Migration
 
                     \Nitm\Content\Models\Category::create(
                         [
-                        'title' => 'Feature Type',
-                        'slug' => 'feature-type',
-                        'description' => 'Feature types',
-                        'author_id' => null,
-                        'editor_id' => null
+                            'title' => 'Feature Type',
+                            'slug' => 'feature-type',
+                            'description' => 'Feature types',
+                            'author_id' => null,
+                            'editor_id' => null
                         ]
                     );
                 }
@@ -43,4 +44,4 @@ class CreateNitmFeatures extends Migration
     {
         //   Schema::dropIfExists('nitm_features');
     }
-}
+};
