@@ -22,11 +22,6 @@ return new class extends Migration
             $table->text('tagline')->nullable();
             $table->timestamps();
         });
-
-        Schema::table('teams', function (Blueprint $table) {
-            $table->integer('city_id')->unsigned()->nullable();
-            $table->foreign('city_id')->references('id')->on('geo')->onDelete('cascade');
-        });
     }
 
     /**
@@ -37,12 +32,5 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('team_profiles');
-
-        Schema::table('teams', function (Blueprint $table) {
-            if (config('database.default') !== 'testing') {
-                $table->dropForeign(['city_id']);
-            }
-            $table->dropColumn('city_id');
-        });
     }
 };
