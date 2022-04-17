@@ -18,6 +18,13 @@ trait Model
     public static $tableColumns = [];
 
     /**
+     * Fields visible to the API
+     *
+     * @var mixed
+     */
+    protected $visibleToApi;
+
+    /**
      * Toggle a single atribute on the model
      *
      * @param  string|array $attributes The atributes to be toggled
@@ -403,11 +410,24 @@ trait Model
     public function title(): string
     {
         if (property_exists($this, 'title')) {
-            return $this->title;
+            return "{$this->title}";
         }
         if (property_exists($this, 'name')) {
-            return $this->name;
+            return "{$this->name}";
         }
         return '(not set)';
+    }
+
+    /**
+     * If the `` property is set, return only those properties, otherwise return all
+     * properties
+     *
+     * @return The result of the parent::toArray() method, but only the fields that are specified in
+     * the  property.
+     */
+    public function toArray()
+    {
+        $result = parent::toArray();
+        return !empty($only = $this->visibleToApi)  ? Arr::only($result, (array) $only) : $result;
     }
 }
