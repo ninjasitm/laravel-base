@@ -34,28 +34,8 @@ class BaseModel extends EloquentModel
         ProvidesUrls,
         HasFactory;
 
-    /**
-     * Fields visible to the API
-     *
-     * @var mixed
-     */
-    protected $visibleToApi;
-
     public function fromJson($value, $asObject = false)
     {
         return is_array($value) || is_object($value) ? $value : json_decode($value, !$asObject);
-    }
-
-    /**
-     * If the `` property is set, return only those properties, otherwise return all
-     * properties
-     *
-     * @return The result of the parent::toArray() method, but only the fields that are specified in
-     * the  property.
-     */
-    public function toArray()
-    {
-        $result = parent::toArray();
-        return !empty($only = $this->visibleToApi)  ? Arr::only($result, (array) $only) : $result;
     }
 }
