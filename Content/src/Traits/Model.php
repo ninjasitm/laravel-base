@@ -18,13 +18,6 @@ trait Model
     public static $tableColumns = [];
 
     /**
-     * Fields visible to the API
-     *
-     * @var mixed
-     */
-    protected $visibleToApi;
-
-    /**
      * Toggle a single atribute on the model
      *
      * @param  string|array $attributes The atributes to be toggled
@@ -428,6 +421,9 @@ trait Model
     public function toArray()
     {
         $result = parent::toArray();
-        return !empty($only = $this->visibleToApi)  ? Arr::only($result, (array) $only) : $result;
+        if(property_exists($this, 'visibleToApi')) {
+            return !empty($only = $this->visibleToApi)  ? Arr::only($result, (array) $only) : $result;
+        }
+        return $result;
     }
 }
