@@ -80,4 +80,17 @@ class ClassHelper
 
         return $classes;
     }
+
+    /**
+     * Has Trait
+     *
+     * @param mixed $item
+     * @param  mixed $trait
+     * @return bool
+     */
+    public static function hasTrait($item, string $trait): bool
+    {
+        $uses = is_callable('class_uses_recursive') ? class_uses_recursive($item) : class_uses($item);
+        return in_array(ltrim($trait, '\\'), $uses);
+    }
 }
