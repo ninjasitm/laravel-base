@@ -13,15 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('team_profiles', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('team_id')->unsigned()->nullable();
-            $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
-            $table->index(['team_id']);
-            $table->text('bio')->nullable();
-            $table->text('tagline')->nullable();
-            $table->timestamps();
-        });
+        
+        if (!Schema::hasTable('team_profiles')) {
+            Schema::create('team_profiles', function (Blueprint $table) {
+                $table->bigIncrements('id');
+                $table->integer('team_id')->unsigned()->nullable();
+                $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
+                $table->index(['team_id']);
+                $table->text('bio')->nullable();
+                $table->text('tagline')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**
