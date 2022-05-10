@@ -17,17 +17,21 @@ return new class extends Migration
                     $table->text('slug')->nullable();
                     $table->text('description')->nullable();
                     $table->text('photo_url')->nullable();
-                    $table->integer('author_id')->nullable();
-                    $table->integer('editor_id')->nullable();
+                    $table->integer('author_id')->unsigned()->nullable();
+                    $table->integer('editor_id')->unsigned()->nullable();
                     $table->timestamp('updated_at')->nullable();
                     $table->timestamp('created_at')->nullable();
-                    $table->integer('deleter_id')->nullable();
-                    $table->integer('parent_id')->nullable();
+                    $table->integer('deleter_id')->unsigned()->nullable();
+                    $table->integer('parent_id')->unsigned()->nullable();
                     $table->integer('nest_left')->nullable();
                     $table->integer('nest_right')->nullable();
                     $table->integer('nest_depth')->nullable();
                     $table->softDeletes();
-
+                }
+            );
+            Schema::table(
+                'categories',
+                function ($table) {
                     $table->foreign('author_id')->references('id')->on('users')->onDelete('cascade');
                     $table->foreign('editor_id')->references('id')->on('users')->onDelete('cascade');
                     $table->foreign('deleter_id')->references('id')->on('users')->onDelete('cascade');

@@ -20,7 +20,7 @@ return new class extends Migration
                     $table->string('slug');
                     $table->integer('type_id')->nullable();
                     $table->integer('category_id')->nullable();
-                    $table->integer('author_id')->nullable();
+                    $table->integer('author_id')->unsigned()->nullable();
                     $table->timestamp('created_at');
                     $table->integer('editor_d')->nullable();
                     $table->timestamp('updated_at')->nullable();
@@ -30,10 +30,15 @@ return new class extends Migration
                     $table->text('description');
                     $table->string('status', 10);
                     $table->double('cost', 10, 2)->nullable();
-                    $table->integer('location_id');
+                    $table->integer('location_id')->unsigned();
                     $table->unique('slug');
-                    $table->foreign('location_id')->references('id')->on('nitm_location');
                     $table->softDeletes();
+                }
+            );
+            Schema::table(
+                'nitm_events',
+                function ($table) {
+                    $table->foreign('location_id')->references('id')->on('nitm_location');
                 }
             );
 
@@ -41,7 +46,6 @@ return new class extends Migration
                 [
                     'title' => 'Event Type',
                     'description' => 'Event Type',
-                    'author_id' => 1,
                 ]
             );
 
@@ -49,7 +53,6 @@ return new class extends Migration
                 [
                     'title' => 'Event Category',
                     'description' => 'Event Category',
-                    'author_id' => 1,
                 ]
             );
         }
