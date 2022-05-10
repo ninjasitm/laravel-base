@@ -15,7 +15,7 @@ return new class extends Migration
     {
         if (!Schema::hasTable('teams')) {
             Schema::create('teams', function (Blueprint $table) {
-                $table->id();
+                $table->increments('id');
                 $table->foreignId('user_id')->index();
                 $table->string('name');
                 $table->boolean('personal_team');
