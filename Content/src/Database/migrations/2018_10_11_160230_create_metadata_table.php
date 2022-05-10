@@ -17,13 +17,13 @@ return new class extends Migration
             $table->increments('id');
             $table->text('entity_type');
             $table->integer('entity_id')->unsigned();
-            $table->string('entity_relation')->nullable()->default('metadata');
+            $table->string('entity_relation')->nullable();
             $table->integer('priority')->nullable();
             $table->text('name');
             $table->text('section')->nullable();
             $table->text('type');
             $table->text('value')->nullable();
-            $table->json('options')->nullable()->default('{}');
+            $table->json('options')->nullable();
             $table->timestamps();
 
             $table->index(['priority']);
