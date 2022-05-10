@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('team_id');
             $table->unsignedInteger('user_id');
             $table->boolean('is_approved')->default(false);
-            $table->text('role')->default('member');
+            $table->text('role')->nullable();
 
             $table->unique(['team_id', 'user_id']);
         });
