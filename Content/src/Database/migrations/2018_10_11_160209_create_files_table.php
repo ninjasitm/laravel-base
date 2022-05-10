@@ -17,7 +17,7 @@ return new class extends Migration
             $table->increments('id');
             $table->text('entity_type');
             $table->integer('entity_id')->unsigned();
-            $table->text('entity_relation')->default('file');
+            $table->text('entity_relation');
             $table->text('name')->nullable();
             $table->text('type')->nullable();
             $table->text('fingerprint')->nullable();
