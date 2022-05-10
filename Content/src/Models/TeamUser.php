@@ -25,6 +25,8 @@ class TeamUser extends Model
 
     protected $appends = ['role_name'];
 
+    protected $attributes = ['role' => 'member'];]
+
     /**
      * Tteam
      *
