@@ -5,6 +5,9 @@ namespace Nitm\Content;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Nitm\Content\Console\Commands\SyncSequences;
+use Nitm\Content\Console\Commands\AddUserRoles;
+use Nitm\Content\Console\Commands\ForeignKeyChecks;
+use Nitm\Content\Console\Commands\ScheduleList;
 
 class NitmContentServiceProvider extends ServiceProvider
 {
@@ -92,7 +95,10 @@ class NitmContentServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands(
                 [
-                SyncSequences::class,
+                    ScheduleList::class,
+                    ForeignKeyChecks::class,
+                    AddUserRoles::class,
+                    SyncSequences::class,
                 ]
             );
         }
