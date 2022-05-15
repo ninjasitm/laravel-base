@@ -86,7 +86,7 @@ class AddUserRoles extends Command
         $class = config('nitm-content.team_model', \App\Models\Team::class);
         $s = $this->argument('team');
         $lowerName = \DB::raw('lower(name)');
-        $team = ClassHelper::hasTrait($class, Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where($lowerName, 'LIKE', "%$s%")->first();
+        $team = ClassHelper::hasTrait($class, Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where($lowerName, 'LIKE', "%$s%")->get();
         if (!$team->count()) {
             $this->error("Team not found");
             exit;
