@@ -6,6 +6,7 @@ use DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Nitm\Helpers\ClassHelper;
+use Nitm\Content\Traits\Search;
 
 class AddUserRoles extends Command
 {
@@ -68,8 +69,9 @@ class AddUserRoles extends Command
     {
         $roles = [];
         $class = config('permissions.models.role', \App\Models\Role::class);
+        $lowerName = \DB::raw('lower(name)');
         foreach ($this->option('role') as $role) {
-            $roles[] = ClassHelper::hasTrait($class, \Nitm\Content\Traits\Search::class) ? $class::search($role)->first() : $class::where('name', 'ilike', "%$role%")->first();
+            $roles[] = ClassHelper::hasTrait($class, Search::class) ? $class::search($role)->first() : $class::where($lowerName, 'LIKE', "%$role%")->first();
         }
         return collect(array_filter($roles));
     }
@@ -83,7 +85,8 @@ class AddUserRoles extends Command
     { 
         $class = config('nitm-content.team_model', \App\Models\Team::class);
         $s = $this->argument('team');
-        $team = ClassHelper::hasTrait($class, \Nitm\Content\Traits\Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where('name', 'ilike', "%$s%")->first();
+        $lowerName = \DB::raw('lower(name)');
+        $team = ClassHelper::hasTrait($class, Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where($lowerName, 'LIKE', "%$s%")->first();
         if (!$team->count()) {
             $this->error("Team not found");
             exit;
