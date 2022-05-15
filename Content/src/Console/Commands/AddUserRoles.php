@@ -82,7 +82,8 @@ class AddUserRoles extends Command
     protected function getTeam(): Team
     { 
         $class = config('nitm-content.team_model', \App\Models\Team::class);
-        $team = $class::search($this->argument('team'))->orderBy('name', 'asc')->get();
+        $s = $this->argument('team');
+        $team = ClassHelper::hasTrait($class, \Nitm\Content\Traits\Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where('name', 'ilike', "%$s%")->first();
         if (!$team->count()) {
             $this->error("Team not found");
             exit;
