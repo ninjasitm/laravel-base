@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Traits;
 
+use DB;
 use Illuminate\Support\Arr;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -197,21 +198,23 @@ trait Repository
      */
     public function create($input)
     {
-        if ($this->updateExisting) {
-            // Some input may need to be transformed by the model
-            $attributes = Arr::only($this->model->newInstance($input)->fill($input)->getAttributes(), $this->model->getFillable());
-            $model = $this->model->firstOrCreate($attributes);
-        } else {
-            $model = $this->model->newInstance($input);
-        }
+        return DB::transaction (function () use ($input) {
+            if ($this->updateExisting) {
+                // Some input may need to be transformed by the model
+                $attributes = Arr::only($this->model->newInstance($input)->fill($input)->getAttributes(), $this->model->getFillable());
+                $model = $this->model->firstOrCreate($attributes);
+            } else {
+                $model = $this->model->newInstance($input);
+            }
 
-        $model->fill(Arr::only($input, $model->getFillable()));
+            $model->fill(Arr::only($input, $model->getFillable()));
 
-        $model->save();
+            $model->save();
 
-        $this->syncData($model, $input);
+            $this->syncData($model, $input);
 
-        return $model->refresh();
+            return $model->refresh();
+        });
     }
 
     /**
@@ -403,18 +406,20 @@ trait Repository
      */
     public function update($input, $model)
     {
-        if (!($model instanceof Model)) {
-            $query = $this->model->newQuery();
-            $model = $query->findOrFail($model);
-        }
+        return DB::transaction (function () use ($input, $model) {
+            if (!($model instanceof Model)) {
+                $query = $this->model->newQuery();
+                $model = $query->findOrFail($model);
+            }
 
-        $model->fill($input);
+            $model->fill($input);
 
-        $model->save();
+            $model->save();
 
-        $this->syncData($model, $input);
+            $this->syncData($model, $input);
 
-        return $model->refresh();
+            return $model->refresh();
+        });
     }
 
     /**
