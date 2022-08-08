@@ -79,7 +79,7 @@ class NitmContentServiceProvider extends ServiceProvider
      */
     private function registerMigrations()
     {
-        if ($this->app->runningInConsole()) {
+        if ($this->app->runningInConsole() && !env('NITM_CONTENT_DISABLE_MIGRATIONS')) {
             $this->loadMigrationsFrom(__DIR__ . '/Database/migrations');
         }
     }
