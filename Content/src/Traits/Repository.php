@@ -27,7 +27,14 @@ trait Repository
      *
      * @var bool
      */
-    protected $updateExisting = true;
+    protected bool $updateExisting = true;
+
+    /**
+     * Update using the given keys
+     *
+     * @var array
+     */
+    protected array $updateExistingKeys;
 
     /**
      * Allow the user to define the fields to be returned
@@ -201,7 +208,8 @@ trait Repository
         return DB::transaction (function () use ($input) {
             if ($this->updateExisting) {
                 // Some input may need to be transformed by the model
-                $attributes = Arr::only($this->model->newInstance($input)->fill($input)->getAttributes(), $this->model->getFillable());
+                $keys = empty($this->updateExistingKeys) ? $this->model->getFillable() : $this->updateExistingKeys;
+                $attributes = Arr::only($this->model->newInstance($input)->fill($input)->getAttributes(), $keys);
                 $model = $this->model->firstOrCreate($attributes);
             } else {
                 $model = $this->model->newInstance($input);
