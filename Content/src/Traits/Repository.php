@@ -210,7 +210,7 @@ trait Repository
                 // Some input may need to be transformed by the model
                 $keys = empty($this->updateExistingKeys) ? $this->model->getFillable() : $this->updateExistingKeys;
                 $attributes = Arr::only($this->model->newInstance($input)->fill($input)->getAttributes(), $keys);
-                $model = $this->model->firstOrCreate($attributes);
+                $model = $this->model->firstOrNew($attributes);
             } else {
                 $model = $this->model->newInstance($input);
             }
