@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait CustomControllerTrait
@@ -24,19 +25,34 @@ trait CustomControllerTrait
 
     public function paginate(Request $request, $query)
     {
-        $page = abs(intval($request->get('page')));
+        return $this->afterPaginate($request, 'paginate');
+    }
 
-        $perPage = abs(intval($request->get('perPage', $this->perPage)));
+    public function cursorPaginate(Request $request, $query)
+    {
+        return $this->afterPaginate($request, 'simplePaginate');
+    }
 
-        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+    public function simplePaginate(Request $request, $query)
+    {
+        return $this->afterPaginate($request, 'simplePaginate');
+    }
+
+    public function afterPaginate(Request $request, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): Paginator
+    {
+        $page = $position ?: abs(intval($request->get('page')));
+
+        $perPage = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
+
+        $paginator = $query->$using($perPage, $columns, $name, $page);
 
         $paginator->status = 'ok';
+
+        $this->beforePaginateTransform($request, $paginator);
 
         $fields = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = array_merge((array) $fields, (array) $relations);
-
-        $this->beforePaginateTransform($request, $paginator);
 
         if (!empty($allFields)) {
             $paginator->getCollection()->transform(
@@ -58,8 +74,7 @@ trait CustomControllerTrait
             }));
         }
 
-        return $paginator;
-    }
+        return $paginator;    }
 
     /**
      * Do some custom pagination for paginated data
