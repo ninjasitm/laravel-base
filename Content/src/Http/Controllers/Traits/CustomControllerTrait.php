@@ -6,16 +6,15 @@
 
 namespace Nitm\Content\Http\Controllers\Traits;
 
-use Response;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
-use InfyOm\Generator\Utils\ResponseUtil;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use InfyOm\Generator\Utils\ResponseUtil;
+use Response;
 
 trait CustomControllerTrait
 {
@@ -23,34 +22,69 @@ trait CustomControllerTrait
 
     protected $perPage = 10;
 
+    /**
+     * Use full pagination
+     *
+     * @param Request request The request object
+     * @param query The query builder instance.
+     *
+     * @return The return value of the afterPaginate method.
+     */
     public function paginate(Request $request, $query)
     {
-        return $this->afterPaginate($request, 'paginate');
+        return $this->afterPaginate($request, $query, 'paginate');
     }
 
+    /**
+     * Use Cursor Pagination
+     *
+     * @param Request request The request object
+     * @param query The query builder instance.
+     *
+     * @return Paginator A paginator object
+     */
     public function cursorPaginate(Request $request, $query)
     {
-        return $this->afterPaginate($request, 'simplePaginate');
+        return $this->afterPaginate($request, $query, 'simplePaginate');
     }
 
+    /**
+     * Use simple pagination
+     *
+     * @param Request request The request object
+     * @param query The query builder instance.
+     *
+     * @return The return value is the result of the afterPaginate method.
+     */
     public function simplePaginate(Request $request, $query)
     {
-        return $this->afterPaginate($request, 'simplePaginate');
+        return $this->afterPaginate($request, $query, 'simplePaginate');
     }
 
-    public function afterPaginate(Request $request, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): Paginator
+    /**
+     * A function that is used to paginate the data.
+     *
+     * @param Request request The request object.
+     * @param Query The query
+     * @param using The method to use to paginate the results.
+     * @param perPage The number of items to show per page.
+     * @param columns The columns to be selected.
+     * @param name The name of the paginator instance.
+     * @param position The page number to be returned.
+     *
+     * @return Paginator A paginator object
+     */
+    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): Paginator
     {
         $page = $position ?: abs(intval($request->get('page')));
-
         $perPage = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
-
         $paginator = $query->$using($perPage, $columns, $name, $page);
 
         $paginator->status = 'ok';
 
         $this->beforePaginateTransform($request, $paginator);
 
-        $fields = request()->input('_fields');
+        $fields    = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = array_merge((array) $fields, (array) $relations);
 
@@ -74,7 +108,8 @@ trait CustomControllerTrait
             }));
         }
 
-        return $paginator;    }
+        return $paginator;
+    }
 
     /**
      * Do some custom pagination for paginated data
@@ -82,25 +117,60 @@ trait CustomControllerTrait
      * @param Request $request
      * @param mixed   $paginator
      *
-     * @return [type]
+     * @return void
      */
-    protected function beforePaginateTransform(Request $request, LengthAwarePaginator $paginator)
+    protected function beforePaginateTransform(Request $request, Paginator $paginator)
     {
     }
 
+    /**
+     * It returns a JSON response with a message and a result
+     *
+     * @param result The data you want to return
+     * @param message The message you want to send to the user.
+     * @param code HTTP status code
+     *
+     * @return A JSON response with the message and result.
+     */
     public function sendResponse($result, $message, $code = 200)
     {
         return Response::json(ResponseUtil::makeResponse($message, $result), $code);
     }
 
+    /**
+     * It returns a json response with the error message and the error code.
+     *
+     * @param result The result of the operation.
+     * @param message The message you want to send to the user.
+     * @param code HTTP status code
+     *
+     * @return A JSON object with the following structure:
+     * ```
+     * {
+     *     "error": {
+     *         "message": "The error message",
+     *         "code": 400
+     *     }
+     * }
+     * ```
+     */
     public function sendError($result, $message, $code = 400)
     {
         return Response::json(ResponseUtil::makeError($message, $result), $code);
     }
 
+    /**
+     * It takes the data, status, and code and returns a response with the data, status, and code
+     *
+     * @param data The data to be returned.
+     * @param string status The status of the response.
+     * @param int code The HTTP status code to return.
+     *
+     * @return The data is being returned with the status and code.
+     */
     protected function printSuccess($data, string $status = 'ok', int $code = 200)
     {
-        $fields = request()->input('_fields');
+        $fields    = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = $fields !== 'all' ? array_merge((array) $fields, (array) $relations) : [];
         if (!empty($allFields)) {
@@ -113,7 +183,6 @@ trait CustomControllerTrait
         }
         return $this->sendResponse($data, $status, $code);
     }
-
 
     /**
      * Load a model response
@@ -145,7 +214,7 @@ trait CustomControllerTrait
                     }
                 } catch (\Exception $e) {
                 }
-            } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model  && is_callable([$model, 'getCustomWith'])) {
+            } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
                 try {
                     $allWith = $model->getAllWith();
                     if (!empty($allWith)) {
@@ -163,7 +232,6 @@ trait CustomControllerTrait
 
         return $this->printSuccess($model, $status, $code);
     }
-
 
     /**
      * Load a collection response
