@@ -7,7 +7,7 @@
 namespace Nitm\Api\Http\Controllers\Traits;
 
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 trait ApiControllerTrait
 {
@@ -20,9 +20,9 @@ trait ApiControllerTrait
      *
      * @return [type]
      */
-    protected function beforePaginateTransform(Request $request, LengthAwarePaginator $paginator)
+    protected function beforePaginateTransform(Request $request, Paginator $paginator)
     {
-        if(class_exists($this->resource())) {
+        if (class_exists($this->resource())) {
             $class = $this->resource();
             $paginator->setCollection($class::collection($paginator->getCollection())->collection);
         } else {
@@ -39,7 +39,7 @@ trait ApiControllerTrait
      */
     protected function printModelSuccess($model, $status = 'ok', int $code = 200)
     {
-        if(class_exists($this->resource()) && !is_a($model, $this->resource())) {
+        if (class_exists($this->resource()) && !is_a($model, $this->resource())) {
             $class = $this->resource();
             $model = new $class($model);
         }
