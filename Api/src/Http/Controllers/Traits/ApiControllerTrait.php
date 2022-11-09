@@ -7,7 +7,7 @@
 namespace Nitm\Api\Http\Controllers\Traits;
 
 use Illuminate\Http\Request;
-use Illuminate\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\Paginator;
 
 trait ApiControllerTrait
 {
