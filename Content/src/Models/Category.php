@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Traits\NestedTree;
@@ -351,7 +352,7 @@ class Category extends Model
                     ]
                 )->orderBy('id', 'asc')->limit(1)->first();
                 if ($model) {
-                    $this->fill((array) $model);
+                    $this->fill(Arr::only((array) $model, ['parent_id', 'nest_left', 'nest_right', 'nest_depth']));
                     $query->allChildren();
                 }
             }
