@@ -346,13 +346,13 @@ class Category extends Model
         if (get_called_class() !== 'Nitm\Content\Models\Category') {
             if (!$this->id) {
                 $slug  = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
-                $model = \DB::table($this->getTable())->where(
+                $model = \DB::table($this->getTable())->select(['id', 'nest_left', 'nest_right', 'nest_depth'])->where(
                     [
                         'slug' => $slug,
                     ]
                 )->orderBy('id', 'asc')->limit(1)->first();
                 if ($model) {
-                    $this->fill(Arr::only((array) $model, ['parent_id', 'nest_left', 'nest_right', 'nest_depth']));
+                    $this->fill(array_filter(Arr::only((array) $model, ['nest_left', 'nest_right', 'nest_depth'])));
                     $query->allChildren();
                 }
             }
