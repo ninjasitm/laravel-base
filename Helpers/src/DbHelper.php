@@ -18,13 +18,13 @@ class DbHelper
 
     protected static function beforeQuery()
     {
-        static::$_origFetchMode = DB::getFetchMode();
-        DB::setFetchMode(\PDO::FETCH_ASSOC);
+        // static::$_origFetchMode = DB::getFetchMode();
+        // DB::setFetchMode(\PDO::FETCH_ASSOC);
     }
 
     protected static function afterQuery()
     {
-        DB::setFetchMode(static::$_origFetchMode);
+        // DB::setFetchMode(static::$_origFetchMode);
     }
 
     protected static function normalizeResult($result)
@@ -84,6 +84,15 @@ class DbHelper
         });
     }
 
+    /**
+     * > Get the indexes for a table
+     *
+     * @param tableName The name of the table to get the indexes for.
+     * @param dbName The name of the database to use. If not specified, the default database will be
+     * used.
+     *
+     * @return An array of indexes for the table.
+     */
     public static function getIndexes($tableName = null, $dbName = null)
     {
         static::beforeQuery();
@@ -91,6 +100,15 @@ class DbHelper
         return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableIndexes($tableName));
     }
 
+    /**
+     * > It returns a list of columns for a given table
+     *
+     * @param tableName The name of the table you want to get the fields from.
+     * @param dbName The name of the database to connect to. If not specified, the default database
+     * will be used.
+     *
+     * @return An array of column names
+     */
     public static function getFields($tableName = null, $dbName = null)
     {
         static::beforeQuery();
@@ -98,21 +116,103 @@ class DbHelper
         return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableColumns($tableName));
     }
 
+    /**
+     * > Get the foreign key constraints for a table
+     *
+     * @param tableName The name of the table you want to get the foreign keys for.
+     * @param dbName The name of the database to use. If not specified, the default database will be
+     * used.
+     *
+     * @return An array of foreign keys for the table.
+     */
+    public static function getForeignConstraints($tableName = null, $dbName = null)
+    {
+        static::beforeQuery();
+
+        return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableForeignKeys($tableName));
+    }
+
+    /**
+     * It returns a collection of foreign constraint names.
+     *
+     * @param tableName The name of the table you want to get the foreign keys for.
+     * @param dbName The name of the database to look in. If not provided, the default database will be
+     * used.
+     *
+     * @return A collection of foreign key constraints.
+     */
+    public static function getForeignConstraintNames($tableName = null, $dbName = null)
+    {
+        return collect(static::getForeignConstraints($tableName, $dbName))->map(
+            function ($c) {
+                return $c->getName();
+            }
+        );
+    }
+
+    /**
+     * It checks if a table has a foreign constraint.
+     *
+     * @param tableName The name of the table you want to check.
+     * @param constraint The name of the foreign key constraint.
+     * @param dbName The database name. If not provided, the default database will be used.
+     */
+    public static function hasForeignConstraint($tableName, $constraint, $dbName = null)
+    {
+        return collect(static::getForeignConstraints($tableName, $dbName))->map(
+            function ($fkColumn) {
+                return $fkColumn->getName();
+            }
+        )->flatten()->contains($constraint);
+    }
+
+    /**
+     * > It returns a boolean value indicating whether the given table has a foreign key constraint on
+     * the given columns
+     *
+     * @param tableName The name of the table you want to check.
+     * @param columns The column name(s) you want to check for foreign key constraints.
+     * @param dbName The database name. If not provided, it will use the default database.
+     */
+    public static function hasForeignConstraintColumns($tableName, $columns, $dbName = null)
+    {
+        return collect(static::getForeignConstraints($tableName, $dbName))->map(
+            function ($fkColumn) {
+                return $fkColumn->getColumns();
+            }
+        )->flatten()->contains($columns);
+    }
+
+    /**
+     * It takes a query builder object and returns a string of the query with the bindings in place
+     *
+     * @param query The query object you want to get the SQL and bindings for.
+     *
+     * @return The query with the bindings replaced with the actual values.
+     */
     public static function getQueryWithBindings($query)
     {
         $sql = str_replace('?', "'?'", $query->toSql());
         return Str::replaceArray('?', $query->getBindings(), $sql);
     }
 
+    /**
+     * It checks if a query has been joined on a table
+     *
+     * @param query The query builder instance
+     * @param table The table name to check for.
+     */
     public static function isJoinedOn($query, $table)
     {
-        return collect($query->getQuery()->joins)->pluck('table')->contains(function ($value, $key) use ($table) {
-            if (is_a($value, \Illuminate\Database\Query\Expression::class)) {
-                /** @var Illuminate\Database\Query\Expression $value */
-                return $value->getValue() === $table; // $table is something like "table_name AS permissions_table"
-            }
+        return collect($query->getQuery()->joins)->pluck('table')->contains(
+            function ($value, $key) use ($table) {
+                if (is_a($value, \Illuminate\Database\Query\Expression::class)) {
+                    /** @var Illuminate\Database\Query\Expression $value */
+                    return $value->getValue() === $table; // $table is something like "table_name AS permissions_table"
+                }
 
-            return $value === $table;
-        });
+                return $value === $table;
+            }
+        );
     }
 }
