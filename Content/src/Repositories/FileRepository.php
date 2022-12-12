@@ -58,7 +58,7 @@ class FileRepository extends BaseRepository
      *
      * @return Model Return an up to date fresh model
      */
-    public function create($input)
+    public function create($input): ?Model
     {
         $attributes = static::store($input, Arr::get($input, 'entity_relation', 'file'))->first();
         return !empty($attributes) ? File::firstOrCreate($attributes) : null;
@@ -171,9 +171,9 @@ class FileRepository extends BaseRepository
      * @param string $path
      * @param string $disk
      *
-     * @return boolean
+     * @return bool
      */
-    public function delete($model)
+    public function delete($model): ? bool
     {
         $model = $model instanceof File ? $model : File::find($model);
         static::getStorageDisk()->delete($model->url);
