@@ -3,17 +3,22 @@
 namespace Nitm\Content\Traits;
 
 use DB;
-use Illuminate\Support\Arr;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Nitm\Content\Models\User;
+use Illuminate\Support\Collection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Nitm\Content\Traits\RepositorySyncsRelations;
-use Nitm\Content\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 
 /**
  * Traits for Model.
@@ -39,7 +44,7 @@ trait Repository
     /**
      * Allow the user to define the fields to be returned
      *
-     * @return void
+     * @return array
      */
     public function toArray()
     {
@@ -75,15 +80,15 @@ trait Repository
      * Allow the user to define the fields to return for the collection
      *
      * @param  Collection|Paginator|LengthAwarePaginator $collection
-     * @return void
+     * @return Collection|Paginator|LengthAwarePaginator
      */
-    public static function collectionToArray($collection)
+    public static function collectionToArray($collection): Collection|Paginator|LengthAwarePaginator
     {
         $fields = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = array_merge((array) $fields, (array) $relations);
         if (!empty($allFields)) {
-            $transofmer = function ($data) use ($allFields) {
+            $transformer = function ($data) use ($allFields) {
                 if ($data instanceof Model || is_array($data)) {
                     $realData = $data instanceof Model ? $data->toArray() : $data;
                     return Arr::only($realData, $allFields);
@@ -92,9 +97,9 @@ trait Repository
                 }
             };
             if ($collection instanceof LengthAwarePaginator || $collection instanceof Paginator) {
-                $collection->getCollection()->transform($transform);
+                $collection->getCollection()->transform($transformer);
             } else {
-                $collection->transform($transform);
+                $collection->transform($transformer);
             }
         }
         return $collection;
@@ -109,7 +114,7 @@ trait Repository
      *
      * @return Model
      */
-    public function makeModel()
+    public function makeModel(): ?Model
     {
         $model = $this->app->make($this->model());
 
@@ -121,17 +126,76 @@ trait Repository
     }
 
     /**
+     * Get Meta Input
+     *
+     * @param  mixed $key
+     * @param  mixed $default
+     * @return void
+     */
+    public function getMetaInput($key, $default = null)
+    {
+        $value = request()->input($key);
+        if (!$value) {
+            return $default;
+        }
+        return is_array($value) ? $value : (json_decode($value, true) ?? $value);
+    }
+
+    /**
      * Paginate records for scaffold.
      *
      * @param  int   $perPage
      * @param  array $columns
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return LengthAwarePaginatorContract
      */
-    public function paginate($perPage, $columns = ['*'])
+    public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginatorContract
     {
         $query = $this->allQuery();
 
         return $query->paginate($perPage, $columns);
+    }
+
+    /**
+     * Paginate the given query using the request
+     *
+     * @param  mixed $request
+     * @param  mixed $query
+     * @param  string $using The paginator mathod to use
+     * @return LengthAwarePaginatorContract|CursorPaginatorContract|PaginatorContract
+     */
+    public function paginateUsing(Request $request, $query, $using = 'paginate')
+    {
+        $page = abs(intval($request->get('page')));
+
+        $perPage = abs(intval($request->get('perPage', 10)));
+
+        if (!empty($allWith = (array) $this->getMetaInput('_with'))) {
+            $query->with(array_filter($allWith, [$query->getModel(), 'hasRelation']));
+        }
+
+        $using = in_array(strtolower($using), ['paginate', 'simplepaginate', 'cursorpaginate']) ? $using : 'paginate';
+        $paginator = $query->$using($perPage, ['*'], 'page', $page);
+
+        $paginator->status = 'ok';
+
+        $fields = $this->getMetaInput('_fields');
+        $relations = $this->getMetaInput('_relations');
+        $allFields = array_merge((array) $fields, (array) $relations);
+
+        if (!empty($allFields)) {
+            $paginator->getCollection()->transform(
+                function ($data) use ($allFields) {
+                    if ($data instanceof Model || is_array($data)) {
+                        $realData = $data instanceof Model ? $data->toArray() : $data;
+                        return Arr::only($realData, $allFields);
+                    } else {
+                        return $data;
+                    }
+                }
+            );
+        }
+
+        return $paginator;
     }
 
     /**
@@ -140,7 +204,7 @@ trait Repository
      * @param  array $data
      * @return Builder
      */
-    public function search($data = [])
+    public function search($data = []): ?Builder
     {
         return $this->model->search($data);
     }
@@ -151,7 +215,7 @@ trait Repository
      * @param  array $data
      * @return Builder
      */
-    public function trashedSearch($data = [])
+    public function trashedSearch($data = []): ?Builder
     {
         return $this->model->search($data)->withTrashed();
     }
@@ -162,9 +226,9 @@ trait Repository
      * @param  array    $search
      * @param  int|null $skip
      * @param  int|null $limit
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
-    public function allQuery($search = [], $skip = null, $limit = null)
+    public function allQuery($search = [], $skip = null, $limit = null): ?Builder
     {
         $query = $this->model->search($search);
 
@@ -187,9 +251,9 @@ trait Repository
      * @param int|null $limit
      * @param array    $columns
      *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     * @return Collection|static[]
      */
-    public function all($search = [], $skip = null, $limit = null, $columns = ['*'])
+    public function all($search = [], $skip = null, $limit = null, $columns = ['*']): ?Collection
     {
         $query = $this->allQuery($search, $skip, $limit);
 
@@ -203,9 +267,9 @@ trait Repository
      *
      * @return Model Return an up to date fresh model
      */
-    public function create($input)
+    public function create($input): ?Model
     {
-        return DB::transaction (function () use ($input) {
+        return DB::transaction(function () use ($input) {
             if ($this->updateExisting) {
                 // Some input may need to be transformed by the model
                 $keys = empty($this->updateExistingKeys) ? $this->model->getFillable() : $this->updateExistingKeys;
@@ -231,9 +295,11 @@ trait Repository
      * @param int   $id
      * @param array $columns
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
+     * @throws ModelNotFoundException
+     *
+     * @return Model|null
      */
-    public function find($id, $columns = ['*'])
+    public function find($id, $columns = ['*']): ?Model
     {
         $query = $this->model->newQuery();
 
@@ -275,9 +341,11 @@ trait Repository
      * @param int   $id
      * @param array $columns
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
+     * @throws ModelNotFoundException
+     *
+     * @return Model
      */
-    public function findOrFail($id, $columns = ['*'], $key = 'id', $silently = false)
+    public function findOrFail($id, $columns = ['*'], $key = 'id', $silently = false): ?Model
     {
         if ($id instanceof Model && $id->exists) {
             return $id;
@@ -317,9 +385,11 @@ trait Repository
      * @param int   $id
      * @param array $columns
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
+     * @throws ModelNotFoundException
+     *
+     * @return bool
      */
-    public function existsOrFail($id, $key = 'id', $silently = false)
+    public function existsOrFail($id, $key = 'id', $silently = false): ?bool
     {
         $query = $this->model->newQuery();
 
@@ -353,9 +423,11 @@ trait Repository
      * @param int   $id
      * @param array $columns
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
+     * @throws ModelNotFoundException
+     *
+     * @return Model
      */
-    public function trashedFindOrFail($id, $columns = ['*'], $key = 'id', $silently = false)
+    public function trashedFindOrFail($id, $columns = ['*'], $key = 'id', $silently = false): ?Model
     {
         $query = $this->model->newQuery();
 
@@ -374,9 +446,9 @@ trait Repository
      * @param int   $id
      * @param array $columns
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model|null
+     * @return bool
      */
-    public function trashedExistsOrFail($id, $key = 'id', $silently = false)
+    public function trashedExistsOrFail($id, $key = 'id', $silently = false): ?bool
     {
         $query = $this->model->newQuery()->withTrashed();
 
@@ -410,11 +482,11 @@ trait Repository
      * @param array $input
      * @param int   $id
      *
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection|Model
+     * @return Model
      */
-    public function update($input, $model)
+    public function update($input, $model): ?Model
     {
-        return DB::transaction (function () use ($input, $model) {
+        return DB::transaction(function () use ($input, $model) {
             if (!($model instanceof Model)) {
                 $query = $this->model->newQuery();
                 $model = $query->findOrFail($model);
@@ -437,7 +509,7 @@ trait Repository
      *
      * @return bool|mixed|null
      */
-    public function delete($model)
+    public function delete($model): ?bool
     {
         if (!($model instanceof Model)) {
             $query = $this->model->newQuery();

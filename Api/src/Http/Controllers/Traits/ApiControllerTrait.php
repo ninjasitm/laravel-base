@@ -7,7 +7,9 @@
 namespace Nitm\Api\Http\Controllers\Traits;
 
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 
 trait ApiControllerTrait
 {
@@ -20,7 +22,7 @@ trait ApiControllerTrait
      *
      * @return [type]
      */
-    protected function beforePaginateTransform(Request $request, Paginator $paginator)
+    protected function beforePaginateTransform(Request $request, LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract $paginator)
     {
         if (class_exists($this->resource())) {
             $class = $this->resource();

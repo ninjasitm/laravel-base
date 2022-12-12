@@ -7,7 +7,10 @@
 namespace Nitm\Content\Http\Controllers\Traits;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -45,7 +48,7 @@ trait CustomControllerTrait
      */
     public function cursorPaginate(Request $request, $query)
     {
-        return $this->afterPaginate($request, $query, 'simplePaginate');
+        return $this->afterPaginate($request, $query, 'cursorPaginate');
     }
 
     /**
@@ -74,10 +77,10 @@ trait CustomControllerTrait
      *
      * @return Paginator A paginator object
      */
-    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): Paginator
+    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract
     {
-        $page = $position ?: abs(intval($request->get('page')));
-        $perPage = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
+        $page      = $position ?: abs(intval($request->get('page')));
+        $perPage   = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
         $paginator = $query->$using($perPage, $columns, $name, $page);
 
         $paginator->status = 'ok';
@@ -115,11 +118,11 @@ trait CustomControllerTrait
      * Do some custom pagination for paginated data
      *
      * @param Request $request
-     * @param mixed   $paginator
+     * @param LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract   $paginator
      *
      * @return void
      */
-    protected function beforePaginateTransform(Request $request, Paginator $paginator)
+    protected function beforePaginateTransform(Request $request, LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract $paginator)
     {
     }
 

@@ -10,11 +10,12 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Nitm\Content\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Model;
+use Nitm\Content\Contracts\Repository as RepositoryContract;
 
 trait SupportsRepositories
 {
     /**
-     * @var BaseRepository
+     * @var RepositoryContract
      */
     protected $repository;
 
@@ -26,12 +27,12 @@ trait SupportsRepositories
     /**
      * Construct controller
      *
-     * @param Application    $app
      * @param BaseRepository $repository
+     * @return RepositoryContract
      */
-    public function createRepository($repository = null)
+    public function createRepository($repository = null): RepositoryContract
     {
-        if ($repository instanceof BaseRepository) {
+        if ($repository instanceof RepositoryContract) {
             $this->repository = $repository;
         } else {
             $repositoryClass = $this->repository();
@@ -84,9 +85,9 @@ trait SupportsRepositories
     /**
      * Get the repository
      *
-     * @return BaseRepository
+     * @return RepositoryContract
      */
-    public function getRepository()
+    public function getRepository(): RepositoryContract
     {
         if (!isset($this->repository)) {
             $this->repository = $this->createRepository();
