@@ -30,7 +30,7 @@ trait SupportsRepositories
      * @param BaseRepository $repository
      * @return RepositoryContract
      */
-    public function createRepository($repository = null): RepositoryContract
+    public function createRepository($repository = null): ?RepositoryContract
     {
         if ($repository instanceof RepositoryContract) {
             $this->repository = $repository;
