@@ -75,9 +75,9 @@ trait CustomControllerTrait
      * @param name The name of the paginator instance.
      * @param position The page number to be returned.
      *
-     * @return Paginator A paginator object
+     * @return LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract | array A paginator result
      */
-    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract
+    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract | array
     {
         $page      = $position ?: abs(intval($request->get('page')));
         $perPage   = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
@@ -106,9 +106,23 @@ trait CustomControllerTrait
 
         $chunk = intval(request()->input('_chunk'));
         if ($chunk > 1) {
-            $paginator->setCollection($paginator->getCollection()->chunk($chunk)->map(function ($group) {
-                return $group->values();
-            }));
+            // Work around for chunking cursor pagination
+            // TODO: See if Laravel resolves this
+            if (strtolower($using) == 'cursorpaginate') {
+                $result = $paginator->toArray();
+                $result['data'] = $paginator->getCollection()->chunk($chunk)->map(
+                    function ($group) {
+                        return $group->values();
+                    }
+                );
+                $paginator = $result;
+            } else {
+                $paginator->setCollection($paginator->getCollection()->chunk($chunk)->map(
+                    function ($group) {
+                        return $group->values();
+                    }
+                ));
+            }
         }
 
         return $paginator;
