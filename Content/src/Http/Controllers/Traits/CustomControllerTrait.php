@@ -77,11 +77,16 @@ trait CustomControllerTrait
      *
      * @return LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract | array A paginator result
      */
-    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = ' page', $position = null): LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract | array
+    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null): LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract | array
     {
         $page      = $position ?: abs(intval($request->get('page')));
         $perPage   = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
-        $paginator = $query->$using($perPage, $columns, $name, $page);
+        if(strtolower($using) === 'cursorpaginate') {
+            // The 4th argument to cursorPaginate is a cursor and is notably different from simplePaginate and paginate
+            $paginator = $query->cursorPaginate($perPage, $columns, $name);
+        } else {
+            $paginator = $query->$using($perPage, $columns, $name, $page);
+        }
 
         $paginator->status = 'ok';
 
