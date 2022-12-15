@@ -163,18 +163,23 @@ trait Repository
      * @param  string $using The paginator mathod to use
      * @return LengthAwarePaginatorContract|CursorPaginatorContract|PaginatorContract
      */
-    public function paginateUsing(Request $request, $query, $using = 'paginate')
+    public function paginateUsing(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null)
     {
-        $page = abs(intval($request->get('page')));
+        $page = abs($position ?: intval($request->get('page')));
 
-        $perPage = abs(intval($request->get('perPage', 10)));
+        $perPage = abs($perPage ?: intval($request->get('perPage', 10)));
 
         if (!empty($allWith = (array) $this->getMetaInput('_with'))) {
             $query->with(array_filter($allWith, [$query->getModel(), 'hasRelation']));
         }
 
         $using = in_array(strtolower($using), ['paginate', 'simplepaginate', 'cursorpaginate']) ? $using : 'paginate';
-        $paginator = $query->$using($perPage, ['*'], 'page', $page);
+        if(strtolower($using) === 'cursorpaginate') {
+            // The 4th argument to cursorPaginate is a cursor and is notably different from simplePaginate and paginate
+            $paginator = $query->cursorPaginate($perPage, $columns, $name);
+        } else {
+            $paginator = $query->$using($perPage, $columns, $name, $page);
+        }
 
         $paginator->status = 'ok';
 
