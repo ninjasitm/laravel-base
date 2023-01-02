@@ -2,8 +2,11 @@
 
 namespace Nitm\Content\Traits;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Nitm\Helpers\CollectionHelper;
+use Illuminate\Database\Eloquent\Model;
 
 trait FiltersModels
 {
@@ -96,5 +99,82 @@ trait FiltersModels
                 return $relations;
             }
         );
+    }
+    
+
+    /**
+     * @param mixed $query
+     * @param string $relationName
+     * @param mixed $data
+     *
+     * @return [type]
+     */
+    public function filterByRelation($query, string $relationName, $data)
+    {
+        if (!CollectionHelper::isCollection($data)) {
+            $data = collect(is_array($data) ? $data : [$data]);
+        }
+        if ($data->count()) {
+            $query->whereHas(
+                $relationName,
+                function ($query) use ($data) {
+                    $query->whereIn(
+                        $query->getModel()->getTable() . '.id',
+                        collect($data)->map(
+                            function ($d) {
+                                return intval($d instanceof Model ? $d->id : $d);
+                            }
+                        )
+                    );
+                }
+            );
+        }
+    }
+
+    /**
+     * Filter By Created
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function scopeFilterByCreatedAt($query, $value)
+    {
+        $this->filterByDate($query, $value);
+    }
+
+    /**
+     * Filter By Updated
+     *
+     * @param  mixed $query
+     * @param  mixed $value
+     * @return void
+     */
+    public function scopeFilterByUpdatedAt($query, $value)
+    {
+        $this->filterByDate($query, $value, 'updated_at');
+    }
+
+    /**
+     * Filter By Date
+     *
+     * @param  mixed $query
+     * @param  mixed $field
+     * @param  mixed $value
+     * @return void
+     */
+    public function filterByDate($query, $value, $field = 'created_at')
+    {
+        if (is_array($value) && !empty(array_filter($value, function ($value) {
+            $isStringDate = (is_string($value) && DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false);
+            $isTimestamp = ((string) (int) $value === (string) $value) && ($value <= PHP_INT_MAX) && ($value >= ~PHP_INT_MAX);
+            return $isStringDate || $isTimestamp;
+        }))) {
+            $start = Carbon::parse(array_shift($value));
+            $end = empty($value) ? Carbon::now() : Carbon::parse(array_pop($value));
+            $query->whereBetween($field, [$start, $end]);
+        } else if (is_string($value)) {
+            $query->where($field, Carbon::parse((string)$value));
+        }
     }
 }
