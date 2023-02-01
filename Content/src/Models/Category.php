@@ -353,9 +353,8 @@ class Category extends Model
     public function scopeBindToType($query)
     {
         if (get_called_class() !== 'Nitm\Content\Models\Category') {
-            $query->whereHas('parent', function ($query) {
-                $query->whereSlug($this->getIs());
-            });
+            $sql = "SELECT id FROM categories WHERE slug='" . $this->getIs() . "'";
+            $query->whereRaw('(parent_id=(' . $sql . '))');
         }
     }
 
