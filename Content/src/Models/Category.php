@@ -274,6 +274,15 @@ class Category extends Model
     }
 
     /**
+     * Get the is value for this model
+     * @return string
+     */
+    public function getIs(): string
+    {
+        return isset($this->_is) ? $this->_is : str_replace('_', '-', snake_case(class_basename(get_called_class())));
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
     public function author()
@@ -324,7 +333,7 @@ class Category extends Model
      */
     public function scopeSelf($query)
     {
-        $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', snake_case(class_basename(get_called_class())));
+        $slug = $this->getIs();
         if ($slug != 'category') {
             $query->where(
                 [
@@ -342,6 +351,20 @@ class Category extends Model
      * @return [type]
      */
     public function scopeBindToType($query)
+    {
+        if (get_called_class() !== 'Nitm\Content\Models\Category') {
+            $query->whereHas('parent', function ($query) {
+                $query->whereSlug($this->getIs());
+            });
+        }
+    }
+
+    /**
+     * @param mixed $query
+     *
+     * @return [type]
+     */
+    public function scopeBindToTypeLegacy($query)
     {
         if (get_called_class() !== 'Nitm\Content\Models\Category') {
             if (!$this->id) {
