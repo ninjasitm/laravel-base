@@ -329,17 +329,13 @@ class Category extends Model
     /**
      * @param mixed $query
      *
-     * @return [type]
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeSelf($query)
     {
         $slug = $this->getIs();
         if ($slug != 'category') {
-            $query->where(
-                [
-                    'slug' => $slug,
-                ]
-            );
+            return parent::newQuery()->whereSlug($slug);
         }
 
         return $query;
@@ -348,13 +344,13 @@ class Category extends Model
     /**
      * @param mixed $query
      *
-     * @return [type]
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeBindToType($query)
     {
-        $baseName = class_basename(get_called_class());
-        if ($baseName !== 'Category') {
-            $sql = "SELECT id FROM categories WHERE slug='" . $this->getIs() . "' order by id asc limit 1";
+        $slug = $this->getIs();
+        if ($slug !== 'category') {
+            $sql = "SELECT id FROM categories WHERE slug='{$slug}' order by id asc limit 1";
             $query->whereRaw('(parent_id=(' . $sql . '))');
         }
     }
@@ -362,7 +358,7 @@ class Category extends Model
     /**
      * @param mixed $query
      *
-     * @return [type]
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeBindToTypeLegacy($query)
     {
@@ -382,6 +378,9 @@ class Category extends Model
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     public function newQuery()
     {
         $query = parent::newQuery();
