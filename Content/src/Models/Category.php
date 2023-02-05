@@ -8,8 +8,9 @@ use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Traits\NestedTree;
 use Nitm\Content\Models\BaseModel as Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Nitm\Content\Database\Factories\CategoryFactory;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Nitm\Content\Database\Scopes\CategoryDefaultOrderScope;
 
 /**
  * Class Category
@@ -197,7 +198,7 @@ class Category extends Model
     {
         parent::boot();
 
-        static::addGlobalScope(new \Nitm\Content\Database\Scopes\CategoryDefaultOrderScope());
+        static::addGlobalScope(new CategoryDefaultOrderScope());
 
         static::saving(
             function ($model) {
@@ -329,13 +330,17 @@ class Category extends Model
     /**
      * @param mixed $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return [type]
      */
     public function scopeSelf($query)
     {
         $slug = $this->getIs();
         if ($slug != 'category') {
-            return parent::newQuery()->whereSlug($slug);
+            $query->where(
+                [
+                    'slug' => $slug,
+                ]
+            );
         }
 
         return $query;
@@ -344,13 +349,13 @@ class Category extends Model
     /**
      * @param mixed $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return [type]
      */
     public function scopeBindToType($query)
     {
-        $slug = $this->getIs();
-        if ($slug !== 'category') {
-            $sql = "SELECT id FROM categories WHERE slug='{$slug}' order by id asc limit 1";
+        $baseName = class_basename(get_called_class());
+        if ($baseName !== 'Category') {
+            $sql = "SELECT id FROM categories WHERE slug='" . $this->getIs() . "' order by id asc limit 1";
             $query->whereRaw('(parent_id=(' . $sql . '))');
         }
     }
@@ -358,7 +363,7 @@ class Category extends Model
     /**
      * @param mixed $query
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return [type]
      */
     public function scopeBindToTypeLegacy($query)
     {
@@ -379,8 +384,15 @@ class Category extends Model
     }
 
     /**
-     * @inheritDoc
+     * > This function removes the default ordering scope from the query
+     *
+     * @param query The query builder instance.
      */
+    public function scopeClearOrderBy($query)
+    {
+        $query->withoutGlobalScope(CategoryDefaultOrderScope::class);
+    }
+
     public function newQuery()
     {
         $query = parent::newQuery();
