@@ -336,7 +336,9 @@ class Category extends Model
     {
         $slug = $this->getIs();
         if ($slug != 'category') {
-            $query->where(
+            $model = new static;
+            $model->bindToType = false;
+            return $model->where(
                 [
                     'slug' => $slug,
                 ]
@@ -351,13 +353,24 @@ class Category extends Model
      *
      * @return [type]
      */
-    public function scopeBindToType($query)
+    public function scopeBindToType($query, $type = null)
     {
         $baseName = class_basename(get_called_class());
         if ($baseName !== 'Category') {
-            $sql = "SELECT id FROM categories WHERE slug='" . $this->getIs() . "' order by id asc limit 1";
+            $type = $type ?: $this->getIs();
+            $sql = "SELECT id FROM categories WHERE slug='" . $type . "' order by id asc limit 1";
             $query->whereRaw('(parent_id=(' . $sql . '))');
         }
+    }
+
+    /**
+     * > This function is used to unbind the model from the type
+     *
+     * @param query The query builder instance
+     */
+    public function scopeUnbindToType($query)
+    {
+        $this->bindToType = false;
     }
 
     /**
