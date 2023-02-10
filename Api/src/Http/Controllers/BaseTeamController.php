@@ -1,14 +1,15 @@
 <?php
+
 namespace Nitm\Api\Http\Controllers;
 
-use Nitm\Content\Repositories\BaseRepository;
-use Nitm\Api\Http\Controllers\Traits\CustomControllerTrait;
-use Nitm\Api\Http\Controllers\Traits\SupportsTeamRepositories;
-use Illuminate\Container\Container as Application;
 use Illuminate\Foundation\Bus\DispatchesJobs;
+use Nitm\Content\Repositories\BaseRepository;
+use Illuminate\Container\Container as Application;
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller as LaravelController;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Nitm\Content\Http\Controllers\Traits\CustomControllerTrait;
+use Nitm\Content\Http\Controllers\Traits\SupportsTeamRepositories;
 
 /**
  * @SWG\Swagger(
