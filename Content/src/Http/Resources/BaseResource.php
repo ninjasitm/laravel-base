@@ -5,7 +5,7 @@ namespace Nitm\Content\Http\Resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Nitm\Helpers\ClassHelper;
 
-class TrendingTagResource extends JsonResource
+class BaseResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
