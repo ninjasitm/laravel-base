@@ -49,3 +49,28 @@ Be sure to add the following to the top of your base API controller:
  ```
 ## Dependedncies
  - `infyom/laravel-generator` for API and model generation support
+
+# Using numeric IDs, Hashids or UUIDs
+
+You may use the raw ids, hashed ids or UUIDs when serializing data for API responses
+
+## Pros and Cons
+|Item | Pro | Con |
+|-----|-----|-----|
+|IDs|Easy to use and require no changes|Guessable and can lead to DDoS attacks using sequential IDs|
+|UUIDs|Provides truly unique IDs|Long and can create unwieldy Ids|
+|HashIds|Based on IDs and simply mask the real ID|May introduce complexity when converting between IDs and HashIds|
+
+## Using UUIDs
+Attach the `Nitm\Content\Traits\SetUuid` trait to your model. You may alsowant to extends your Http Resources from the `Nitm\Content\Http\Resources\BaseResource` class.
+
+## Using HashIds
+Attach the `Nitm\Content\Traits\SupportsHashIds` trait to your model. You may alsowant to extends your Http Resources from the `Nitm\Content\Http\Resources\BaseResource` class.
+
+Additionally you may use the `resolveRouteBindingUsingHashId` function in your `resolveRouteBinding` method:
+
+```
+public function resolveRouteBinding($value, $field = null) {
+    return $this->resolveRouteBindingUsingHashId($value, $field);
+}
+```

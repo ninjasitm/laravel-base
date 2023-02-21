@@ -16,9 +16,10 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": ">=7.3.0",
-        "laravel/framework": "7.*|8.*|9.*",
-        "spatie/laravel-activitylog": "*"
+        "php": "^8.0",
+        "laravel/framework": "^9.0",
+        "spatie/laravel-activitylog": "*",
+        "vinkla/hashids": "^10.0"
     },
     "suggest": {
         "mad-web/laravel-social-auth": "To support social auth",
@@ -26,15 +27,17 @@
         "infyomlabs/swagger-generator": "To support swagger annotations for models"
     },
     "require-dev": {
-        "dms/phpunit-arraysubset-asserts": "^0.1.0",
-        "fzaninotto/faker": "~1.4",
-        "orchestra/testbench": "^6.22",
-        "phpunit/phpunit": "~5.7",
+        "dms/phpunit-arraysubset-asserts": "^0.4.0",
+        "fakerphp/faker": "^1.14.0",
+        "laravel/pint": "^1.4",
+        "orchestra/testbench": "^7.0",
+        "phpunit/phpunit": "*",
         "phpunit/phpunit-selenium": "~1.2",
-        "phpdocumentor/reflection-docblock": "2.0.4",
+        "phpdocumentor/reflection-docblock": "*",
         "infyomlabs/generator-builder": "*",
         "infyomlabs/laravel-generator": "*",
-        "infyomlabs/swagger-generator": "*"
+        "infyomlabs/swagger-generator": "*",
+        "symfony/mime": "^6.0.0"
     },
     "autoload": {
         "psr-4": {
