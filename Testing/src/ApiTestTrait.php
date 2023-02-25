@@ -172,6 +172,6 @@ trait ApiTestTrait
     {
         foreach ($actualData as $key => $value) {
             $this->assertEquals(Arr::get($actualData, $key, "{$key}: (not set)"), Arr::get($expectedData, $key, "{$key}: (not set)"));
-        }:
+        }
     }
 }
