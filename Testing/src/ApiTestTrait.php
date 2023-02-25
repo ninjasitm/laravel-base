@@ -171,7 +171,7 @@ trait ApiTestTrait
     public function assertModelData(array $actualData, array $expectedData)
     {
         foreach ($actualData as $key => $value) {
-            $this->assertEquals(Arr::get($actualData, $key, '(not set)'), Arr::get($expectedData, $key, '(not set)'));
-        }
+            $this->assertEquals(Arr::get($actualData, $key, "{$key}: (not set)"), Arr::get($expectedData, $key, "{$key}: (not set)"));
+        }:
     }
 }
