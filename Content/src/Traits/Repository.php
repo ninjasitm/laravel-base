@@ -4,6 +4,7 @@ namespace Nitm\Content\Traits;
 
 use DB;
 use Carbon\Carbon;
+use Nitm\Models\BaseModel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;

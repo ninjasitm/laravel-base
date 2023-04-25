@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Contracts;
 
+use Nitm\Models\BaseModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ interface Repository
      *
      * @param array $data
      */
-    public function syncData(Model $model, array $data);
+    public function syncData(BaseModel $model, array|Collection $data = []);
 
     /**
      * Get searchable fields array
