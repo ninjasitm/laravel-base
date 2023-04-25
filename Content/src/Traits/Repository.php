@@ -80,6 +80,7 @@ trait Repository
      * Allow the user to define the fields to return for the collection
      *
      * @param  Collection|Paginator|LengthAwarePaginator $collection
+     * 
      * @return Collection|Paginator|LengthAwarePaginator
      */
     public static function collectionToArray($collection): Collection|Paginator|LengthAwarePaginator
@@ -130,7 +131,8 @@ trait Repository
      *
      * @param  mixed $key
      * @param  mixed $default
-     * @return void
+     * 
+     * @return mixed
      */
     public function getMetaInput($key, $default = null)
     {
@@ -146,6 +148,7 @@ trait Repository
      *
      * @param  int   $perPage
      * @param  array $columns
+     * 
      * @return LengthAwarePaginatorContract
      */
     public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginatorContract
@@ -161,6 +164,11 @@ trait Repository
      * @param  mixed $request
      * @param  mixed $query
      * @param  string $using The paginator mathod to use
+     * @param  integer $perPage
+     * @param  array $columns
+     * @param  string $page
+     * @param  string $position
+     * 
      * @return LengthAwarePaginatorContract|CursorPaginatorContract|PaginatorContract
      */
     public function paginateUsing(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null)
@@ -206,7 +214,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param  array $data
+     * @param  array|Collection $data
      * @return Builder
      */
     public function search($data = []): ?Builder
@@ -345,6 +353,8 @@ trait Repository
      *
      * @param int   $id
      * @param array $columns
+     * @param string $key
+     * @param boolean $silently
      *
      * @throws ModelNotFoundException
      *
@@ -388,7 +398,8 @@ trait Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param string $key
+     * @param boolean $silently
      *
      * @throws ModelNotFoundException
      *
@@ -427,6 +438,8 @@ trait Repository
      *
      * @param int   $id
      * @param array $columns
+     * @param string $key
+     * @param boolean $silently
      *
      * @throws ModelNotFoundException
      *
@@ -449,7 +462,8 @@ trait Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param string $key
+     * @param boolean $silently
      *
      * @return bool
      */
@@ -484,12 +498,13 @@ trait Repository
     /**
      * Update model record for given id
      *
-     * @param array $input
+     * @param array|Collection $input
+     * @param Model $subject
      * @param int   $id
      *
      * @return Model
      */
-    public function update($input, $model): ?Model
+    public function update(array|Collection $input, Model $model): ?Model
     {
         return DB::transaction(function () use ($input, $model) {
             if (!($model instanceof Model)) {
@@ -510,11 +525,13 @@ trait Repository
     /**
      * @param int|Model $id
      *
+     * @param Model $subject
+     * 
      * @throws \Exception
      *
      * @return bool|mixed|null
      */
-    public function delete($model): ?bool
+    public function delete(Model $model): ?bool
     {
         if (!($model instanceof Model)) {
             $query = $this->model->newQuery();
@@ -527,11 +544,12 @@ trait Repository
     /**
      * Sync the model's data
      *
-     * @param array $data
+     * @param BaseModel $model
+     * @param array|Collection $data
      *
      * @return void
      */
-    public function syncData($model, array $data)
+    public function syncData(BaseModel $model, array|Collection $data = [])
     {
     }
 

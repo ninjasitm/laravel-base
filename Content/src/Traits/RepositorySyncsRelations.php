@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Nitm\Content\Models\Metadata\Metadata;
+use Nitm\Models\BaseModel;
 
 trait RepositorySyncsRelations
 {
@@ -18,7 +19,7 @@ trait RepositorySyncsRelations
         return [];
     }
 
-    public function syncRelationData(Model $subject, string $relation, $inputData, $data)
+    public function syncRelationData(Model $subject, string $relation, string $inputData, array|Collection $data)
     {
         $realData = Arr::get($data, $inputData, null);
         if (is_array($realData)) {
@@ -43,13 +44,14 @@ trait RepositorySyncsRelations
     }
 
     /**
-     * SYnc a many to many relation with the new data
+     * Sync a many to many relation with the new data
      *
-     * @param [type] $data
-     * @param [type] $relation
+     * @param Model $subject
+     * @param array|Collection $data
+     * @param string $relation
      * @return void
      */
-    public function syncManyToManyRelation(Model $subject, $data, string $relation)
+    public function syncManyToManyRelation(Model $subject, array|Collection $data, string $relation)
     {
         $subject->$relation()->detach();
         $subject->$relation()->attach($data);
@@ -87,11 +89,12 @@ trait RepositorySyncsRelations
      * Sync single metadata
      * TODO: Why do I have two methods that do the same thing?
      *
-     * @param array $data
+     * @param Model $subject
+     * @param array|Collection $data
      * @param string $key
      * @return Model
      */
-    public function syncSingleMetadata(Model $subject, $data, string $key)
+    public function syncSingleMetadata(Model $subject, array|Collection $data, string $key)
     {
         // print_r($data);
 
@@ -140,7 +143,7 @@ trait RepositorySyncsRelations
      * @param string $key
      * @return Model
      */
-    public function syncMetadataModel(Model $subject, $data, string $key)
+    public function syncMetadataModel(BaseModel|Model $subject, $data, string $key)
     {
         return $this->syncSingleMetadata($model, $data, $key);
     }
@@ -148,12 +151,14 @@ trait RepositorySyncsRelations
     /**
      * Sync metadata
      * TODO: Update syncMetadata usage to require the actual data directly instead of in a nested array
-     * @param array $data
+     * 
+     * @param Model $subject
+     * @param array|Collection $data
      * @param string $key
      * @param boolean $dataIsValue
      * @return Illuminate\Support\Collection
      */
-    public function syncMetadata(Model $subject, $data, string $key = 'metadata', array $linkedBy = ['id'])
+    public function syncMetadata(Model $subject, array|Collection $data, string $key = 'metadata', array $linkedBy = ['id'])
     {
         $data = array_filter((array)$data);
         if (!is_array($data) || empty($data)) {
@@ -222,14 +227,16 @@ trait RepositorySyncsRelations
 
     /**
      * Sync a relation
-     * @param array $data
+     * 
+     * @param Model $subject
+     * @param array|Collection $data
      * @param string $key
      * @param callback $callback A method that can be used to transform a single entry
      * @param array $linkedByswe987o0ilp bn
      * @return Illuminate\Support\Collection
      */
 
-    public function syncRelation(Model $subject, $data, string $relation, callable $callable = null, $linkedBy = ['id'])
+    public function syncRelation(Model $subject, array|Collection $data, string $relation, callable $callable = null, $linkedBy = ['id'])
     {
         $data = is_array($data) ? array_filter($data) : $data;
 
@@ -297,6 +304,8 @@ trait RepositorySyncsRelations
 
     /**
      * Sync a relation
+     * 
+     * @param Model $subject
      * @param array $data
      * @param string $key
      * @param callback $callback A method that can be used to transform a single entry
@@ -304,7 +313,7 @@ trait RepositorySyncsRelations
      * @return Illuminate\Support\Collection
      */
 
-    public function syncSingleRelation(Model $subject, $data, string $relation, callable $callable = null, array $linkedBy = null)
+    public function syncSingleRelation(Model $subject, array $data, string $relation, callable $callable = null, array $linkedBy = null)
     {
         if (
             (!is_array($data) && is_object($data) && !method_exists($data, 'getAttributes')) || (is_array($data) && empty($data))
@@ -370,6 +379,7 @@ trait RepositorySyncsRelations
     /**
      * Find a relational model
      *
+     * @param Model $subject
      * @param string $relation
      * @param array $where
      * @param array|Model $data
