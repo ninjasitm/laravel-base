@@ -2,9 +2,9 @@
 
 namespace Nitm\Content\Contracts;
 
-use Nitm\Models\BaseModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Nitm\Content\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;

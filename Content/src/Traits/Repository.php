@@ -4,12 +4,12 @@ namespace Nitm\Content\Traits;
 
 use DB;
 use Carbon\Carbon;
-use Nitm\Models\BaseModel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Nitm\Content\Models\User;
 use Illuminate\Support\Collection;
+use Nitm\Content\Models\BaseModel;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
