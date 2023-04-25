@@ -192,7 +192,7 @@ interface Repository
      * @param  array $data
      * @return Model     *
      */
-    public function update(?array $input, $model): ?Model;
+    public function update(Collection|array $input, Model $model): ?Model;
 
     /**
      * Update a new model
@@ -201,5 +201,5 @@ interface Repository
      * @return bool
      *
      */
-    public function delete($model): ?bool;
+    public function delete(Model $modell): ?bool;
 }
