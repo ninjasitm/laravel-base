@@ -532,7 +532,7 @@ trait Repository
      *
      * @return bool|mixed|null
      */
-    public function delete(Model $model): ?bool
+    public function delete(Model|int $model): ?bool
     {
         if (!($model instanceof Model)) {
             $query = $this->model->newQuery();
