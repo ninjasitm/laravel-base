@@ -500,12 +500,12 @@ trait Repository
      * Update model record for given id
      *
      * @param array|Collection $input
-     * @param Model $subject
+     * @param Model|string|id $subject
      * @param int   $id
      *
      * @return Model
      */
-    public function update(array|Collection $input, Model $model): ?Model
+    public function update(array|Collection $input, Model|string|id $model): ?Model
     {
         return DB::transaction(function () use ($input, $model) {
             if (!($model instanceof Model)) {
