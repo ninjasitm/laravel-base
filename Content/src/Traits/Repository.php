@@ -545,12 +545,12 @@ trait Repository
     /**
      * Sync the model's data
      *
-     * @param BaseModel $model
+     * @param BaseModel|Model $model
      * @param array|Collection $data
      *
      * @return void
      */
-    public function syncData(BaseModel $model, array|Collection $data = [])
+    public function syncData(BaseModel|Model $model, array|Collection $data = [])
     {
     }
 
