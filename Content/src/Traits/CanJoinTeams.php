@@ -196,9 +196,9 @@ trait CanJoinTeams
      * Is the user an admin on the given team?
      * @param TeamContract $team The team
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isAdminOn(TeamContract $team = null): boolean
+    public function isAdminOn(TeamContract $team = null): bool
     {
         return $this->isSuperAdmin() || $this->isOrganizationAdmin($team) || $this->isOwnerOf($team);
     }
@@ -206,9 +206,9 @@ trait CanJoinTeams
     /**
      * Is the user a super admin?
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isSuperAdmin(): boolean
+    public function isSuperAdmin(): bool
     {
         return $this->hasRole('Super Admin') || $this->systemRole && $this->systemRole->name === 'Super Admin';
     }
@@ -217,9 +217,9 @@ trait CanJoinTeams
      * Is the user an admin on the given team?
      * @param TeamContract $team The team
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isOrganizationAdmin(TeamContract $team = null): boolean
+    public function isOrganizationAdmin(TeamContract $team = null): bool
     {
         $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
         return $team instanceof TeamContract ? $this->roleOn($team) === 'organization-admin' : false;
@@ -229,9 +229,9 @@ trait CanJoinTeams
      * Is the user on the given team?
      * @param TeamContract $team The team
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isUserOn(TeamContract $team = null): boolean
+    public function isUserOn(TeamContract $team = null): bool
     {
         $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
         return $team instanceof TeamContract ? $this->roleOn($team) !== null : false;
@@ -241,9 +241,9 @@ trait CanJoinTeams
      * Is the user approved on the given team?
      * @param TeamContract $team The team
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isPendingOn(TeamContract $team = null): boolean
+    public function isPendingOn(TeamContract $team = null): bool
     {
         $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
         return $team instanceof TeamContract ? in_array($this->roleOn($team), ['pending', 'member']) : false;
@@ -253,9 +253,9 @@ trait CanJoinTeams
      * Is the user the owner of the given team?
      * @param TeamContract $team The team
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isOwnerOf(TeamContract $team = null): boolean
+    public function isOwnerOf(TeamContract $team = null): bool
     {
         $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
         return $team instanceof TeamContract ? $team->owner_id === $this->id : false;
@@ -265,9 +265,9 @@ trait CanJoinTeams
      * Is the user approved on the given team?
      * @param TeamContract $team The team
      * 
-     * @return boolean
+     * @return bool
      */
-    public function isApprovedOn(TeamContract $team = null): boolean
+    public function isApprovedOn(TeamContract $team = null): bool
     {
         if (!$team && $this->teamUser || $this->pivot) {
             if ($this->teamUser) {
