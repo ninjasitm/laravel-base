@@ -5,13 +5,14 @@ namespace Nitm\Content\Models;
 use Illuminate\Support\Str;
 use Nitm\Content\NitmContent;
 use Nitm\Content\Models\Invitation;
+use Nitm\Content\Contracts\TeamContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Nitm\Content\Models\TeamSubscription;
 use Nitm\Content\Database\Factories\TeamFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Team extends Model
+class Team extends Model implements TeamContract
 {
     use HasFactory;
     use Notifiable;

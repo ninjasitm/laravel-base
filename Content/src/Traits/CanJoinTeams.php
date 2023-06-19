@@ -3,6 +3,7 @@
 namespace Nitm\Content\Traits;
 
 use InvalidArgumentException;
+use Nitm\Content\Contracts\TeamContract;
 
 trait CanJoinTeams
 {
@@ -180,5 +181,131 @@ trait CanJoinTeams
                 return $team->totalPotentialUsers();
             }
         ) - $this->ownedTeams->count();
+    }
+    
+
+    /**
+     * Get the user's role on a given team.
+     * @param TeamContract $team The team
+     * 
+     * @return string
+     */
+    public function roleOn(TeamContract $team): string
+    {
+        if (!$team || $team && $this->current_team_id == $team->id) {
+            if (!$this->relationLoaded('teamUser')) {
+                $this->load('teamUser');
+            }
+            return $this->teamUser ? $this->teamUser->role : 'pending';
+        } else {
+            if ($team = $this->teams->find($team->id)) {
+                return $team->pivot ? $team->pivot->role : 'pending';
+            }
+            return 'pending';
+        }
+    }
+
+    /**
+     * Is the user an admin on the given team?
+     * @param TeamContract $team The team
+     * 
+     * @return boolean
+     */
+    public function isAdminOn(TeamContract $team = null): boolean
+    {
+        return $this->isSuperAdmin() || $this->isOrganizationAdmin($team) || $this->isOwnerOf($team);
+    }
+
+    /**
+     * Is the user a super admin?
+     * 
+     * @return boolean
+     */
+    public function isSuperAdmin(): boolean
+    {
+        return $this->hasRole('Super Admin') || $this->systemRole && $this->systemRole->name === 'Super Admin';
+    }
+
+    /**
+     * Is the user an admin on the given team?
+     * @param TeamContract $team The team
+     * 
+     * @return boolean
+     */
+    public function isOrganizationAdmin(TeamContract $team = null): boolean
+    {
+        $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
+        return $team instanceof TeamContract ? $this->roleOn($team) === 'organization-admin' : false;
+    }
+
+    /**
+     * Is the user on the given team?
+     * @param TeamContract $team The team
+     * 
+     * @return boolean
+     */
+    public function isUserOn(TeamContract $team = null): boolean
+    {
+        $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
+        return $team instanceof TeamContract ? $this->roleOn($team) !== null : false;
+    }
+
+    /**
+     * Is the user approved on the given team?
+     * @param TeamContract $team The team
+     * 
+     * @return boolean
+     */
+    public function isPendingOn(TeamContract $team = null): boolean
+    {
+        $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
+        return $team instanceof TeamContract ? in_array($this->roleOn($team), ['pending', 'member']) : false;
+    }
+
+    /**
+     * Is the user the owner of the given team?
+     * @param TeamContract $team The team
+     * 
+     * @return boolean
+     */
+    public function isOwnerOf(TeamContract $team = null): boolean
+    {
+        $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
+        return $team instanceof TeamContract ? $team->owner_id === $this->id : false;
+    }
+    
+    /**
+     * Is the user approved on the given team?
+     * @param TeamContract $team The team
+     * 
+     * @return boolean
+     */
+    public function isApprovedOn(TeamContract $team = null): boolean
+    {
+        if (!$team && $this->teamUser || $this->pivot) {
+            if ($this->teamUser) {
+                return $this->teamUser ? \Nitm\Helpers\ModelHelper::boolval($this->teamUser->is_approved) === true : false;
+            }
+            if ($this->pivot) {
+                return $this->pivot ? \Nitm\Helpers\ModelHelper::boolval($this->pivot->is_approved) === true : false;
+            }
+        } else {
+            $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
+            if ($team instanceof TeamContract) {
+                if (!$team->pivot) {
+                    if ($this->relationLoaded('teams') && $this->teams) {
+                        $team = $this->teams->where('id', $team->id)->first();
+                    } else {
+                        $team = $this->teams()->where('id', $team->id)->first();
+                    }
+                }
+                if ($team instanceof TeamContract) {
+                    return $team->pivot ? \Nitm\Helpers\ModelHelper::boolval($team->pivot->is_approved) === true : false;
+                }
+                return false;
+            } else {
+                return false;
+            }
+        }
     }
 }
