@@ -66,19 +66,6 @@ trait CanJoinTeams
     }
 
     /**
-     * Get the user's role on a given team.
-     *
-     * @param  \Nitm\Content\Models\Team $team
-     * @return string
-     */
-    public function roleOn($team)
-    {
-        if ($team = $this->teams->find($team->id)) {
-            return $team->pivot->role;
-        }
-    }
-
-    /**
      * Get the user's role on the team currently being viewed.
      *
      * @return string
