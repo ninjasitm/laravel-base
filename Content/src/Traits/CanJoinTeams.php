@@ -283,7 +283,7 @@ trait CanJoinTeams
                     if ($this->relationLoaded('teams') && $this->teams) {
                         $team = $this->teams->where('id', $team->id)->first();
                     } else {
-                        $team = $this->teams()->where('id', $team->id)->first();
+                        $team = $this->teams()->where('teams.id', $team->id)->first();
                     }
                 }
                 if ($team instanceof TeamContract) {
