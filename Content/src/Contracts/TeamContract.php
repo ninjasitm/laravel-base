@@ -1,5 +1,5 @@
 <?php
 
-namespace Nim\Content\Contracts;
+namespace Nitm\Content\Contracts;
 
 interface TeamContract {}
