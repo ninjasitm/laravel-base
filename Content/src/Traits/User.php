@@ -13,7 +13,7 @@ trait User
 
     public function getMorphClass()
     {
-        return 'RainLab\User\Models\User';
+        return 'Nitm\Content\Models\User';
     }
 
     public function setProfileAttribute($profile)
