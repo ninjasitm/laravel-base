@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Nitm\Content\Models\User;
 use Illuminate\Support\Collection;
+use Nitm\Content\Contracts\TeamContract;
 use Nitm\Content\Models\BaseModel;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
@@ -574,7 +575,7 @@ trait Repository
      *
      * @return array
      */
-    public function prepareFormConfig(Team $team, Request $request): array
+    public function prepareFormConfig(TeamContract $team, Request $request): array
     {
         return [];
     }
@@ -584,7 +585,7 @@ trait Repository
      *
      * @return array
      */
-    public function prepareIndexConfig(Team $team, Request $request): array
+    public function prepareIndexConfig(TeamContract $team, Request $request): array
     {
         return [
             'filters' => []
