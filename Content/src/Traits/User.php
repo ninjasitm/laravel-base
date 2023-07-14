@@ -16,51 +16,6 @@ trait User
         return 'Nitm\Content\Models\User';
     }
 
-    public function setProfileAttribute($profile)
-    {
-        if (!empty($profile)) {
-            foreach ((array) $profile as $key => $value) {
-                $key = 'iu_'.$key;
-                switch ($key) {
-                    case 'iu_bio':
-                        $key = 'iu_about';
-                        break;
-                    case 'iu_social':
-                        $this->setProfileAttribute($value);
-                        break;
-                    case 'iu_location':
-                        $this->setProfileAttribute($value);
-                        break;
-                }
-                if (in_array($key, $this->fillable)) {
-                    $this->$key = $value;
-                }
-            }
-        }
-    }
-
-    public function getProfileAttribute()
-    {
-        return [
-            'bio' => $this->iu_about,
-            'bio_short' => $this->iu_about && strlen($this->iu_about) > 240 ? preg_replace('/\s+?(\S+)?$/', '', substr($this->iu_about, 0, 240)).' ...' : '',
-            'website' => $this->iu_webpage,
-            'company' => $this->iu_company,
-            'social' => [
-                'twitter' => $this->iu_twitter,
-                'facebook' => $this->iu_facebook,
-                'linkedin' => $this->iu_blog,
-            ],
-            'location' => [
-                'street_addr' => $this->street_addr,
-                'city' => $this->city,
-                'zip' => $this->zip,
-                'state' => $this->state ? $this->state->toArray() : [],
-                'country' => $this->country ? $this->country->toArray() : [],
-            ],
-        ];
-    }
-
     public static function apiFind($id, $options = [])
     {
         unset($options['hashedId']);
