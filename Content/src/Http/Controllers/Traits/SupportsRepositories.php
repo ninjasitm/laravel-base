@@ -6,6 +6,7 @@
 
 namespace Nitm\Content\Http\Controllers\Traits;
 
+use Nitm\Content\NitmContent;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Nitm\Content\Repositories\BaseRepository;
@@ -192,7 +193,7 @@ trait SupportsRepositories
      */
     public function indexConfig(Request $request)
     {
-        return $this->printSuccess($this->getRepository()->prepareIndexConfig($team, $request));
+        return $this->printSuccess($this->getRepository()->prepareIndexConfig($request->team ?: NitmContent::team(), $request));
     }
 
     /**
@@ -203,6 +204,6 @@ trait SupportsRepositories
      */
     public function formConfig(Request $request)
     {
-        return $this->printSuccess($this->getRepository()->prepareFormConfig($team, $request));
+        return $this->printSuccess($this->getRepository()->prepareFormConfig($request->team ?: NitmContent::team(), $request));
     }
 }

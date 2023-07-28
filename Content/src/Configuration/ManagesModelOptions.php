@@ -11,21 +11,21 @@ trait ManagesModelOptions
      *
      * @var string
      */
-    public static $userModel = 'Nitm\Content\User';
+    public static $userModel = 'Nitm\Content\Models\User';
 
     /**
      * The team model class name.
      *
      * @var string
      */
-    public static $teamModel = 'Nitm\Content\Team';
+    public static $teamModel = 'Nitm\Content\Models\Team';
 
     /**
      * The category model class name.
      *
      * @var string
      */
-    public static $categoryModel = 'Nitm\Content\Category';
+    public static $categoryModel = 'Nitm\Content\Models\Category';
 
     /**
      * Set the user model class name.
