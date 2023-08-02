@@ -146,17 +146,34 @@ trait CustomControllerTrait
     }
 
     /**
-     * It returns a JSON response with a message and a result
+     * Make a response and append meta if needed.
      *
-     * @param result The data you want to return
-     * @param message The message you want to send to the user.
-     * @param code HTTP status code
+     * @param array $data
+     * @param string $message
      *
-     * @return A JSON response with the message and result.
+     * @return Response
+     */
+    protected function makeResponse($data, $message = 'Success!')
+    {
+        $result = ResponseUtil::makeResponse($message, $data);
+        if (!empty($this->responseMeta)) {
+            $result['meta'] = $this->responseMeta;
+        }
+        return $result;
+    }
+
+    /**
+     * Send Response
+     *
+     * @param  mixed $result
+     * @param  mixed $message
+     * @param  mixed $code
+     * @return string | Response
      */
     public function sendResponse($result, $message, $code = 200)
     {
-        return Response::json(ResponseUtil::makeResponse($message, $result), $code);
+        // 15 = Symfony\Component\HttpFoundation::DEFAULT_ENCODING_OPTIONS
+        return Response::json($this->makeResponse($result, $message), $code, [], 15 | JSON_INVALID_UTF8_SUBSTITUTE);
     }
 
     /**
@@ -179,6 +196,44 @@ trait CustomControllerTrait
     public function sendError($result, $message, $code = 400)
     {
         return Response::json(ResponseUtil::makeError($message, $result), $code);
+    }
+    
+    /**
+     * Get Meta Input
+     *
+     * @param  mixed $key
+     * @param  mixed $default
+     * @return void
+     */
+    protected function getMetaInput($key, $default = null)
+    {
+        $value = request()->input($key);
+        if (!$value) {
+            return $default;
+        }
+        return is_array($value) ? $value : (json_decode($value, true) ?? $value);
+    }
+
+    /**
+     * Add Meta information to the response
+     *
+     * @param  mixed $meta
+     * @return void
+     */
+    protected function addMeta($meta = [])
+    {
+        $this->responseMeta = array_merge($this->responseMeta, $meta);
+    }
+
+    /**
+     * Set Meta information for the response
+     *
+     * @param  mixed $meta
+     * @return void
+     */
+    protected function setMeta($meta = [])
+    {
+        $this->responseMeta = $meta;
     }
 
     /**
