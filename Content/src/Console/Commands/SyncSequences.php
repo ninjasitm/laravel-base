@@ -30,10 +30,10 @@ class SyncSequences extends Command
                     function () use ($table) {
                         $pkMax = DB::select("SELECT nextval('{$table}_id_seq')")[0]->nextval;
                         $pkNext = DB::select("SELECT MAX(id)+1 as pkNext FROM {$table}")[0]->pknext;
-                        $this->info("Sequence on $table is (Expected) $pkMax => (Current) $pkNext");
+                        $this->info("Sequence on {$table} is (Expected) {$pkMax} => (Current) {$pkNext}");
                         if($pkMax != $pkNext) {
-                            DB::select("SELECT setval('{$table}_id_seq', COALESCE((SELECT MAX(id)+1 FROM ${table}), 1), false)");
-                            $this->info("Updated sequence on $table from $pkMax to $pkNext");
+                            DB::select("SELECT setval('{$table}_id_seq', COALESCE((SELECT MAX(id)+1 FROM {$table}), 1), false)");
+                            $this->info("\tUpdated sequence on {$table} from {$pkMax} to {$pkNext}");
                         }
                     }, 5
                 );
