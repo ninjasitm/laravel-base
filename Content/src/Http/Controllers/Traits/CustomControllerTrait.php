@@ -18,12 +18,30 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Response;
+use Nitm\Content\Jobs\RecordActivity;
 
 trait CustomControllerTrait
 {
+    /**
+     * The model that should be used for pagination.
+     *
+     * @var string
+     */
     protected $model;
 
+    /**
+     * The model that should be used for pagination.
+     *
+     * @var string
+     */
     protected $perPage = 10;
+
+    /**
+     * Enable activity recording for this controller
+     * 
+     * @var bool
+     */
+    protected $recordsActivity = false;
 
     /**
      * Use full pagination
@@ -305,6 +323,15 @@ trait CustomControllerTrait
                 } catch (\Exception $e) {
                 }
             }
+        }
+
+        if($this->recordsActivity) {
+            RecordActivity::dispatch(auth()->user(), $model, [
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'url' => request()->url(),
+                'method' => request()->method(),
+            ]);
         }
 
         return $this->printSuccess($model, $status, $code);
