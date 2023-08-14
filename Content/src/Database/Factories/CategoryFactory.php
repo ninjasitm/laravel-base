@@ -22,6 +22,20 @@ class CategoryFactory extends Factory
      */
     public function definition()
     {
-        return [];
+        return [
+            'title' => $this->faker->word()
+        ];
+    }
+
+    /**
+     * Set the category parent
+     */
+    public function withParent($id): Factory
+    {
+        return $this->state(function (array $attributes) use ($id) {
+            return [
+                'parent_id' => $id
+            ];
+        });
     }
 }
