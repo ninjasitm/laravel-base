@@ -52,7 +52,7 @@ class RecordActivity implements ShouldQueue
      */
     public function __construct($user, $models, $properties= [], $logName = null)
     {
-        $this->models = is_array($models) || $models instanceof Collection ? $models : [$model];
+        $this->models = is_array($models) || $models instanceof Collection ? $models : [$models];
         $this->user = $user;
         $this->properties = $properties;
     }
