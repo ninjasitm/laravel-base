@@ -5,6 +5,7 @@ namespace Nitm\Content\Traits;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Collection;
 use Nitm\Helpers\CollectionHelper;
 use Illuminate\Database\Eloquent\Model;
 
@@ -101,20 +102,76 @@ trait FiltersModels
         );
     }
     
-
     /**
+     * Filter the given relation by the name
+     * 
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
+     * @param bool $exclusive
+     * @return mixed
      *
-     * @return [type]
+     * @return void
      */
-    public function filterByRelation($query, string $relationName, $data)
+    public function filterByRelation($query, string $relationName, $data, bool $exclusive = true)
     {
         if (!CollectionHelper::isCollection($data)) {
             $data = collect(is_array($data) ? $data : [$data]);
         }
         if ($data->count()) {
+            $method = $exclusive? 'whereHas' : 'orWhereHas';
+            $query->$method(
+                $relationName,
+                function ($query) use ($data) {
+                    $query->whereIn(
+                        $query->getModel()->getTable() . '.id',
+                        collect($data)->map(
+                            function ($d) {
+                                return intval($d instanceof Model ? $d->id : $d);
+                            }
+                        )
+                    );
+                }
+            );
+        }
+    }
+
+    /**
+     * Filter by the given relation
+     * 
+     * @param mixed $query
+     * @param string $relationName
+     * @param mixed $data
+     * @param array $morphable
+     * @param bool $exclusive
+     * @return mixed
+     *
+     * @return void
+     */
+    public function scopeFilterByRelation($query, string $relationName, $data, bool $exclusive = true)
+    {
+        $this->filterByRelation($query, $relationName, $data, $exclusive);
+    }
+    
+    /**
+     * Filter the given morph relation by the name
+     * 
+     * @param mixed $query
+     * @param string $relationName
+     * @param mixed $data
+     * @param array $morphable
+     * @param bool $exclusive
+     * @return mixed
+     *
+     * @return void
+     */
+    public function filterByMorphRelation($query, string $relationName, $data, array|Collection $morphable = [], bool $exclusive = true)
+    {
+        if (!CollectionHelper::isCollection($data)) {
+            $data = collect(is_array($data) ? $data : [$data]);
+        }
+        if ($data->count()) {
+            $method = $exclusive ? 'whereHasMorph' : 'orWhereHasMorph';
             $query->whereHas(
                 $relationName,
                 function ($query) use ($data) {
@@ -129,6 +186,23 @@ trait FiltersModels
                 }
             );
         }
+    }
+
+    /**
+     * Filter by the morphable relation
+     * 
+     * @param mixed $query
+     * @param string $relationName
+     * @param mixed $data
+     * @param array $morphable
+     * @param bool $exclusive
+     * @return mixed
+     *
+     * @return void
+     */
+    public function scopeFilterByMorphRelation($query, string $relationName, $data, array|Collection $morphable = [], bool $exclusive = true)
+    {
+        $this->filterByMorphRelation($query, $relationName, $data, $morphable, $exclusive);
     }
 
     /**
