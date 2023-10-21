@@ -5,6 +5,7 @@ namespace Nitm\Content\Models;
 use Nitm\Content\Traits\Model;
 use Nitm\Content\Traits\Search;
 use Nitm\Content\Traits\Feature;
+use Illuminate\Support\Arr;
 use Illuminate\Notifications\Notifiable;
 use Nitm\Content\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
