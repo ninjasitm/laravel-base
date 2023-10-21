@@ -71,6 +71,31 @@ class User extends Authenticatable
     public $eagerWith = [];
 
     /**
+     * @inheritDoc
+     */
+    public static function boot() 
+    {
+        parent::boot();
+        static::saving(function ($user) {
+            $firstName = Arr::get($user->attributes, 'first_name');
+            $lastName = Arr::get($user->attributes, 'last_name');
+            if($firstName && $lastName) {
+                $user->name = "{$firstName} {$lastName}";
+            } else {
+                $user->name = $user->name ?: "{$firstName} {$lastName}";
+            }
+            unset($user->attributes['first_name'], $user->attributes['last_name']);
+            // dump($firstName, $lastName, $user->name, $user->attributes);
+            // $user->username = $user->username ?: $user->email;
+        });
+        static::creating(function ($user) {
+            $user->password = $user->password ?: Str::random(12);
+            $user->name = $user->name ?: "{$user->first_name} {$user->last_name}";
+            // $user->username = $user->username ?: $user->email;
+        });
+    }
+
+    /**
      * Create a new factory instance for the model.
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
