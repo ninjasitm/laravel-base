@@ -41,7 +41,6 @@ trait RepositorySyncsRelations
                 })->filter(function ($v, $k) {
                     return filter_var($v, FILTER_VALIDATE_INT);
                 });
-                dump("Syncing relation: $relation", $filteredData->toArray());
                 $subject->$relation()->sync($filteredData->toArray());
             }
         }
