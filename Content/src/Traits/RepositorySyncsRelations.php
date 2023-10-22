@@ -11,6 +11,9 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Nitm\Content\Models\Metadata\Metadata;
 use Nitm\Models\BaseModel;
+use Nitm\Helpers\CollectionHelper;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 trait RepositorySyncsRelations
 {
@@ -41,6 +44,82 @@ trait RepositorySyncsRelations
                 $subject->$relation()->sync($filteredData->toArray());
             }
         }
+    }
+
+    /**
+     * Sync Relation Data
+     *
+     * @param  mixed $relation
+     * @param  mixed $key
+     * @param  mixed $data
+     * @return void
+     */
+    public function syncRelationDataWithParams(Model $subject, string $relation, $key, $data, $orderBy = 'updated_at')
+    {
+        $pivotFields = [];
+        $realData = $this->extractRealDataFrom($key, $data);
+        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array)$realData);
+        $relationQuery = $subject->$relation();
+        if ($realData->count()) {
+            $syncMethod = Str::camel('sync-' . $relation);
+            if (method_exists($subject, $syncMethod)) {
+                $subject->$syncMethod($realData->toArray(), $relation);
+            } else {
+                $filteredData = [];
+                foreach ($realData as $key => $params) {
+                    $id = null;
+                    if (is_array($params) && !empty($id = Arr::pull($params, 'id'))) {
+                        $filteredData[$id] = [];
+                    }
+                    if ($key !== 'id') {
+                        $id = $id ?: (is_numeric($params) ? $params : $key);
+                        $filteredData[$id] = is_array($params) ? $params : [];
+                    }
+                }
+                $pivotFields = array_keys((array)current($filteredData));
+                if ($relationQuery instanceof HasMany || $relationQuery instanceof HasManyThrough) {
+                    $relationQuery->whereIn('id', array_keys($filteredData))
+                        ->get()
+                        ->map(function ($model) use ($filteredData) {
+                            $model->fill($filteredData[$model->id]);
+                            $model->save();
+                        });
+                } else {
+                    $relationQuery->sync($filteredData);
+                }
+            }
+        }
+
+        if ($relationQuery instanceof HasMany || $relationQuery instanceof HasManyThrough) {
+            $relationQuery = $subject->$relation()->orderByRaw("$orderBy asc" . (app()->environment('testing') ? '' : ' NULLS LAST'));
+        } else {
+            $relationQuery = empty($pivotFields) ? $subject->$relation() : $subject->$relation()->withPivot($pivotFields);
+            if (!empty($pivotFields) && in_array($orderBy, $pivotFields)) {
+                $relationQuery->orderByRaw("pivot_{$orderBy}" . (app()->environment('testing') ? '' : ' NULLS LAST'));
+            }
+        }
+
+        return $relationQuery->get();
+    }
+
+    /**
+     * Extract Real Data From
+     *
+     * @param  mixed $keys
+     * @param  mixed $data
+     * @return void
+     */
+    protected function extractRealDataFrom($keys, $data)
+    {
+        $realData = null;
+        $keys = (array) $keys;
+        foreach ($keys as $key) {
+            $realData = Arr::get($data, $key, null);
+            if (!empty($realData)) {
+                break;
+            }
+        }
+        return $realData;
     }
 
     /**
