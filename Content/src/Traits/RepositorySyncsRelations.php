@@ -408,12 +408,13 @@ trait RepositorySyncsRelations
             if (is_callable($callable)) {
                 $data = $callable($data, $index, $this);
             }
+
+            $method = is_object($data) ? 'save' : 'create';
             if (!empty($linkedBy)) {
                 $where = $this->_getLinkCondition($data, $linkedBy);
-                $method = is_object($data) ? 'save' : 'create';
                 $model = $this->_findRelationModel($subject, $relation, $where, $data, $method);
             } else {
-                $model = $this->_findRelationModel($subject, $relation, [], null, $save);
+                $model = $this->_findRelationModel($subject, $relation, [], null, $method);
             }
             $fillData = is_object($data) ? $data->getAttributes() : $data;
             $model->fill($fillData);
