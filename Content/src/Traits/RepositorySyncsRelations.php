@@ -22,9 +22,9 @@ trait RepositorySyncsRelations
         return [];
     }
 
-    public function syncRelationData(Model $subject, string $relation, string $inputData, array|Collection $data)
+    public function syncRelationData(Model $subject, string $relation, array|Collection $data)
     {
-        $realData = Arr::get($data, $inputData, null);
+        $realData = $data;
         if (is_array($realData)) {
             $syncMethod = Str::camel('sync-' . $relation);
             if (method_exists($this, $syncMethod)) {
@@ -41,6 +41,7 @@ trait RepositorySyncsRelations
                 })->filter(function ($v, $k) {
                     return filter_var($v, FILTER_VALIDATE_INT);
                 });
+                dump("Syncing relation: $relation", $filteredData->toArray());
                 $subject->$relation()->sync($filteredData->toArray());
             }
         }
@@ -54,10 +55,10 @@ trait RepositorySyncsRelations
      * @param  mixed $data
      * @return void
      */
-    public function syncRelationDataWithParams(Model $subject, string $relation, $key, $data, $orderBy = 'updated_at')
+    public function syncRelationDataWithParams(Model $subject, string $relation, $data, $orderBy = 'updated_at')
     {
         $pivotFields = [];
-        $realData = $this->extractRealDataFrom($key, $data);
+        $realData = $data;
         $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array)$realData);
         $relationQuery = $subject->$relation();
         if ($realData->count()) {
@@ -191,13 +192,13 @@ trait RepositorySyncsRelations
             $data['entity_relation'] = $relation;
             $id = Arr::get($data, 'id');
             if ($subject->relationLoaded($relation)) {
-                $model = $subject->$relation ?? new Metadata;
+                $model = $subject->$relation ?? new Metadata();
             } else {
-                $model = $id ? $subject->$relation()->find($id) : new Metadata;
+                $model = $id ? $subject->$relation()->find($id) : new Metadata();
             }
 
             if ($model instanceof EloquentCollection) {
-                $model = $model->firstWhere('id', '=', $id) ?? new Metadata;
+                $model = $model->firstWhere('id', '=', $id) ?? new Metadata();
             }
         }
         if (Schema::hasColumn($model->getTable(), 'priority') && !$model->priority) {
@@ -230,7 +231,7 @@ trait RepositorySyncsRelations
     /**
      * Sync metadata
      * TODO: Update syncMetadata usage to require the actual data directly instead of in a nested array
-     * 
+     *
      * @param Model $subject
      * @param array|Collection $data
      * @param string $key
@@ -306,7 +307,7 @@ trait RepositorySyncsRelations
 
     /**
      * Sync a relation
-     * 
+     *
      * @param Model $subject
      * @param array|Collection $data
      * @param string $key
@@ -383,7 +384,7 @@ trait RepositorySyncsRelations
 
     /**
      * Sync a relation
-     * 
+     *
      * @param Model $subject
      * @param array $data
      * @param string $key
