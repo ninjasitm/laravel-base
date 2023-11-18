@@ -38,7 +38,7 @@ trait CustomControllerTrait
 
     /**
      * Enable activity recording for this controller
-     * 
+     *
      * @var bool
      */
     protected $recordsActivity = false;
@@ -99,7 +99,7 @@ trait CustomControllerTrait
     {
         $page      = $position ?: abs(intval($request->get('page')));
         $perPage   = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
-        if(strtolower($using) === 'cursorpaginate') {
+        if (strtolower($using) === 'cursorpaginate') {
             // The 4th argument to cursorPaginate is a cursor and is notably different from simplePaginate and paginate
             $paginator = $query->cursorPaginate($perPage, $columns, $name);
         } else {
@@ -173,10 +173,7 @@ trait CustomControllerTrait
      */
     protected function makeResponse($data, $message = 'Success!')
     {
-        $result = ResponseUtil::makeResponse($message, $data);
-        if (!empty($this->responseMeta)) {
-            $result['meta'] = $this->responseMeta;
-        }
+        $result = $this->appendMeta(ResponseUtil::makeResponse($message, $data));
         return $result;
     }
 
@@ -215,7 +212,7 @@ trait CustomControllerTrait
     {
         return Response::json(ResponseUtil::makeError($message, $result), $code);
     }
-    
+
     /**
      * Get Meta Input
      *
@@ -252,6 +249,25 @@ trait CustomControllerTrait
     protected function setMeta($meta = [])
     {
         $this->responseMeta = $meta;
+    }
+
+    /**
+     * Append meta to the data
+     *
+     * @param  mixed $data
+     * @return void
+     */
+    protected function appendMeta($data)
+    {
+        if (!empty($this->responseMeta)) {
+            if ($data instanceof Collection || $data instanceof Paginator || $data instanceof Model) {
+                $data = $data->toArray();
+            }
+            if (is_array($data)) {
+                $data['meta'] = $this->responseMeta;
+            }
+        }
+        return $data;
     }
 
     /**
@@ -309,7 +325,7 @@ trait CustomControllerTrait
                     }
                 } catch (\Exception $e) {
                 }
-            } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
+            } elseif (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
                 try {
                     $allWith = $model->getAllWith();
                     if (!empty($allWith)) {
@@ -325,7 +341,7 @@ trait CustomControllerTrait
             }
         }
 
-        if($this->recordsActivity) {
+        if ($this->recordsActivity) {
             RecordActivity::dispatch(auth()->user(), $model, [
                 'ip' => request()->ip(),
                 'user_agent' => request()->userAgent(),
@@ -370,7 +386,7 @@ trait CustomControllerTrait
             if ($silently) {
                 return false;
             }
-            throw new ModelNotFoundException;
+            throw new ModelNotFoundException();
         }
 
         return true;
