@@ -17,8 +17,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use InfyOm\Generator\Utils\ResponseUtil;
+use Response;
 use Nitm\Content\Jobs\RecordActivity;
-use Illuminate\Http\Response;
 
 trait CustomControllerTrait
 {
@@ -38,7 +38,7 @@ trait CustomControllerTrait
 
     /**
      * Enable activity recording for this controller
-     *
+     * 
      * @var bool
      */
     protected $recordsActivity = false;
@@ -215,7 +215,7 @@ trait CustomControllerTrait
     {
         return Response::json(ResponseUtil::makeError($message, $result), $code);
     }
-
+    
     /**
      * Get Meta Input
      *
@@ -309,7 +309,7 @@ trait CustomControllerTrait
                     }
                 } catch (\Exception $e) {
                 }
-            } elseif (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
+            } else if (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
                 try {
                     $allWith = $model->getAllWith();
                     if (!empty($allWith)) {
@@ -370,7 +370,7 @@ trait CustomControllerTrait
             if ($silently) {
                 return false;
             }
-            throw new ModelNotFoundException();
+            throw new ModelNotFoundException;
         }
 
         return true;
