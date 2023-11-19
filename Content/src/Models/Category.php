@@ -205,6 +205,7 @@ class Category extends Model
                 if (!$model->slug) {
                     $model->slugAttributes();
                 }
+                $model->parent_id = $model->parent_id ?: optional(static::self()->first())->id;
             }
         );
     }
