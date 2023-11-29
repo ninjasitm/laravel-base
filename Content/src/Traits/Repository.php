@@ -82,7 +82,7 @@ trait Repository
      * Allow the user to define the fields to return for the collection
      *
      * @param  Collection|Paginator|LengthAwarePaginator $collection
-     * 
+     *
      * @return Collection|Paginator|LengthAwarePaginator
      */
     public static function collectionToArray($collection): Collection|Paginator|LengthAwarePaginator
@@ -133,7 +133,7 @@ trait Repository
      *
      * @param  mixed $key
      * @param  mixed $default
-     * 
+     *
      * @return mixed
      */
     public function getMetaInput($key, $default = null)
@@ -150,7 +150,7 @@ trait Repository
      *
      * @param  int   $perPage
      * @param  array $columns
-     * 
+     *
      * @return LengthAwarePaginatorContract
      */
     public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginatorContract
@@ -170,7 +170,7 @@ trait Repository
      * @param  array $columns
      * @param  string $page
      * @param  string $position
-     * 
+     *
      * @return LengthAwarePaginatorContract|CursorPaginatorContract|PaginatorContract
      */
     public function paginateUsing(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null)
@@ -184,7 +184,7 @@ trait Repository
         }
 
         $using = in_array(strtolower($using), ['paginate', 'simplepaginate', 'cursorpaginate']) ? $using : 'paginate';
-        if(strtolower($using) === 'cursorpaginate') {
+        if (strtolower($using) === 'cursorpaginate') {
             // The 4th argument to cursorPaginate is a cursor and is notably different from simplePaginate and paginate
             $paginator = $query->cursorPaginate($perPage, $columns, $name);
         } else {
@@ -289,7 +289,11 @@ trait Repository
                 // Some input may need to be transformed by the model
                 $keys = empty($this->updateExistingKeys) ? $this->model->getFillable() : $this->updateExistingKeys;
                 $attributes = Arr::only($this->model->newInstance($input)->fill($input)->getAttributes(), $keys);
-                $model = $this->model->firstOrNew($attributes);
+                if (!empty($attributes)) {
+                    $model = $this->model->firstOrNew($attributes);
+                } else {
+                    $model = $this->model->newInstance($input);
+                }
             } else {
                 $model = $this->model->newInstance($input);
             }
@@ -528,7 +532,7 @@ trait Repository
      * @param int|Model $id
      *
      * @param Model $subject
-     * 
+     *
      * @throws \Exception
      *
      * @return bool|mixed|null
