@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 trait Model
 {
     public static $tableColumns = [];
+    public static $foreignKeys = [];
 
     /**
      * Toggle a single atribute on the model
@@ -167,6 +168,35 @@ trait Model
         }
 
         return static::$tableColumns[$table];
+    }
+
+    /**
+     * Get the foreign keys for the given table.
+     *
+     * @param  string  $tableName
+     * @return \Illuminate\Support\Collection
+     */
+    public function getTableForeignKeys($tableName)
+    {
+        if (!isset(self::$foreignKeys[$tableName])) {
+            self::$foreignKeys[$tableName] = collect(Schema::getConnection()->getDoctrineSchemaManager()->listTableForeignKeys($tableName))->map(function ($foreignKey) {
+                return $foreignKey->getName();
+            });
+        }
+        return self::$foreignKeys[$tableName];
+    }
+
+    /**
+     * Determine if the given table has a foreign key.
+     *
+     * @param  string  $tableName
+     * @param  string  $columnName
+     * @return bool
+     */
+    public function hasForeignKey($tableName, $columnName)
+    {
+        $foreignKeys = $this->getTableForeignKeys($tableName);
+        return in_array($columnName, $foreignKeys->toArray()) || in_array(substr($tableName . '_' . $columnName . '_foreign', 0, 63), $foreignKeys->toArray());
     }
 
     /**
