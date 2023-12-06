@@ -16,8 +16,8 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.0",
-        "laravel/framework": "^9.0",
+        "php": "^8.0|^8.1|8.2|^8.3",
+        "laravel/framework": "^9.0|^10.0",
         "spatie/laravel-activitylog": "*",
         "vinkla/hashids": "^10.0"
     },
