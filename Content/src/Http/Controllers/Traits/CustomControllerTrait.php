@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use InfyOm\Generator\Utils\ResponseUtil;
-use Response;
+use Illuminate\Http\Response;
 use Nitm\Content\Jobs\RecordActivity;
 
 trait CustomControllerTrait
@@ -350,8 +350,36 @@ trait CustomControllerTrait
             ]);
         }
 
+        $this->beforeSendModel(request(), $model);
+
         return $this->printSuccess($model, $status, $code);
     }
+
+    /**
+     * Load a model response
+     *
+     * @param Model $model
+     *
+     * @return void
+     */
+    protected function printModelSuccessWithMeta($model, $status = 'ok', int $code = 200)
+    {
+        if (is_object($model) && method_exists($model, 'getMeta')) {
+            $this->addMeta($model->getMeta());
+        }
+        return $this->printModelSuccess($model, $status, $code);
+    }
+
+    /**
+     * Adjust items on the model before sending the response
+     *
+     * @param  mixed $model
+     * @return void
+     */
+    protected function beforeSendModel(Request $request, $model)
+    {
+    }
+
 
     /**
      * Load a collection response
@@ -362,7 +390,7 @@ trait CustomControllerTrait
      */
     protected function printSuccessCollection(Collection $items)
     {
-        return $this->paginate($items);
+        return $this->paginate(request(), $items);
     }
 
     /**
