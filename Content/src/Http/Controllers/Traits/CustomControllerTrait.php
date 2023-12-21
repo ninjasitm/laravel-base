@@ -188,7 +188,7 @@ trait CustomControllerTrait
     public function sendResponse($result, $message, $code = 200)
     {
         // 15 = Symfony\Component\HttpFoundation::DEFAULT_ENCODING_OPTIONS
-        return Response::json($this->makeResponse($result, $message), $code, [], 15 | JSON_INVALID_UTF8_SUBSTITUTE);
+        return response()->json($this->makeResponse($result, $message), $code, [], 15 | JSON_INVALID_UTF8_SUBSTITUTE);
     }
 
     /**
@@ -210,7 +210,7 @@ trait CustomControllerTrait
      */
     public function sendError($result, $message, $code = 400)
     {
-        return Response::json(ResponseUtil::makeError($message, $result), $code);
+        return response()->json(ResponseUtil::makeError($message, $result), $code);
     }
 
     /**
