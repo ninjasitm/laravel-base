@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Nitm\Content\Models\Team;
 use Nitm\Content\Models\User;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
@@ -157,7 +158,7 @@ trait Model
      *
      * @method getTableColumns
      *
-     * @return [type] [description]
+     * @return \Illuminate\Support\Collection
      */
     public function getTableColumns($table = null)
     {
@@ -168,6 +169,20 @@ trait Model
         }
 
         return static::$tableColumns[$table];
+    }
+
+    /**
+     * Get the table columns for a particular model as a collection.
+     *
+     * @param string $table
+     *
+     * @method getTableColumnsAsCollection
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getTableColumnsAsCollection($table = null)
+    {
+        return collect($this->getTableColumns($table));
     }
 
     /**
