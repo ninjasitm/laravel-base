@@ -77,7 +77,8 @@ trait SyncsRelations
                 return $this->syncHasOneRelation($data, $relation, $callable, $linkedBy);
                 break;
             default:
-                return $this->syncMetadata($data, $relation, $linkedBy);
+                $data = ['data' => Arr::get($data, 'data') ?: $data];
+                return $this->syncRelationData($relation, 'data', $data);
                 break;
         }
     }
