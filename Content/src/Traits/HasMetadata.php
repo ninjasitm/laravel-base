@@ -130,10 +130,11 @@ trait HasMetadata
      *
      * @param  array   $data
      * @param  string  $key
+     * @param  callable $callable
      * @param  boolean $dataIsValue
      * @return Illuminate\Support\Collection
      */
-    public function syncMetadata($data, string $key = 'metadata', array $linkedBy = ['id'])
+    public function syncMetadata($data, string $key = 'metadata', callable $callable = null, array $linkedBy = ['id'])
     {
         $data = array_filter((array)$data);
         if (!is_array($data) || empty($data)) {
