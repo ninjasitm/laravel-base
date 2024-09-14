@@ -65,7 +65,7 @@ class TeamSocialAuthController extends BaseController
      * If there is no response from the social network, redirect the user to the social auth page
      * else make create with information from social network.
      *
-     * @param  SocialProvider $social bound by "Route model binding" feature
+     * @param SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
     public function getAccounts($team)
@@ -84,19 +84,19 @@ class TeamSocialAuthController extends BaseController
      * If there is no response from the social network, redirect the user to the social auth page
      * else make create with information from social network.
      *
-     * @param  SocialProvider $social bound by "Route model binding" feature
+     * @param SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
     public function getAccountCustom($team, SocialProvider $social)
     {
         $provider = $this->socialite->driver($social->slug);
 
-        if (! empty($social->scopes)) {
+        if (!empty($social->scopes)) {
             $social->override_scopes ? $provider->setScopes($social->scopes) : $provider->scopes($social->scopes);
         }
 
         $account = $this->getTeamAccount($team, $social);
-        if($account) {
+        if ($account) {
             $this->checkToken($provider, $account);
         }
 
@@ -115,8 +115,8 @@ class TeamSocialAuthController extends BaseController
     /**
      * Redirect callback for social network.
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
+     * @param Request        $request
+     * @param SocialProvider $social
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
@@ -135,7 +135,7 @@ class TeamSocialAuthController extends BaseController
         }
 
         // if we have no social info for some reason
-        if (! $socialUser) {
+        if (!$socialUser) {
             throw new SocialGetUserInfoException(
                 $social,
                 trans('social-auth::messages.no_user_data', ['social' => $social->label])
@@ -143,7 +143,7 @@ class TeamSocialAuthController extends BaseController
         }
 
         // if user is guest
-        if (! $this->auth->check()) {
+        if (!$this->auth->check()) {
             return $this->processData($request, $social, $socialUser);
         }
 
@@ -175,8 +175,8 @@ class TeamSocialAuthController extends BaseController
     /**
      * Create social account from frontend data
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
+     * @param Request        $request
+     * @param SocialProvider $social
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
@@ -197,7 +197,7 @@ class TeamSocialAuthController extends BaseController
         }
 
         // if we have no social info for some reason
-        if (! $socialUser) {
+        if (!$socialUser) {
             throw new SocialGetUserInfoException(
                 $social,
                 trans('social-auth::messages.no_user_data', ['social' => $social->label])
@@ -235,16 +235,16 @@ class TeamSocialAuthController extends BaseController
     /**
      * Detaches social account for user.
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
+     * @param Request        $request
+     * @param SocialProvider $social
      * @return array
      * @throws SocialUserAttachException
      */
     public function detachAccountCustom(Request $request, $team, SocialProvider $social)
     {
         /**
- * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user
-*/
+         * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user
+         */
         $user = $request->user();
         // $userSocials = $user->socials();
         $teamSocials = $team->socials();
@@ -258,7 +258,7 @@ class TeamSocialAuthController extends BaseController
 
         // $result = $userSocials->detach($social->id);
         // if($result) {
-            // Need to delete the remoe connection first
+        // Need to delete the remoe connection first
         $this->deleteToken($social, $team);
         $result = $teamSocials->detach($social->id);
         // }
@@ -271,9 +271,9 @@ class TeamSocialAuthController extends BaseController
     /**
      * Process user using data from social network.
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
-     * @param  SocialUser     $socialUser
+     * @param Request        $request
+     * @param SocialProvider $social
+     * @param SocialUser     $socialUser
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     protected function processDataCustom(Request $request, $team, SocialProvider $social, SocialUser $socialUser)
@@ -309,7 +309,7 @@ class TeamSocialAuthController extends BaseController
     /**
      * Refresh User's Google OAuth2 Access Token
      *
-     * @param  [type] $account [description]
+     * @param [type] $account [description]
      * @return [type]         [description]
      */
     protected static function refreshGoogleToken(SocialProvider $account)
@@ -345,7 +345,7 @@ class TeamSocialAuthController extends BaseController
     /**
      * Refresh User's Google OAuth2 Access Token
      *
-     * @param  [type] $account [description]
+     * @param [type] $account [description]
      * @return [type]         [description]
      */
     protected static function getGoogleOfflineToken(SocialProvider $account, $code)
@@ -370,17 +370,17 @@ class TeamSocialAuthController extends BaseController
     /**
      * Undocumented function
      *
-     * @param  AbstractProvider $provider
-     * @param  SocialProvider   $account
+     * @param AbstractProvider $provider
+     * @param SocialProvider   $account
      * @return void
      */
     protected function getOfflineToken(AbstractProvider $provider, SocialProvider $account, $code)
     {
         $token = [];
         switch ($account->slug) {
-        case 'google':
-            $token = $this->getGoogleOfflineToken($account, $code);
-            break;
+            case 'google':
+                $token = $this->getGoogleOfflineToken($account, $code);
+                break;
         }
         return $token;
     }
@@ -388,28 +388,29 @@ class TeamSocialAuthController extends BaseController
     /**
      * Undocumented function
      *
-     * @param  AbstractProvider $provider
-     * @param  SocialProvider   $account
+     * @param AbstractProvider $provider
+     * @param SocialProvider   $account
      * @return void
      */
     protected function checkToken(AbstractProvider $provider, SocialProvider $account = null)
     {
-        if ($account && (            !$account->token->expires_in
-            || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in))))
+        if (
+            $account && (!$account->token->expires_in
+                || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in))))
         ) {
             $token = null;
             switch ($account->slug) {
-            case 'google':
-                $token = $this->refreshGoogleToken($account);
-                break;
+                case 'google':
+                    $token = $this->refreshGoogleToken($account);
+                    break;
             }
             if ($token) {
                 $where = array_filter(Arr::only($account->token->getAttributes(), ['team_id', 'user_id', 'social_provider_id']));
-                $newExpiry =  Carbon::now()->addSeconds(Arr::get($token, 'expires_in'));
+                $newExpiry = Carbon::now()->addSeconds(Arr::get($token, 'expires_in'));
                 $account->token->where($where)->update(
                     [
-                    'token' => Arr::get($token, 'access_token', Arr::get($token, 'token')),
-                    'expires_in' => $newExpiry
+                        'token' => Arr::get($token, 'access_token', Arr::get($token, 'token')),
+                        'expires_in' => $newExpiry
                     ]
                 );
                 $account->token->token = Arr::get($token, 'access_token', $account->token->token);
@@ -421,29 +422,29 @@ class TeamSocialAuthController extends BaseController
     /**
      * Undocumented function
      *
-     * @param  SocialProvider $account
+     * @param SocialProvider $account
      * @return void
      */
     protected function deleteToken(SocialProvider $social, $team)
     {
         switch ($social->slug) {
-        case 'google':
-            return $this->deleteGoogleToken($social, $team);
-            break;
+            case 'google':
+                return $this->deleteGoogleToken($social, $team);
+                break;
         }
     }
 
     /**
      * Undocumented function
      *
-     * @param  SocialProvider $account
-     * @param  Team           $team
+     * @param SocialProvider $account
+     * @param Team           $team
      * @return bool
      */
     protected function deleteGoogleToken(SocialProvider $social, $team)
     {
         $account = $team->socials()->whereSocialProviderId($social->id)->first();
-        if($account) {
+        if ($account) {
             $config = \Config::get('services.google');
 
             // Config
@@ -455,7 +456,8 @@ class TeamSocialAuthController extends BaseController
             $client->setClientId($client_id);
             $client->setClientSecret($client_secret);
             $token = $account->token->token;
-            if(!$account->token->expires_in
+            if (
+                !$account->token->expires_in
                 || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in)))
             ) {
                 $token = Arr::get($this->refreshGoogleToken($account), 'access_token');

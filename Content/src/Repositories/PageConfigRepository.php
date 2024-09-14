@@ -44,7 +44,7 @@ class PageConfigRepository extends BaseRepository
     /**
      * Get Config
      *
-     * @param  mixed $id
+     * @param mixed $id
      * @return void
      */
     public function getConfig($id = null)
@@ -55,7 +55,7 @@ class PageConfigRepository extends BaseRepository
     /**
      * Get Page
      *
-     * @param  mixed $id
+     * @param mixed $id
      * @return void
      */
     public function getPage($id)

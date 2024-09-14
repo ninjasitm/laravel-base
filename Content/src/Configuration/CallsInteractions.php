@@ -18,8 +18,8 @@ trait CallsInteractions
     /**
      * Run an interaction method.
      *
-     * @param  string $interaction
-     * @param  array  $parameters
+     * @param string $interaction
+     * @param array  $parameters
      * @return mixed
      */
     public static function call($interaction, array $parameters = [])
@@ -30,14 +30,14 @@ trait CallsInteractions
     /**
      * Run an interaction method.
      *
-     * @param  string $interaction
-     * @param  array  $parameters
+     * @param string $interaction
+     * @param array  $parameters
      * @return mixed
      */
     public static function interact($interaction, array $parameters = [])
     {
-        if (! Str::contains($interaction, '@')) {
-            $interaction = $interaction.'@handle';
+        if (!Str::contains($interaction, '@')) {
+            $interaction = $interaction . '@handle';
         }
 
         list($class, $method) = explode('@', $interaction);
@@ -48,8 +48,8 @@ trait CallsInteractions
 
         $base = class_basename($class);
 
-        if (isset(static::$interactions[$base.'@'.$method])) {
-            return static::callSwappedInteraction($base.'@'.$method, $parameters, $class);
+        if (isset(static::$interactions[$base . '@' . $method])) {
+            return static::callSwappedInteraction($base . '@' . $method, $parameters, $class);
         }
 
         return call_user_func_array([app($class), $method], $parameters);
@@ -58,8 +58,8 @@ trait CallsInteractions
     /**
      * Run a swapped interaction method.
      *
-     * @param  string $interaction
-     * @param  array  $parameters
+     * @param string $interaction
+     * @param array  $parameters
      * @return mixed
      */
     protected static function callSwappedInteraction($interaction, array $parameters, $class)
@@ -78,8 +78,8 @@ trait CallsInteractions
     /**
      * Swap the implementation of an interaction method.
      *
-     * @param  string $interaction
-     * @param  mixed  $callback
+     * @param string $interaction
+     * @param mixed  $callback
      * @return void
      */
     public static function swap($interaction, $callback)
@@ -90,7 +90,7 @@ trait CallsInteractions
     /**
      * Register a callback to provide the rules for new users.
      *
-     * @param  mixed $callback
+     * @param mixed $callback
      * @return void
      */
     public static function validateUsersWith($callback)
@@ -101,7 +101,7 @@ trait CallsInteractions
     /**
      * Register a callback to create new users.
      *
-     * @param  mixed $callback
+     * @param mixed $callback
      * @return void
      */
     public static function createUsersWith($callback)
@@ -112,7 +112,7 @@ trait CallsInteractions
     /**
      * Register a callback to create new teams.
      *
-     * @param  mixed $callback
+     * @param mixed $callback
      * @return void
      */
     public static function createTeamsWith($callback)
@@ -123,7 +123,7 @@ trait CallsInteractions
     /**
      * Register a callback to provide the rules for new teams.
      *
-     * @param  mixed $callback
+     * @param mixed $callback
      * @return void
      */
     public static function validateTeamsWith($callback)
@@ -135,7 +135,7 @@ trait CallsInteractions
     /**
      * Set a callback to be used to check plan eligibility.
      *
-     * @param  \Closure $callback
+     * @param \Closure $callback
      * @return void
      */
     public static function checkPlanEligibilityUsing($callback)
@@ -146,19 +146,19 @@ trait CallsInteractions
     /**
      * Determine if the user is eligible for the given plan.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param  \Nitm\Content\Plan                         $plan
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param \Nitm\Content\Plan                         $plan
      * @return bool
      */
     public static function eligibleForPlan($user, $plan)
     {
-        return static::call(CheckPlanEligibility::class.'@handle', [$user, $plan]);
+        return static::call(CheckPlanEligibility::class . '@handle', [$user, $plan]);
     }
 
     /**
      * Set a callback to be used to check team plan eligibility.
      *
-     * @param  \Closure $callback
+     * @param \Closure $callback
      * @return void
      */
     public static function checkTeamPlanEligibilityUsing($callback)
@@ -169,12 +169,12 @@ trait CallsInteractions
     /**
      * Determine if the team is eligible for the given plan.
      *
-     * @param  \Nitm\Content\Models\Team $team
-     * @param  \Nitm\Content\Plan        $plan
+     * @param \Nitm\Content\Models\Team $team
+     * @param \Nitm\Content\Plan        $plan
      * @return bool
      */
     public static function eligibleForTeamPlan($team, $plan)
     {
-        return static::call(CheckTeamPlanEligibility::class.'@handle', [$team, $plan]);
+        return static::call(CheckTeamPlanEligibility::class . '@handle', [$team, $plan]);
     }
 }

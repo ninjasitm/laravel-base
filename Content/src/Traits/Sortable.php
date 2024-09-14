@@ -50,8 +50,8 @@ trait Sortable
      * Sets the sort order of records to the specified orders. If the orders is
      * undefined, the record identifier is used.
      *
-     * @param  mixed $itemIds
-     * @param  array $itemOrders
+     * @param mixed $itemIds
+     * @param array $itemOrders
      * @return void
      */
     public function setSortableOrder($itemIds, $itemOrders = null)

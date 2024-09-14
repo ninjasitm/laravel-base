@@ -21,7 +21,7 @@ trait HasCompositePrimaryKey
     /**
      * Get an attribute from the model.
      *
-     * @param  string  $key
+     * @param string  $key
      * @return mixed
      */
     public function getAttribute($key)
@@ -33,8 +33,10 @@ trait HasCompositePrimaryKey
         // If the attribute exists in the attribute array or has a "get" mutator we will
         // get the attribute's value. Otherwise, we will proceed as if the developers
         // are asking for a relationship's value. This covers both types of values.
-        if ($key && (is_numeric($key) || is_string($key)) && (array_key_exists($key, $this->attributes) ||
-            $this->hasGetMutator($key))) {
+        if (
+            $key && (is_numeric($key) || is_string($key)) && (array_key_exists($key, $this->attributes) ||
+                $this->hasGetMutator($key))
+        ) {
             return $this->getAttributeValue($key);
         }
 
@@ -51,7 +53,7 @@ trait HasCompositePrimaryKey
     /**
      * Set the keys for a save update query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Illuminate\Database\Eloquent\Builder
      */
     protected function setKeysForSaveQuery(Builder $query)
@@ -71,8 +73,8 @@ trait HasCompositePrimaryKey
     /**
      * Execute a query for a single record by ID.
      *
-     * @param  array  $ids Array of keys, like [column => value].
-     * @param  array  $columns
+     * @param array  $ids Array of keys, like [column => value].
+     * @param array  $columns
      * @return mixed|static
      */
     public static function find($ids, $columns = ['*'])

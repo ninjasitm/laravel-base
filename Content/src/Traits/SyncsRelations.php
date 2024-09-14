@@ -28,8 +28,8 @@ trait SyncsRelations
     /**
      * Extract Real Data From
      *
-     * @param  mixed $keys
-     * @param  mixed $data
+     * @param mixed $keys
+     * @param mixed $data
      * @return void
      */
     protected function extractRealDataFrom($keys, $data)
@@ -112,16 +112,16 @@ trait SyncsRelations
     /**
      * Sync Relation Data
      *
-     * @param  mixed $relation
-     * @param  mixed $key
-     * @param  mixed $data
+     * @param mixed $relation
+     * @param mixed $key
+     * @param mixed $data
      * @return void
      */
     public function syncRelationData(string $relation, $key, $data)
     {
-        $key = (array)$key;
+        $key = (array) $key;
         $realData = $this->extractRealDataFrom($key, $data);
-        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array)$realData);
+        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array) $realData);
         $syncMethod = Str::camel('sync-' . $relation);
         if (method_exists($this, $syncMethod)) {
             $this->$syncMethod($realData->toArray(), $relation);
@@ -137,10 +137,10 @@ trait SyncsRelations
                     return $v;
                 }
             )->filter(
-                function ($v, $k) {
-                    return filter_var($v, FILTER_VALIDATE_INT);
-                }
-            );
+                    function ($v, $k) {
+                        return filter_var($v, FILTER_VALIDATE_INT);
+                    }
+                );
             $this->$relation()->sync($filteredData->toArray());
         }
         return $this->$relation;
@@ -149,9 +149,9 @@ trait SyncsRelations
     /**
      * Sync Relation Data
      *
-     * @param  mixed $relation
-     * @param  mixed $key
-     * @param  mixed $data
+     * @param mixed $relation
+     * @param mixed $key
+     * @param mixed $data
      * @return void
      */
     public function syncRelationDataWithParams(string $relation, $key, $data, $orderBy = 'updated_at')
@@ -162,16 +162,16 @@ trait SyncsRelations
     /**
      * Sync belongs to many Relation Data
      *
-     * @param  mixed $relation
-     * @param  mixed $key
-     * @param  mixed $data
+     * @param mixed $relation
+     * @param mixed $key
+     * @param mixed $data
      * @return void
      */
     public function syncBelongsToManyRelation(string $relation, $key, $data, $orderBy = 'updated_at')
     {
         $pivotFields = [];
         $realData = $this->extractRealDataFrom($key, $data);
-        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array)$realData);
+        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array) $realData);
         $relationQuery = $this->$relation();
         if ($realData->count()) {
             $syncMethod = Str::camel('sync-' . $relation);
@@ -189,7 +189,7 @@ trait SyncsRelations
                         $filteredData[$id] = is_array($params) ? $params : [];
                     }
                 }
-                $pivotFields = array_keys((array)current($filteredData));
+                $pivotFields = array_keys((array) current($filteredData));
                 if ($relationQuery instanceof HasMany || $relationQuery instanceof HasManyThrough) {
                     $relationQuery->whereIn('id', array_keys($filteredData))
                         ->get()
@@ -218,10 +218,10 @@ trait SyncsRelations
     /**
      * Sync a relation
      *
-     * @param  array    $data
-     * @param  string   $key
-     * @param  callback $callback A method that can be used to transform a single entry
-     * @param  array    $linkedBy
+     * @param array    $data
+     * @param string   $key
+     * @param callback $callback A method that can be used to transform a single entry
+     * @param array    $linkedBy
      * @return Illuminate\Support\Collection
      */
 
@@ -229,7 +229,8 @@ trait SyncsRelations
     {
         $data = is_array($data) ? array_filter($data) : $data;
 
-        if ((is_array($data) && empty($data))
+        if (
+            (is_array($data) && empty($data))
             && ((CollectionHelper::isCollection($data)) && !$data->count())
         ) {
             return;
@@ -295,8 +296,8 @@ trait SyncsRelations
     /**
      * Sync the belongs to relation for the given model
      *
-     * @param  array  $data
-     * @param  string $relation
+     * @param array  $data
+     * @param string $relation
      *
      * @return Model
      */
@@ -317,7 +318,7 @@ trait SyncsRelations
         if (empty($model)) {
             $requiredFields = DbHelper::getColumns($relationModel->getTable())->filter(function ($column) {
                 return $column->getNotnull();
-            })->filter(fn ($column) => $column->getName() != 'id')->pluck('name')->all();
+            })->filter(fn($column) => $column->getName() != 'id')->pluck('name')->all();
             $model = $id ? $modelClass::find($id) : $modelClass::firstOrCreate(Arr::only($data, $requiredFields));
         }
 
@@ -332,10 +333,10 @@ trait SyncsRelations
     /**
      * Sync a belongs to many relation
      *
-     * @param  array    $data
-     * @param  string   $key
-     * @param  callback $callback            A method that can be used to transform a single entry
-     * @param  boolean  $detachBeforeSyncing
+     * @param array    $data
+     * @param string   $key
+     * @param callback $callback            A method that can be used to transform a single entry
+     * @param boolean  $detachBeforeSyncing
      * @return Illuminate\Support\Collection
      */
 
@@ -374,10 +375,10 @@ trait SyncsRelations
     /**
      * Sync a single relation
      *
-     * @param  array    $data
-     * @param  string   $key
-     * @param  callback $callback A method that can be used to transform a single entry
-     * @param  array    $linkedBy
+     * @param array    $data
+     * @param string   $key
+     * @param callback $callback A method that can be used to transform a single entry
+     * @param array    $linkedBy
      * @return Model
      */
     public function syncSingleRelation($data, string $relation, callable $callable = null, array $linkedBy = null)
@@ -388,17 +389,18 @@ trait SyncsRelations
     /**
      * Sync a relation
      *
-     * @param  array    $data
-     * @param  string   $key
-     * @param  callback $callback A method that can be used to transform a single entry
-     * @param  array    $linkedBy
+     * @param array    $data
+     * @param string   $key
+     * @param callback $callback A method that can be used to transform a single entry
+     * @param array    $linkedBy
      * @return Model
      */
 
     public function syncHasOneRelation($data, string $relation, callable $callable = null, array $linkedBy = null)
     {
 
-        if ((!is_array($data) && is_object($data) && !method_exists($data, 'getAttributes')) || (is_array($data) && empty($data))
+        if (
+            (!is_array($data) && is_object($data) && !method_exists($data, 'getAttributes')) || (is_array($data) && empty($data))
         ) {
             return;
         }
@@ -437,8 +439,8 @@ trait SyncsRelations
     /**
      * Get the link condition for data
      *
-     * @param  object $data
-     * @param  array  $linkedBy Can be an associataive array or an indexed array
+     * @param object $data
+     * @param array  $linkedBy Can be an associataive array or an indexed array
      * @return array
      */
     protected function _getLinkCondition($data, array $linkedBy): array
@@ -462,10 +464,10 @@ trait SyncsRelations
     /**
      * Find a relational model
      *
-     * @param  string      $relation
-     * @param  array       $where
-     * @param  array|Model $data
-     * @param  string      $method
+     * @param string      $relation
+     * @param array       $where
+     * @param array|Model $data
+     * @param string      $method
      * @return Model
      */
     protected function _findRelationModel(string $relation, array $where, $data = null, $method = 'create')

@@ -63,14 +63,15 @@ class Search extends \October\Rain\Extension\ExtensionBase
             throw new \Exception('An owner is needed for this behavior');
         }
         $this->owner = $owner;
-        $this->_columns = $owner->getTableColumns();;
+        $this->_columns = $owner->getTableColumns();
+        ;
     }
 
     /**
      * Handle dynamic method calls into the model.
      *
-     * @param  string  $method
-     * @param  array  $parameters
+     * @param string  $method
+     * @param array  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -140,7 +141,7 @@ class Search extends \October\Rain\Extension\ExtensionBase
         }
 
         if (empty($query->getQuery()->orders)) {
-            $key = isset($columns['updated_at']) ? ['updated_at'] : (array)$query->getModel()->primaryKey;
+            $key = isset($columns['updated_at']) ? ['updated_at'] : (array) $query->getModel()->primaryKey;
             foreach ($key as $k) {
                 if ($k = $this->ensureSearchOrderBy($query, $k)) {
                     $query->orderBy($query->getModel()->getTable() . '.' . $k, 'desc');

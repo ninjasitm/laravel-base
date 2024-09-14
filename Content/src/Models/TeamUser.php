@@ -62,7 +62,7 @@ class TeamUser extends Model
     /**
      * Set Role Attribute
      *
-     * @param  mixed $role
+     * @param mixed $role
      * @return void
      */
     public function setRoleAttribute($role)

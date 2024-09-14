@@ -11,8 +11,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get Message Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageData($event): array;
@@ -20,8 +20,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getData($event): array;
@@ -29,7 +29,7 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  object $event
+     * @param object $event
      * @return void
      */
     public function handle($event);
@@ -38,8 +38,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the event Params
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageParams($event): array;
@@ -47,8 +47,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the event Message
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getMessage($event): string;
@@ -56,8 +56,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the Action Text
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionText($event): string;
@@ -65,8 +65,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the Action Url
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionUrl($event): string;
@@ -74,8 +74,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get Message Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageDataForAdmin($event): array;
@@ -83,8 +83,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getDataForAdmin($event): array;
@@ -92,8 +92,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the Params For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageParamsForAdmin($event): array;
@@ -101,8 +101,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the Message For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getMessageForAdmin($event): string;
@@ -110,8 +110,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the Action Text For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionTextForAdmin($event): string;
@@ -119,8 +119,8 @@ interface ListensToAutomationEvents extends ShouldQueue
     /**
      * Get the Action Url For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionUrlForAdmin($event): string;

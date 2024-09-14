@@ -18,7 +18,7 @@ class ModelHelper
      * @param string $key The value to get from the config
      * @param string $db  The name of the database
      *
-     * @return [type] [description]
+     * @return string
      */
     public static function getIs($model)
     {
@@ -26,7 +26,7 @@ class ModelHelper
         $str = array_pop($parts);
         preg_match_all('/((?:^|[A-Z])[a-z]+)/', $str, $matches);
 
-        return strtolower(implode($matches[0], '-'));
+        return strtolower(implode('-', $matches[0]));
     }
 
     /**
@@ -34,7 +34,7 @@ class ModelHelper
      *
      * @param [type] $value
      * @param boolean $returnNull
-     * @return void
+     * @return boolean
      */
     public static function boolval($value, $returnNull = false)
     {
@@ -48,7 +48,7 @@ class ModelHelper
      * @param string $class
      * @param string $relation
      * @param array $attributes
-     * @param string|Callable $localKey
+     * @param string|callable $localKey
      * @param string $foreignKey
      *
      * @return void
@@ -93,7 +93,7 @@ class ModelHelper
             if (is_callable($localKey)) {
                 $query->leftJoin($table, $localKey);
             } else {
-                $query->leftJoin($table, $table . '.' . $foreignKey, '=', $this->getTable() . '.' . $localKey)
+                $query->leftJoin($table, $table . '.' . $foreignKey, '=', $query->getModel()->getTable() . '.' . $localKey)
                     ->orderBy("$table.$attribute", $direction);
             }
         });
@@ -120,7 +120,7 @@ class ModelHelper
      * @param [type] $class
      * @param boolean $autoload
      *
-     * @return void
+     * @return boolean
      */
     public static function usesTrait($trait, $class, $autoload = true)
     {

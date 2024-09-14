@@ -31,7 +31,7 @@ trait ManagesAvailableRoles
     /**
      * Define the roles available to team members.
      *
-     * @param  array $roles
+     * @param array $roles
      * @return void
      */
     public static function useRoles(array $roles)
@@ -52,7 +52,7 @@ trait ManagesAvailableRoles
     /**
      * Set the default role to be used by new team members.
      *
-     * @param  string $role
+     * @param string $role
      * @return void
      */
     public static function useDefaultRole($role)

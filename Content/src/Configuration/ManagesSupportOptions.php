@@ -18,7 +18,7 @@ trait ManagesSupportOptions
      */
     public static function hasSupportAddress()
     {
-        return ! is_null(static::$sendsSupportEmailsTo);
+        return !is_null(static::$sendsSupportEmailsTo);
     }
 
     /**
@@ -34,7 +34,7 @@ trait ManagesSupportOptions
     /**
      * Set the e-mail address to send customer support e-mails to.
      *
-     * @param  string $address
+     * @param string $address
      * @return void
      */
     public static function sendSupportEmailsTo($address)

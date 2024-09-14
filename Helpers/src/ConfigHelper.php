@@ -10,17 +10,21 @@ use Config;
 use DB;
 use Cache;
 
-class ConfigHelper {
+class ConfigHelper
+{
 
 	/**
 	 * Get the tables based on the database driver
-	 * @param  string $key The value to get from the config
+	 * @param string $key The value to get from the config
 	 * @param string $db The name of the database
 	 * @return [type]          [description]
 	 */
-	public static function getDatabaseConfig($key=null, $db='default') {
+	public static function getDatabaseConfig($key = null, $db = 'default')
+	{
 		return Config::get(implode('.', array_filter([
-			'database.connections', Config::get('database.'.$db), $key
+			'database.connections',
+			Config::get('database.' . $db),
+			$key
 		])));
 	}
 }

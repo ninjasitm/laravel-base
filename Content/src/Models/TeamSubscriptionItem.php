@@ -51,8 +51,8 @@ class TeamSubscriptionItem extends Model
     /**
      * Swap the subscription item to a new Stripe plan.
      *
-     * @param  string $plan
-     * @param  array  $options
+     * @param string $plan
+     * @param array  $options
      * @return $this
      *
      * @throws \Laravel\Cashier\Exceptions\SubscriptionUpdateFailure
@@ -65,11 +65,12 @@ class TeamSubscriptionItem extends Model
 
         $options = array_merge(
             [
-                'plan'               => $plan,
-                'quantity'           => $this->quantity,
+                'plan' => $plan,
+                'quantity' => $this->quantity,
                 'proration_behavior' => $this->prorateBehavior(),
-                'tax_rates'          => $this->subscription->getPlanTaxRatesForPayload($plan),
-            ], $options
+                'tax_rates' => $this->subscription->getPlanTaxRatesForPayload($plan),
+            ],
+            $options
         );
 
         $item = StripeSubscriptionItem::update(
@@ -81,7 +82,7 @@ class TeamSubscriptionItem extends Model
         $this->fill(
             [
                 'stripe_plan' => $plan,
-                'quantity'    => $item->quantity,
+                'quantity' => $item->quantity,
             ]
         )->save();
 
@@ -89,7 +90,7 @@ class TeamSubscriptionItem extends Model
             $this->subscription->fill(
                 [
                     'stripe_plan' => $plan,
-                    'quantity'    => $item->quantity,
+                    'quantity' => $item->quantity,
                 ]
             )->save();
         }
@@ -100,8 +101,8 @@ class TeamSubscriptionItem extends Model
     /**
      * Swap the subscription item to a new Stripe plan, and invoice immediately.
      *
-     * @param  string $plan
-     * @param  array  $options
+     * @param string $plan
+     * @param array  $options
      * @return $this
      *
      * @throws \Laravel\Cashier\Exceptions\IncompletePayment

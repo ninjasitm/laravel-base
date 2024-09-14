@@ -30,7 +30,7 @@ trait ManagesModelOptions
     /**
      * Set the user model class name.
      *
-     * @param  string $userModel
+     * @param string $userModel
      * @return void
      */
     public static function useUserModel($userModel)
@@ -62,7 +62,7 @@ trait ManagesModelOptions
     /**
      * Set the team model class name.
      *
-     * @param  string $teamModel
+     * @param string $teamModel
      * @return void
      */
     public static function useTeamModel($teamModel)
@@ -88,7 +88,7 @@ trait ManagesModelOptions
      */
     public static function teamModel()
     {
-        return config('nitm-content.team_model') ??  static::$teamModel;
+        return config('nitm-content.team_model') ?? static::$teamModel;
     }
 
     /**
@@ -104,7 +104,7 @@ trait ManagesModelOptions
     /**
      * Set the category model class name.
      *
-     * @param  string $categoryModel
+     * @param string $categoryModel
      * @return void
      */
     public static function useCategoryModel($categoryModel)

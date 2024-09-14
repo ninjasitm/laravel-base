@@ -2,9 +2,10 @@
 
 namespace Nitm\Content\Database\Eloquent;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder as BaseBuilder;
 use Nitm\Content\Database\Eloquent\Builder as NitmBuilder;
-use Str;
 
 /**
  * Custom Eloquent Builder
@@ -52,7 +53,7 @@ class Builder extends BaseBuilder
                     try {
                         $models = $this->eagerLoadRelation($models, $name, $constraints);
                     } catch (\Exception $e) {
-                        \Log::error($e);
+                        Log::error($e);
                     }
                 }
             }

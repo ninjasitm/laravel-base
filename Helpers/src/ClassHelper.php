@@ -14,7 +14,7 @@ class ClassHelper
 {
     /**
      * @param string $namespace
-     * 
+     *
      * @return array
      */
     public static function findRecursive(string $namespace): array
@@ -30,7 +30,7 @@ class ClassHelper
 
     /**
      * @param string $namespace
-     * 
+     *
      * @return string
      */
     protected static function translateNamespacePath(string $namespace): string
@@ -48,7 +48,7 @@ class ClassHelper
     /**
      * @param string $namespace
      * @param string $namespacePath
-     * 
+     *
      * @return array
      */
     private static function searchClasses(string $namespace, string $namespacePath): array
@@ -59,10 +59,7 @@ class ClassHelper
          * @var \RecursiveDirectoryIterator $iterator
          * @var \SplFileInfo $item
          */
-        foreach ($iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($namespacePath, RecursiveDirectoryIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::SELF_FIRST
-        ) as $item) {
+        foreach ($iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($namespacePath, RecursiveDirectoryIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST) as $item) {
             if ($item->isDir()) {
                 $nextPath = $iterator->current()->getPathname();
                 $nextNamespace = $namespace . '\\' . $item->getFilename();
@@ -85,7 +82,7 @@ class ClassHelper
      * Has Trait
      *
      * @param mixed $item
-     * @param  mixed $trait
+     * @param mixed $trait
      * @return bool
      */
     public static function hasTrait($item, string $trait): bool

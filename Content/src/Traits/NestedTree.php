@@ -84,8 +84,8 @@ trait NestedTree
         static::addGlobalScope(new NestedTreeScope);
 
         /*
-             * Bind events
-             */
+         * Bind events
+         */
         static::creating(
             function ($model) {
                 $model->setDefaultLeftAndRight();
@@ -190,16 +190,16 @@ trait NestedTree
                 $right = $this->getRight();
 
                 /*
-                * Delete children
-                */
+                 * Delete children
+                 */
                 $this->newQuery()
                     ->where($leftCol, '>', $left)
                     ->where($rightCol, '<', $right)
                     ->delete();
 
                 /*
-                * Update left and right indexes for the remaining nodes
-                */
+                 * Update left and right indexes for the remaining nodes
+                 */
                 $diff = $right - $left + 1;
 
                 $this->newQuery()
@@ -314,7 +314,7 @@ trait NestedTree
     /**
      * Checks if the supplied node is inside the subtree of this model.
      *
-     * @param  \Model
+     * @param \Model
      * @return boolean
      */
     public function isInsideSubtree($node)
@@ -328,7 +328,7 @@ trait NestedTree
     /**
      * Returns true if node is a descendant.
      *
-     * @param  NestedSet
+     * @param NestedSet
      * @return boolean
      */
     public function isDescendantOf($other)
@@ -458,9 +458,9 @@ trait NestedTree
     /**
      * Gets an array with values of a given column. Values are indented according to their depth.
      *
-     * @param  string $column Array values
-     * @param  string $key    Array keys
-     * @param  string $indent Character to indent depth
+     * @param string $column Array values
+     * @param string $key    Array keys
+     * @param string $indent Character to indent depth
      * @return array
      */
     public function scopeListsNested($query, $column, $key = null, $indent = '&nbsp;&nbsp;&nbsp;')
@@ -858,8 +858,8 @@ trait NestedTree
     /**
      * Handler for all node alignments.
      *
-     * @param  mixed  $target
-     * @param  string $position
+     * @param mixed  $target
+     * @param string $position
      * @return Model
      */
     protected function moveTo($target, $position)

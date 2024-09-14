@@ -25,8 +25,9 @@ class CreateInvitationRequest extends FormRequest
     public function validator()
     {
         $validator = Validator::make(
-            $this->all(), [
-            'email' => 'required|email|max:255',
+            $this->all(),
+            [
+                'email' => 'required|email|max:255',
             ]
         );
 
@@ -42,32 +43,32 @@ class CreateInvitationRequest extends FormRequest
     /**
      * Determine if the request will exceed the max allowed team members.
      *
-     * @param  \Nitm\Content\Plan $plan
+     * @param \Nitm\Content\Plan $plan
      * @return bool
      */
     protected function exceedsMaxTeamMembers($plan)
     {
-        return ! is_null($plan->teamMembers) &&
-               $plan->teamMembers <= $this->team->totalPotentialUsers();
+        return !is_null($plan->teamMembers) &&
+            $plan->teamMembers <= $this->team->totalPotentialUsers();
     }
 
     /**
      * Determine if the request will exceed the max allowed collaborators.
      *
-     * @param  \Nitm\Content\Plan $plan
+     * @param \Nitm\Content\Plan $plan
      * @return bool
      */
     protected function exceedsMaxCollaborators($plan)
     {
-        return ! is_null($plan->collaborators) &&
-               $plan->collaborators <= $this->user()->totalPotentialCollaborators();
+        return !is_null($plan->collaborators) &&
+            $plan->collaborators <= $this->user()->totalPotentialCollaborators();
     }
 
     /**
      * Verify that the given e-mail is not already on the team.
      *
-     * @param  \Illuminate\Validation\Validator $validator
-     * @param  \Nitm\Content\Models\Team        $team
+     * @param \Illuminate\Validation\Validator $validator
+     * @param \Nitm\Content\Models\Team        $team
      * @return $this
      */
     protected function verifyEmailNotAlreadyOnTeam($validator, $team)
@@ -82,8 +83,8 @@ class CreateInvitationRequest extends FormRequest
     /**
      * Verify that the given e-mail is not already invited.
      *
-     * @param  \Illuminate\Validation\Validator $validator
-     * @param  \Nitm\Content\Models\Team        $team
+     * @param \Illuminate\Validation\Validator $validator
+     * @param \Nitm\Content\Models\Team        $team
      * @return $this
      */
     protected function verifyEmailNotAlreadyInvited($validator, $team)

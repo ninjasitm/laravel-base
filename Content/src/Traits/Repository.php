@@ -18,9 +18,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Nitm\Content\Traits\RepositorySyncsRelations;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
-use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
+use Illuminate\Contracts\Pagination\Paginator as Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginator;
 
 /**
  * Traits for Model.
@@ -81,7 +81,7 @@ trait Repository
     /**
      * Allow the user to define the fields to return for the collection
      *
-     * @param  Collection|Paginator|LengthAwarePaginator $collection
+     * @param Collection|Paginator|LengthAwarePaginator $collection
      *
      * @return Collection|Paginator|LengthAwarePaginator
      */
@@ -131,8 +131,8 @@ trait Repository
     /**
      * Get Meta Input
      *
-     * @param  mixed $key
-     * @param  mixed $default
+     * @param mixed $key
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -148,12 +148,12 @@ trait Repository
     /**
      * Paginate records for scaffold.
      *
-     * @param  int   $perPage
-     * @param  array $columns
+     * @param int   $perPage
+     * @param array $columns
      *
-     * @return LengthAwarePaginatorContract
+     * @return LengthAwarePaginator
      */
-    public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginatorContract
+    public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginator
     {
         $query = $this->allQuery();
 
@@ -163,15 +163,15 @@ trait Repository
     /**
      * Paginate the given query using the request
      *
-     * @param  mixed $request
-     * @param  mixed $query
-     * @param  string $using The paginator mathod to use
-     * @param  integer $perPage
-     * @param  array $columns
-     * @param  string $page
-     * @param  string $position
+     * @param mixed $request
+     * @param mixed $query
+     * @param string $using The paginator mathod to use
+     * @param integer $perPage
+     * @param array $columns
+     * @param string $page
+     * @param string $position
      *
-     * @return LengthAwarePaginatorContract|CursorPaginatorContract|PaginatorContract
+     * @return LengthAwarePaginator|CursorPaginator|Paginator
      */
     public function paginateUsing(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null)
     {
@@ -216,7 +216,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param  array|Collection $data
+     * @param array|Collection $data
      * @return Builder
      */
     public function search($data = []): ?Builder
@@ -227,7 +227,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param  array $data
+     * @param array $data
      * @return Builder
      */
     public function trashedSearch($data = []): ?Builder
@@ -238,9 +238,9 @@ trait Repository
     /**
      * Build a query for retrieving all records.
      *
-     * @param  array    $search
-     * @param  int|null $skip
-     * @param  int|null $limit
+     * @param array    $search
+     * @param int|null $skip
+     * @param int|null $limit
      * @return Builder
      */
     public function allQuery($search = [], $skip = null, $limit = null): ?Builder
@@ -346,7 +346,7 @@ trait Repository
             if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
-                $query->where('id', (int)$id);
+                $query->where('id', (int) $id);
             }
         } elseif (is_array($id) || is_callable($id)) {
             $query->where($id);
@@ -392,7 +392,7 @@ trait Repository
             if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
-                $query->where($key, (int)$id);
+                $query->where($key, (int) $id);
             }
         } elseif (is_array($id) || is_callable($id)) {
             $query->where($id);
@@ -422,7 +422,7 @@ trait Repository
             if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
-                $query->where($key, (int)$id);
+                $query->where($key, (int) $id);
             }
         } elseif (is_array($id)) {
             $query->where($id);

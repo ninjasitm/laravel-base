@@ -34,7 +34,8 @@ trait HasMetadata
         return $this->metadata()->get()->reduce(
             function ($result, $metadata) {
                 return $metadata->delete() ? $result + 1 : $result;
-            }, 0
+            },
+            0
         );
     }
 
@@ -66,8 +67,8 @@ trait HasMetadata
      * Sync single metadata
      * TODO: Why do I have two methods that do the same thing?
      *
-     * @param  array  $data
-     * @param  string $key
+     * @param array  $data
+     * @param string $key
      * @return Model
      */
     public function syncSingleMetadata($data, string $key)
@@ -115,8 +116,8 @@ trait HasMetadata
     /**
      * Sync single metadata
      *
-     * @param  array  $data
-     * @param  string $key
+     * @param array  $data
+     * @param string $key
      * @return Model
      */
     public function syncMetadataModel($data, string $key)
@@ -128,15 +129,15 @@ trait HasMetadata
      * Sync metadata
      * TODO: Update syncMetadata usage to require the actual data directly instead of in a nested array
      *
-     * @param  array   $data
-     * @param  string  $key
-     * @param  callable $callable
-     * @param  boolean $dataIsValue
+     * @param array   $data
+     * @param string  $key
+     * @param callable $callable
+     * @param boolean $dataIsValue
      * @return Illuminate\Support\Collection
      */
     public function syncMetadata($data, string $key = 'metadata', callable $callable = null, array $linkedBy = ['id'])
     {
-        $data = array_filter((array)$data);
+        $data = array_filter((array) $data);
         if (!is_array($data) || empty($data)) {
             return;
         }

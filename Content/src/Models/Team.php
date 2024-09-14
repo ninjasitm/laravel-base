@@ -55,7 +55,7 @@ class Team extends Model implements TeamContract
      * @var array
      */
     protected $casts = [
-        'owner_id'      => 'int',
+        'owner_id' => 'int',
         'trial_ends_at' => 'datetime',
     ];
 
@@ -131,7 +131,7 @@ class Team extends Model implements TeamContract
     /**
      * Get the team photo URL attribute.
      *
-     * @param  string|null $value
+     * @param string|null $value
      * @return string|null
      */
     public function getPhotoUrlAttribute($value)
@@ -187,7 +187,7 @@ class Team extends Model implements TeamContract
     /**
      * Resolve Role to a supported role
      *
-     * @param  mixed $role
+     * @param mixed $role
      * @return string
      */
     public function resolveRole(string $role): string
@@ -205,7 +205,7 @@ class Team extends Model implements TeamContract
     /**
      * Retrieve the model for a bound value.
      *
-     * @param  mixed $value
+     * @param mixed $value
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function resolveRouteBinding($value, $field = null)

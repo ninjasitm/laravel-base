@@ -66,7 +66,7 @@ trait ManagesAppOptions
     /**
      * Set the path to redirect to after authentication.
      *
-     * @param  string $path
+     * @param string $path
      * @return void
      */
     public static function afterLoginRedirectTo($path)
@@ -81,7 +81,7 @@ trait ManagesAppOptions
      */
     public static function teamsIdentifiedByPath()
     {
-        return ! static::showsTeamSwitcher();
+        return !static::showsTeamSwitcher();
     }
 
     /**
@@ -151,7 +151,7 @@ trait ManagesAppOptions
     /**
      * Set the string used to describe teams.
      *
-     * @param  string $string
+     * @param string $string
      * @return void
      */
     public static function prefixTeamsAs($string)
@@ -162,7 +162,7 @@ trait ManagesAppOptions
     /**
      * Get or set the minimum length a user given password can be.
      *
-     * @param  string|null $length
+     * @param string|null $length
      * @return string
      */
     public static function minimumPasswordLength($length = null)

@@ -13,7 +13,7 @@ trait SyncsNotificationPreferences
     /**
      * Sync Notification Preferences
      *
-     * @param  mixed $data
+     * @param mixed $data
      * @return void
      */
     public function syncNotificationPreferences($data)

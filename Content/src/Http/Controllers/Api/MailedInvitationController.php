@@ -22,7 +22,7 @@ class MailedInvitationController extends Controller
     /**
      * Create a new controller instance.
      *
-     * @param  \Nitm\Content\Contracts\Repositories\TeamRepository $teams
+     * @param \Nitm\Content\Contracts\Repositories\TeamRepository $teams
      * @return void
      */
     public function __construct(TeamRepository $teams)
@@ -35,8 +35,8 @@ class MailedInvitationController extends Controller
     /**
      * Get all of the mailed invitations for the given team.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Nitm\Content\Models\Team $team
+     * @param \Illuminate\Http\Request  $request
+     * @param \Nitm\Content\Models\Team $team
      * @return \Illuminate\Http\Response
      */
     public function all(Request $request, $team)
@@ -49,8 +49,8 @@ class MailedInvitationController extends Controller
     /**
      * Create a new invitation.
      *
-     * @param  \Nitm\Content\Http\Requests\CreateInvitationRequest $request
-     * @param  \Nitm\Content\Models\Team                           $team
+     * @param \Nitm\Content\Http\Requests\CreateInvitationRequest $request
+     * @param \Nitm\Content\Models\Team                           $team
      * @return \Illuminate\Http\Response
      */
     public function store(CreateInvitationRequest $request, $team)
@@ -61,8 +61,8 @@ class MailedInvitationController extends Controller
     /**
      * Cancel / delete the given invitation.
      *
-     * @param  \Illuminate\Http\Request        $request
-     * @param  \Nitm\Content\Models\Invitation $invitation
+     * @param \Illuminate\Http\Request        $request
+     * @param \Nitm\Content\Models\Invitation $invitation
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, Invitation $invitation)

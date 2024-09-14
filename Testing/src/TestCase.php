@@ -43,15 +43,15 @@ abstract class TestCase extends BaseTestCase
     /**
      * Use as the given role for the specified team
      *
-     * @param  mixed $role
-     * @param  mixed $team
+     * @param mixed $role
+     * @param mixed $team
      * @return void
      */
     protected function useAs($role, $team = null)
     {
-        $team     = $team ?: $this->team ?: Team::factory()->create();
-        $class    = NitmContent::userModel();
-        $user     = $class::factory()->create();
+        $team = $team ?: $this->team ?: Team::factory()->create();
+        $class = NitmContent::userModel();
+        $user = $class::factory()->create();
         $teamUser = TeamUser::firstOrCreate(['team_id' => $team->id, 'role' => $role, 'user_id' => $user->id, 'is_approved' => true]);
         auth()->login($user);
         return $user;
@@ -60,7 +60,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * useAsUser
      *
-     * @param  mixed $team
+     * @param mixed $team
      * @return void
      */
     protected function useAsUser($team = null)
@@ -71,7 +71,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * useAsAdmin
      *
-     * @param  mixed $team
+     * @param mixed $team
      * @return void
      */
     protected function useAsAdmin($team = null)
@@ -87,19 +87,16 @@ abstract class TestCase extends BaseTestCase
         \Illuminate\Database\Connection::resolverFor(
             'sqlite',
             function ($connection, $database, $prefix, $config) {
-                return new class($connection, $database, $prefix, $config) extends SQLiteConnection
-                {
+                return new class ($connection, $database, $prefix, $config) extends SQLiteConnection {
                     public function getSchemaBuilder()
                     {
                         if ($this->schemaGrammar === null) {
                             $this->useDefaultSchemaGrammar();
                         }
-                        return new class($this) extends SQLiteBuilder
-                        {
+                        return new class ($this) extends SQLiteBuilder {
                             protected function createBlueprint($table, \Closure $callback = null)
                             {
-                                return new class($table, $callback) extends Blueprint
-                                {
+                                return new class ($table, $callback) extends Blueprint {
                                     public function dropForeign($index)
                                     {
                                         return new Fluent();
@@ -116,9 +113,9 @@ abstract class TestCase extends BaseTestCase
     /**
      * Generate models from a factory with some common options
      *
-     * @param  string  $class
-     * @param  mixed   $options [states => states]
-     * @param  integer $count
+     * @param string  $class
+     * @param mixed   $options [states => states]
+     * @param integer $count
      * @return Factory
      */
     protected function generateModels(string $class, $options = null, int $count = 3)
@@ -135,9 +132,9 @@ abstract class TestCase extends BaseTestCase
     /**
      * Generate models from a factory with some common options
      *
-     * @param  string  $class
-     * @param  mixed   $options [states => states]
-     * @param  integer $count
+     * @param string  $class
+     * @param mixed   $options [states => states]
+     * @param integer $count
      * @return Factory
      */
     protected function generateModel(string $class, $options = null)
@@ -154,7 +151,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Get the relation for a factory generator
      *
-     * @param  string|array $from
+     * @param string|array $from
      * @return string
      */
     protected function getFactoryRelation($from)

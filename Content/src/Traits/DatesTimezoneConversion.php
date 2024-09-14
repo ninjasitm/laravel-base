@@ -37,9 +37,9 @@ trait DatesTimezoneConversion
     /**
      * Convert a date value to UTC if it is a date or time
      *
-     * @param  string $key              the attribute
-     * @param  mixed  $value            The value being checked
-     * @param  mixed  $timezoneFromUser Used to force a timezone on the given value
+     * @param string $key              the attribute
+     * @param mixed  $value            The value being checked
+     * @param mixed  $timezoneFromUser Used to force a timezone on the given value
      * @return mixed
      */
     public function toUTCTimezone($key, $value, $timezoneFromUser = null)
@@ -49,8 +49,8 @@ trait DatesTimezoneConversion
             return $value;
         }
         /**
- * @var Nitm\Content\Models\User $user
-*/
+         * @var Nitm\Content\Models\User $user
+         */
         $user = auth()->check() ? auth()->user() : null;
 
         // if (in_array($key, $this->userTimezoneDates) || $timezoneFromUser === true) {
@@ -67,7 +67,7 @@ trait DatesTimezoneConversion
             } else {
                 /**
                  * @var Nitm\Content\Models\Team $team
-                */
+                 */
                 $team = request()->route('team') ?? ($user instanceof User ? ($user->team ?? $user->currentTeam) : null);
 
                 if ($team instanceof Team && $value) {
@@ -109,7 +109,7 @@ trait DatesTimezoneConversion
     {
         // Set user timezoned dates
         if ($value && in_array($key, $this->getAllTimes())) {
-            return $this->toUTCTimezone($key, $value, (bool)in_array($key, $this->userTimezoneTimes));
+            return $this->toUTCTimezone($key, $value, (bool) in_array($key, $this->userTimezoneTimes));
         }
         return $value;
     }
@@ -128,9 +128,9 @@ trait DatesTimezoneConversion
     /**
      * Convert a date value to a custom if it is a date or time
      *
-     * @param  string $key              the attribute
-     * @param  mixed  $value            The value being checked
-     * @param  mixed  $timezoneFromUser Used to force a timezone on the given value
+     * @param string $key              the attribute
+     * @param mixed  $value            The value being checked
+     * @param mixed  $timezoneFromUser Used to force a timezone on the given value
      * @return mixed
      */
     public function toCustomTimezone($key, $value, $timezoneFromUser = null)
@@ -138,7 +138,7 @@ trait DatesTimezoneConversion
         // echo "Converting $key = {$value} on ".get_class($this)."\n";
         /**
          * @var Nitm\Content\Models\User $user
-        */
+         */
         /**
          * auth()->check() doesn't do a database call but does identify if the user is logged in or not
          */
@@ -152,8 +152,8 @@ trait DatesTimezoneConversion
         } elseif (($user instanceof User) && $user->hasRelation('currentTeam') && !$user->timezone) {
             //Fallback to the user's team timezone only if their timezone is empty or there is no user
             /**
- * @var Nitm\Content\Models\Team $team
-*/
+             * @var Nitm\Content\Models\Team $team
+             */
             $team = request()->route('team') ?? ($user ? ($user->team ?? $user->currentTeam) : null);
 
             if ($team instanceof Team && $team->timezone && $value->getTimezone() != $team->timezone) {
@@ -179,7 +179,7 @@ trait DatesTimezoneConversion
     {
         // Set user timezoned dates
         if ($value && in_array($key, $this->getAllTimes())) {
-            return $this->toCustomTimezone($key, $value, (bool)in_array($key, $this->userTimezoneTimes));
+            return $this->toCustomTimezone($key, $value, (bool) in_array($key, $this->userTimezoneTimes));
         }
         return $value;
     }
@@ -202,7 +202,7 @@ trait DatesTimezoneConversion
      * Overrides getAttributeValue, and convert any dates
      * to the user's timezone.
      *
-     * @param  string $key
+     * @param string $key
      * @return mixed
      */
     public function getAttributeValue($key)
@@ -218,8 +218,8 @@ trait DatesTimezoneConversion
     /**
      * Set a given attribute on the model.
      *
-     * @param  string $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
      * @return mixed
      */
     public function setAttribute($key, $value)
@@ -247,12 +247,12 @@ trait DatesTimezoneConversion
 
         $type = substr($this->getCastType($key), 0, strpos($this->getCastType($key), ':'));
         switch ($type) {
-        case 'time':
-            $castKey = $this->casts[$key];
-            $format = substr($castKey, strpos($castKey, ':') + 1);
-            return $this->asTime($value, $format);
-        default:
-            return parent::castAttribute($key, $value);
+            case 'time':
+                $castKey = $this->casts[$key];
+                $format = substr($castKey, strpos($castKey, ':') + 1);
+                return $this->asTime($value, $format);
+            default:
+                return parent::castAttribute($key, $value);
         }
     }
 
@@ -279,8 +279,8 @@ trait DatesTimezoneConversion
      * Checks if a date is part of the model's dates array,
      * is an object, and is a Carbon instance.
      *
-     * @param  $key
-     * @param  $value
+     * @param $key
+     * @param $value
      * @return bool
      */
     public function isDateObject($key, $value)
@@ -308,7 +308,7 @@ trait DatesTimezoneConversion
     /**
      * Converts a value to a Carbon date object if needed.
      *
-     * @param  $value
+     * @param $value
      * @return Carbon
      */
     protected function convertToDateObject($value, $timezone = null)

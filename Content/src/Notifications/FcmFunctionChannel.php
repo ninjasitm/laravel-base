@@ -31,7 +31,7 @@ class FcmFunctionChannel
     public function send($notifiable, Notification $notification)
     {
         // Get the message from the notification class
-        $fcmMessage = (array)$notification->toArray($notifiable);
+        $fcmMessage = (array) $notification->toArray($notifiable);
         \Log::info("Sending notification: " . get_class($notification) . ":" . json_encode($fcmMessage, JSON_PRETTY_PRINT));
         $result = array_merge([
             'type' => 'fcm-notification',
@@ -67,7 +67,7 @@ class FcmFunctionChannel
 
         \Log::info("Firebase Notification via: $url for: [" . implode("|", [$notifiable->id, $notifiable->username]) . "]");
 
-        $token = CollectionHelper::isCollection($token) ? $token : collect((array)$token);
+        $token = CollectionHelper::isCollection($token) ? $token : collect((array) $token);
         $token = $token->filter();
         if ($token->count()) {
             $client = new Client([
@@ -95,7 +95,7 @@ class FcmFunctionChannel
     /**
      * Get the array representation of the notification.
      *
-     * @param  mixed $notifiable
+     * @param mixed $notifiable
      * @return array
      */
     public function toArray($notifiable = null)

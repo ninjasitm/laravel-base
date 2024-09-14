@@ -14,7 +14,7 @@ class TeamDeleted
     /**
      * Create a new event instance.
      *
-     * @param  \Nitm\Content\Models\Team $team
+     * @param \Nitm\Content\Models\Team $team
      * @return void
      */
     public function __construct($team)

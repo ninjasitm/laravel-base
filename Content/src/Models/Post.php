@@ -55,15 +55,15 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'id'           => 'integer',
-        'user_id'      => 'integer',
-        'title'        => 'string',
-        'slug'         => 'string',
-        'excerpt'      => 'string',
-        'content'      => 'string',
+        'id' => 'integer',
+        'user_id' => 'integer',
+        'title' => 'string',
+        'slug' => 'string',
+        'excerpt' => 'string',
+        'content' => 'string',
         'content_html' => 'string',
         'published_at' => 'datetime',
-        'published'    => 'boolean',
+        'published' => 'boolean',
     ];
 
     /**
@@ -113,10 +113,10 @@ class Post extends Model
      */
     public function toArray($fullContent = false): array
     {
-        $attributes           = parent::toArray();
-        $genericAvatar        = ImageHelper::getPlaceHolderAvatar();
+        $attributes = parent::toArray();
+        $genericAvatar = ImageHelper::getPlaceHolderAvatar();
         $attributes['author'] = [
-            'name'  => $this->user ? $this->user->name : 'NITM',
+            'name' => $this->user ? $this->user->name : 'NITM',
             'image' => $this->user ? ($this->user->avatar ? $this->user->avatar->getPath() : $genericAvatar) : $genericAvatar,
         ];
         // $attributes['image'] = $this->images->count() ? $this->images->first()->getPath() : ImageHelper::getPlaceHolderBackground();
@@ -200,8 +200,8 @@ class Post extends Model
     /**
      * Allows filtering for specifc categories.
      *
-     * @param  Illuminate\Query\Builder $query      QueryBuilder
-     * @param  array                    $categories List of category ids
+     * @param Illuminate\Query\Builder $query      QueryBuilder
+     * @param array                    $categories List of category ids
      * @return Illuminate\Query\Builder              QueryBuilder
      */
     public function scopeFilterCategories($query, $categories)
@@ -272,8 +272,8 @@ class Post extends Model
      *     // Get the previous post, ordered by the ID attribute instead
      *     Post::applySibling(['direction' => -1, 'attribute' => 'id'])->first();
      *
-     * @param  $query
-     * @param  array $options
+     * @param $query
+     * @param array $options
      * @return
      */
     public function scopeApplySibling($query, $options = [])
@@ -292,8 +292,8 @@ class Post extends Model
             )
         );
 
-        $isPrevious        = in_array($direction, ['previous', -1]);
-        $directionOrder    = $isPrevious ? 'asc' : 'desc';
+        $isPrevious = in_array($direction, ['previous', -1]);
+        $directionOrder = $isPrevious ? 'asc' : 'desc';
         $directionOperator = $isPrevious ? '>' : '<';
 
         $query->where('id', '<>', $this->id);

@@ -7,11 +7,12 @@
 namespace Nitm\Content\Http\Controllers\Traits;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Pagination\Paginator as Paginator;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Nitm\Content\Models\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -19,6 +20,7 @@ use Illuminate\Support\Collection;
 use InfyOm\Generator\Utils\ResponseUtil;
 use Illuminate\Http\Response;
 use Nitm\Content\Jobs\RecordActivity;
+use Illuminate\Database\Query\Builder;
 
 trait CustomControllerTrait
 {
@@ -46,10 +48,10 @@ trait CustomControllerTrait
     /**
      * Use full pagination
      *
-     * @param Request request The request object
-     * @param query The query builder instance.
+     * @param Request $request The request object
+     * @param mixed $query The query builder instance.
      *
-     * @return The return value of the afterPaginate method.
+     * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
     public function paginate(Request $request, $query)
     {
@@ -59,10 +61,10 @@ trait CustomControllerTrait
     /**
      * Use Cursor Pagination
      *
-     * @param Request request The request object
-     * @param query The query builder instance.
+     * @param Request $request The request object
+     * @param mixed $query The query builder instance.
      *
-     * @return Paginator A paginator object
+     * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
     public function cursorPaginate(Request $request, $query)
     {
@@ -72,10 +74,10 @@ trait CustomControllerTrait
     /**
      * Use simple pagination
      *
-     * @param Request request The request object
-     * @param query The query builder instance.
+     * @param Request $request The request object
+     * @param mixed $query The query builder instance.
      *
-     * @return The return value is the result of the afterPaginate method.
+     * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
     public function simplePaginate(Request $request, $query)
     {
@@ -85,20 +87,20 @@ trait CustomControllerTrait
     /**
      * A function that is used to paginate the data.
      *
-     * @param Request request The request object.
-     * @param Query The query
-     * @param using The method to use to paginate the results.
-     * @param perPage The number of items to show per page.
-     * @param columns The columns to be selected.
-     * @param name The name of the paginator instance.
-     * @param position The page number to be returned.
+     * @param Request $request The request object.
+     * @param mixed $query The query
+     * @param string $using The method to use to paginate the results.
+     * @param int|null $perPage The number of items to show per page.
+     * @param array $columns The columns to be selected.
+     * @param string $name The name of the paginator instance.
+     * @param int|null $position The page number to be returned.
      *
-     * @return LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract | array A paginator result
+     * @return LengthAwarePaginator|CursorPaginator|Paginator|array A paginator result
      */
-    public function afterPaginate(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null): LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract | array
+    public function afterPaginate(Request $request, $query, string $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null): LengthAwarePaginator|CursorPaginator|Paginator|array
     {
-        $page      = $position ?: abs(intval($request->get('page')));
-        $perPage   = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
+        $page = $position ?: abs(intval($request->get('page')));
+        $perPage = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
         if (strtolower($using) === 'cursorpaginate') {
             // The 4th argument to cursorPaginate is a cursor and is notably different from simplePaginate and paginate
             $paginator = $query->cursorPaginate($perPage, $columns, $name);
@@ -110,7 +112,7 @@ trait CustomControllerTrait
 
         $this->beforePaginateTransform($request, $paginator);
 
-        $fields    = request()->input('_fields');
+        $fields = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = array_merge((array) $fields, (array) $relations);
 
@@ -155,11 +157,11 @@ trait CustomControllerTrait
      * Do some custom pagination for paginated data
      *
      * @param Request $request
-     * @param LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract   $paginator
+     * @param LengthAwarePaginator|CursorPaginator|Paginator   $paginator
      *
      * @return void
      */
-    protected function beforePaginateTransform(Request $request, LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract $paginator)
+    protected function beforePaginateTransform(Request $request, LengthAwarePaginator|CursorPaginator|Paginator $paginator)
     {
     }
 
@@ -169,7 +171,7 @@ trait CustomControllerTrait
      * @param array $data
      * @param string $message
      *
-     * @return Response
+     * @return array
      */
     protected function makeResponse($data, $message = 'Success!')
     {
@@ -180,10 +182,10 @@ trait CustomControllerTrait
     /**
      * Send Response
      *
-     * @param  mixed $result
-     * @param  mixed $message
-     * @param  mixed $code
-     * @return string | Response
+     * @param mixed $result
+     * @param mixed $message
+     * @param mixed $code
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendResponse($result, $message, $code = 200)
     {
@@ -194,18 +196,11 @@ trait CustomControllerTrait
     /**
      * It returns a json response with the error message and the error code.
      *
-     * @param result The result of the operation.
-     * @param message The message you want to send to the user.
-     * @param code HTTP status code
+     * @param mixed $result The result of the operation.
+     * @param string message The message you want to send to the user.
+     * @param int code HTTP status code
      *
-     * @return A JSON object with the following structure:
-     * ```
-     * {
-     *     "error": {
-     *         "message": "The error message",
-     *         "code": 400
-     *     }
-     * }
+     * @return \Illuminate\Http\JsonResponse
      * ```
      */
     public function sendError($result, $message, $code = 400)
@@ -216,9 +211,10 @@ trait CustomControllerTrait
     /**
      * Get Meta Input
      *
-     * @param  mixed $key
-     * @param  mixed $default
-     * @return void
+     * @param mixed $key
+     * @param mixed $default
+     *
+     * @return mixed
      */
     protected function getMetaInput($key, $default = null)
     {
@@ -232,7 +228,7 @@ trait CustomControllerTrait
     /**
      * Add Meta information to the response
      *
-     * @param  mixed $meta
+     * @param mixed $meta
      * @return void
      */
     protected function addMeta($meta = [])
@@ -243,7 +239,7 @@ trait CustomControllerTrait
     /**
      * Set Meta information for the response
      *
-     * @param  mixed $meta
+     * @param mixed $meta
      * @return void
      */
     protected function setMeta($meta = [])
@@ -254,8 +250,8 @@ trait CustomControllerTrait
     /**
      * Append meta to the data
      *
-     * @param  mixed $data
-     * @return void
+     * @param mixed $data
+     * @return array
      */
     protected function appendMeta($data)
     {
@@ -273,15 +269,15 @@ trait CustomControllerTrait
     /**
      * It takes the data, status, and code and returns a response with the data, status, and code
      *
-     * @param data The data to be returned.
-     * @param string status The status of the response.
-     * @param int code The HTTP status code to return.
+     * @param mixed $data The data to be returned.
+     * @param string $status The status of the response.
+     * @param int $code The HTTP status code to return.
      *
-     * @return The data is being returned with the status and code.
+     * @return \Illuminate\Http\JsonResponse
      */
-    protected function printSuccess($data, string $status = 'ok', int $code = 200)
+    protected function printSuccess(mixed $data, string $status = 'ok', int $code = 200)
     {
-        $fields    = request()->input('_fields');
+        $fields = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = $fields !== 'all' ? array_merge((array) $fields, (array) $relations) : [];
         if (!empty($allFields)) {
@@ -300,7 +296,7 @@ trait CustomControllerTrait
      *
      * @param Model $model
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function printModelSuccess($model, $status = 'ok', int $code = 200)
     {
@@ -325,16 +321,16 @@ trait CustomControllerTrait
                     }
                 } catch (\Exception $e) {
                 }
-            } elseif (($model instanceof \Illuminate\Contracts\Support\Responsable) && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
+            } elseif (($model instanceof \Illuminate\Contracts\Support\Responsable) && property_exists($model, 'resource') && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
                 try {
-                    $allWith = $model->getAllWith();
+                    $allWith = $model->resource->getAllWith();
                     if (!empty($allWith)) {
-                        $model->load($allWith);
+                        $model->resource->load($allWith);
                     }
 
-                    $allWithCount = $model->getAllWithCount();
+                    $allWithCount = $model->resource->getAllWithCount();
                     if (!empty($allWithCount)) {
-                        $model->loadCount($allWithCount);
+                        $model->resource->loadCount($allWithCount);
                     }
                 } catch (\Exception $e) {
                 }
@@ -360,7 +356,7 @@ trait CustomControllerTrait
      *
      * @param Model $model
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function printModelSuccessWithMeta($model, $status = 'ok', int $code = 200)
     {
@@ -373,11 +369,13 @@ trait CustomControllerTrait
     /**
      * Adjust items on the model before sending the response
      *
-     * @param  mixed $model
+     * @param Request $request
+     * @param mixed $model
      * @return void
      */
     protected function beforeSendModel(Request $request, $model)
     {
+        // Consider adding logic here if needed
     }
 
 
@@ -386,7 +384,7 @@ trait CustomControllerTrait
      *
      * @param Collection $model
      *
-     * @return void
+     * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
     protected function printSuccessCollection(Collection $items)
     {
@@ -423,12 +421,13 @@ trait CustomControllerTrait
     /**
      * User Owns Or Fail
      *
-     * @param  mixed $user
-     * @param  mixed $model
-     * @param  mixed $property
-     * @return void
+     * @param mixed $user
+     * @param mixed $model
+     * @param mixed $property
+     *
+     * @return bool
      */
-    protected function userOwnsOrFail(Authenticatable $user, Model $model, string $property = null)
+    protected function userOwnsOrFail(Authenticatable $user, Model|EloquentModel $model, string $property = null)
     {
         if (!$this->userOwns($user, $model, $property)) {
             abort(403);
@@ -439,15 +438,16 @@ trait CustomControllerTrait
     /**
      * User Owns Or Fail
      *
-     * @param  mixed $user
-     * @param  mixed $model
-     * @param  mixed $property
-     * @return void
+     * @param mixed $user
+     * @param mixed $model
+     * @param mixed $property
+     *
+     * @return bool
      */
-    protected function userOwns(Authenticatable $user, Model $model, string $property = null)
+    protected function userOwns(Authenticatable $user, Model|EloquentModel $model, string $property = null)
     {
         $property = $property ?? (property_exists($model, 'author_id') ? 'author_id' : 'user_id');
-        if ($user->id == $model->$property) {
+        if ($user->getAuthIdentifier() == $model->$property) {
             return true;
         }
         return false;

@@ -23,8 +23,8 @@ abstract class BaseUserEvent implements ShouldBroadcast
     /**
      * Create a new event instance.
      *
-     * @param  \Laravel\Spark\Team  $team
-     * @param  mixed  $user
+     * @param \Laravel\Spark\Team  $team
+     * @param mixed  $user
      * @return void
      */
     public function __construct($user)

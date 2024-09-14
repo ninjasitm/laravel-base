@@ -53,8 +53,8 @@ trait SupportsNotificationPreferences
     /**
      * Is there an Enabled Notification Preference Via the given class and method?
      *
-     * @param  string $class
-     * @param  string $via
+     * @param string $class
+     * @param string $via
      * @return bool
      */
     public function hasEnabledNotificationPreferenceVia(string $class, string $via = 'web'): bool
@@ -67,7 +67,7 @@ trait SupportsNotificationPreferences
     /**
      * Enabled
      *
-     * @param  mixed $query
+     * @param mixed $query
      * @return void
      */
     public function scopeEnabled($query)
@@ -78,8 +78,8 @@ trait SupportsNotificationPreferences
     /**
      * scopeHasPreferencesFor
      *
-     * @param  mixed $query
-     * @param  mixed $classes
+     * @param mixed $query
+     * @param mixed $classes
      * @return void
      */
     public function scopePreferencesFor($query, $classes)
@@ -93,8 +93,8 @@ trait SupportsNotificationPreferences
     /**
      * scopeEnabledsFor
      *
-     * @param  mixed $query
-     * @param  mixed $class
+     * @param mixed $query
+     * @param mixed $class
      * @return void
      */
     public function scopeEnabledFor($query, $class)
@@ -105,8 +105,8 @@ trait SupportsNotificationPreferences
     /**
      * Via
      *
-     * @param  mixed $query
-     * @param  mixed $via
+     * @param mixed $query
+     * @param mixed $via
      * @return void
      */
     public function scopeVia($query, $via)

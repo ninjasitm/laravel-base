@@ -32,9 +32,9 @@ trait SupportsAutomation
     /**
      * Translate the given message.
      *
-     * @param  string $key
-     * @param  array  $replace
-     * @param  string $locale
+     * @param string $key
+     * @param array  $replace
+     * @param string $locale
      * @return string|array|null
      */
     protected static function __custom($key, $replace = [], $locale = null)
@@ -72,7 +72,7 @@ trait SupportsAutomation
                         array_shift($parts);
                         $$result[$key] = $subject->pluck(implode('.', $parts));
                     } elseif (is_object($subject) && !empty($parts)) {
-                        $value = method_exists($subject, 'toArray') ? $subject->toArray() : (array)$subject;
+                        $value = method_exists($subject, 'toArray') ? $subject->toArray() : (array) $subject;
                         $result[$key] = Arr::get($value, implode('.', $parts));
                     } elseif (is_array($parts) && !empty($parts)) {
                         $result[$key] = Arr::get($subject, implode('.', $parts));

@@ -7,9 +7,9 @@ use Illuminate\Support\Collection;
 use Nitm\Content\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
-use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
+use Illuminate\Contracts\Pagination\Paginator as Paginator;
+use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginator;
 
 interface Repository
 {
@@ -44,17 +44,17 @@ interface Repository
     /**
      * Paginate records for scaffold.
      *
-     * @param  int   $perPage
-     * @param  array $columns
-     * @return LengthAwarePaginatorContract
+     * @param int   $perPage
+     * @param array $columns
+     * @return LengthAwarePaginator
      */
-    public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginatorContract;
+    public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginator;
 
     /**
      * Get Meta Input
      *
-     * @param  mixed $key
-     * @param  mixed $default
+     * @param mixed $key
+     * @param mixed $default
      * @return void
      */
     public function getMetaInput($key, $default = null);
@@ -62,18 +62,18 @@ interface Repository
     /**
      * Paginate the given query using the request
      *
-     * @param  mixed $request
-     * @param  mixed $query
-     * @return LengthAwarePaginatorContract|CursorPaginatorContract|PaginatorContract
+     * @param mixed $request
+     * @param mixed $query
+     * @return LengthAwarePaginator|CursorPaginator|Paginator
      */
     public function paginateUsing(Request $request, $query);
 
     /**
      * Build a query for retrieving all records.
      *
-     * @param  array    $search
-     * @param  int|null $skip
-     * @param  int|null $limit
+     * @param array    $search
+     * @param int|null $skip
+     * @param int|null $limit
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function allQuery($search = [], $skip = null, $limit = null);
@@ -100,7 +100,7 @@ interface Repository
     /**
      * Convert the collection to an array based on request fields
      *
-     * @param  Collection|Paginator|LengthAwarePaginator $collection
+     * @param Collection|Paginator|LengthAwarePaginator $collection
      * @return Collection|Paginator|LengthAwarePaginator
      */
     public static function collectionToArray($collection);
@@ -108,7 +108,7 @@ interface Repository
     /**
      * Import models
      *
-     * @param  array $data
+     * @param array $data
      * @return array
      */
     public function import(array $data): array;
@@ -116,7 +116,7 @@ interface Repository
     /**
      * Search the models
      *
-     * @param  array $data
+     * @param array $data
      * @return Builder     *
      */
     public function search(array $data): ?Builder;
@@ -124,7 +124,7 @@ interface Repository
     /**
      * Search the trashed models
      *
-     * @param  array $data
+     * @param array $data
      * @return Builder
      */
     public function trashedSearch(array $data): ?Builder;
@@ -182,7 +182,7 @@ interface Repository
     /**
      * Create a new model
      *
-     * @param  array $data
+     * @param array $data
      * @return Model     *
      */
     public function create(array $data): ?Model;
@@ -190,7 +190,7 @@ interface Repository
     /**
      * Update a new model
      *
-     * @param  array $data
+     * @param array $data
      * @return Model     *
      */
     public function update(Collection|array $input, Model $model): ?Model;
@@ -198,7 +198,7 @@ interface Repository
     /**
      * Update a new model
      *
-     * @param  mixed $model
+     * @param mixed $model
      * @return bool
      *
      */

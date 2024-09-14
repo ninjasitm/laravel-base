@@ -25,8 +25,8 @@ trait SupportsTeamRepositories
     /**
      * General import method
      *
-     * @param  Request         $request
-     * @param  ImplementsTeams $team
+     * @param Request         $request
+     * @param ImplementsTeams $team
      * @return void
      */
     public function import(Request $request, ImplementsTeams $team)
@@ -61,8 +61,8 @@ trait SupportsTeamRepositories
     /**
      * General export method
      *
-     * @param  Request         $request
-     * @param  ImplementsTeams $team
+     * @param Request         $request
+     * @param ImplementsTeams $team
      * @return void
      */
     public function export(Request $request, ImplementsTeams $team)

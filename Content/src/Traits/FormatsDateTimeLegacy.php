@@ -28,8 +28,8 @@ trait FormatsDateTimeLegacy
     /**
      * Determine the real start date for a model
      *
-     * @param  CarbonValue $startDate
-     * @param  array       $days
+     * @param CarbonValue $startDate
+     * @param array       $days
      * @return CarbonValue
      */
     public static function getRealStartDate($startDate, array $days)
@@ -59,8 +59,8 @@ trait FormatsDateTimeLegacy
      * Gets the dates between a range
      *
      * @url    https://hdtuto.com/article/how-to-get-all-dates-between-two-dates-in-php-carbon-
-     * @param  Carbon $start_date
-     * @param  Carbon $end_date
+     * @param Carbon $start_date
+     * @param Carbon $end_date
      * @return void
      */
     public function generateDateRange(Carbon $startDate, Carbon $endDate)
@@ -77,9 +77,9 @@ trait FormatsDateTimeLegacy
     /**
      * Get the days between datess, up to 7 days
      *
-     * @param  Carbon  $startDate
-     * @param  Carbon  $endDate
-     * @param  boolean $excludeStart
+     * @param Carbon  $startDate
+     * @param Carbon  $endDate
+     * @param boolean $excludeStart
      * @return void
      */
     public function getDaysBetween(Carbon $startDate, Carbon $endDate, $excludeStart = false)
@@ -182,8 +182,8 @@ trait FormatsDateTimeLegacy
     /**
      * Prepare entries for addition to the database
      *
-     * @param  bool $excludeStart Exclude the start datae from the range?
-     * @param  int  $sequenceId   Should the entries be assigned to an entry sequence?
+     * @param bool $excludeStart Exclude the start datae from the range?
+     * @param int  $sequenceId   Should the entries be assigned to an entry sequence?
      * @return array
      */
     public function prepareEntries(bool $excludeStart = false, int $sequenceId = null, array $requestData = [], $daysOfWeek = [])
@@ -207,16 +207,16 @@ trait FormatsDateTimeLegacy
                          */
                         $array[] = new CalendarEntry(
                             [
-                            'date' => $entryStartDate,
-                            'day_of_week' => $day,
-                            'start_date' => $this->start_date,
-                            'end_date' => $this->end_date,
-                            'start_time' => $startTime,
-                            'end_time' => $endTime,
-                            'status' => static::STATUS_ON,
-                            'entity_type' => $this->entity_type ?: 'calendar',
-                            'entity_id' => $this->entity_id ?: $this->id,
-                            'sequence_owner_id' => $sequenceId ?? null
+                                'date' => $entryStartDate,
+                                'day_of_week' => $day,
+                                'start_date' => $this->start_date,
+                                'end_date' => $this->end_date,
+                                'start_time' => $startTime,
+                                'end_time' => $endTime,
+                                'status' => static::STATUS_ON,
+                                'entity_type' => $this->entity_type ?: 'calendar',
+                                'entity_id' => $this->entity_id ?: $this->id,
+                                'sequence_owner_id' => $sequenceId ?? null
                             ]
                         );
                         $entryStartDate = $entryStartDate->parse(strtotime("next $day", $currentWeek->timestamp));

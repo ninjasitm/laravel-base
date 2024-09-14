@@ -21,8 +21,8 @@ class GuestInvitedToTeam
     /**
      * Create a new event instance.
      *
-     * @param  \Nitm\Content\Models\Team $team
-     * @param  mixed                     $invitation
+     * @param \Nitm\Content\Models\Team $team
+     * @param mixed                     $invitation
      * @return void
      */
     public function __construct($team, $invitation)

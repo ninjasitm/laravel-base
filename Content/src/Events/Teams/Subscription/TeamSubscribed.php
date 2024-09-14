@@ -21,8 +21,8 @@ class TeamSubscribed
     /**
      * Create a new event instance.
      *
-     * @param  \Nitm\Content\Models\Team $team
-     * @param  \Nitm\Content\Plan        $plan
+     * @param \Nitm\Content\Models\Team $team
+     * @param \Nitm\Content\Plan        $plan
      * @return void
      */
     public function __construct($team, $plan)

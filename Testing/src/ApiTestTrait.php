@@ -115,7 +115,7 @@ trait ApiTestTrait
     /**
      * Assert Api Response
      *
-     * @param  mixed $actualData
+     * @param mixed $actualData
      * @return void
      */
     public function assertApiResponse(array $actualData)
@@ -142,7 +142,7 @@ trait ApiTestTrait
     /**
      * Assert Api Response/status Code
      *
-     * @param  mixed $code
+     * @param mixed $code
      * @return void
      */
     public function assertApiResponseCode($code = 200)
@@ -153,7 +153,7 @@ trait ApiTestTrait
     /**
      * Assert Api Status Code
      *
-     * @param  mixed $code
+     * @param mixed $code
      * @return void
      */
     public function assertApiStatus($code = 200)
@@ -164,8 +164,8 @@ trait ApiTestTrait
     /**
      * assertModelData
      *
-     * @param  mixed $actualData
-     * @param  mixed $expectedData
+     * @param mixed $actualData
+     * @param mixed $expectedData
      * @return void
      */
     public function assertModelData(array $actualData, array $expectedData)

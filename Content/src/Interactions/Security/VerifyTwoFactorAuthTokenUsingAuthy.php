@@ -17,7 +17,7 @@ class VerifyTwoFactorAuthTokenUsingAuthy implements Contract
     /**
      * Create a new interaction instance.
      *
-     * @param  \Nitm\Content\Services\Security\Authy $authy
+     * @param \Nitm\Content\Services\Security\Authy $authy
      * @return void
      */
     public function __construct(Authy $authy)

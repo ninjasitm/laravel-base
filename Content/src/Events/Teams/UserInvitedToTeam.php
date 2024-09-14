@@ -21,8 +21,8 @@ class UserInvitedToTeam
     /**
      * Create a new event instance.
      *
-     * @param  \Nitm\Content\Models\Team $team
-     * @param  mixed                     $user
+     * @param \Nitm\Content\Models\Team $team
+     * @param mixed                     $user
      * @return void
      */
     public function __construct($team, $user)

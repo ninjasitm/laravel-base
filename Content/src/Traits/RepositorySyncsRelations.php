@@ -49,16 +49,16 @@ trait RepositorySyncsRelations
     /**
      * Sync Relation Data
      *
-     * @param  mixed $relation
-     * @param  mixed $key
-     * @param  mixed $data
+     * @param mixed $relation
+     * @param mixed $key
+     * @param mixed $data
      * @return void
      */
     public function syncRelationDataWithParams(Model $subject, string $relation, $data, $orderBy = 'updated_at')
     {
         $pivotFields = [];
         $realData = $data;
-        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array)$realData);
+        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array) $realData);
         $relationQuery = $subject->$relation();
         if ($realData->count()) {
             $syncMethod = Str::camel('sync-' . $relation);
@@ -76,7 +76,7 @@ trait RepositorySyncsRelations
                         $filteredData[$id] = is_array($params) ? $params : [];
                     }
                 }
-                $pivotFields = array_keys((array)current($filteredData));
+                $pivotFields = array_keys((array) current($filteredData));
                 if ($relationQuery instanceof HasMany || $relationQuery instanceof HasManyThrough) {
                     $relationQuery->whereIn('id', array_keys($filteredData))
                         ->get()
@@ -105,8 +105,8 @@ trait RepositorySyncsRelations
     /**
      * Extract Real Data From
      *
-     * @param  mixed $keys
-     * @param  mixed $data
+     * @param mixed $keys
+     * @param mixed $data
      * @return void
      */
     protected function extractRealDataFrom($keys, $data)
@@ -138,7 +138,7 @@ trait RepositorySyncsRelations
 
     public function syncDeliverables(Model $subject, $data, string $relation = 'deliverables', string $typeKey = 'deliverable_type')
     {
-        $data = array_filter((array)$data);
+        $data = array_filter((array) $data);
 
         $sync = [];
         foreach ($data as $id) {
@@ -239,7 +239,7 @@ trait RepositorySyncsRelations
      */
     public function syncMetadata(Model $subject, array|Collection $data, string $key = 'metadata', array $linkedBy = ['id'])
     {
-        $data = array_filter((array)$data);
+        $data = array_filter((array) $data);
         if (!is_array($data) || empty($data)) {
             return;
         }
