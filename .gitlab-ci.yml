@@ -31,17 +31,19 @@ build-job: # This job runs in the build stage, which runs first.
 
 test-job: # This job runs in the test stage.
   stage: test # It only starts when the job in the build stage completes successfully.
+  dependencies:
+    - build-job
   script:
     - echo "Running unit tests... This will take about 60 seconds."
     - php vendor/bin/phpunit
 
 tagging:
   stage: publish
+  dependencies:
+    - test-job
   only:
     - master
   script:
     - git config --global user.name "${GITLAB_USER_NAME}"
     - git config --global user.email "${GITLAB_USER_EMAIL}"
-    - tag=$(cat composer.json | grep version | grep -Eo "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
-    - git tag "$tag"
-    - git push --tags http://root:$ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:master
+    - bash bump-git-tag.sh
