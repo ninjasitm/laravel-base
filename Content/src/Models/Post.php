@@ -4,6 +4,7 @@ namespace Nitm\Content\Models;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Nitm\Helpers\ImageHelper;
 use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Models\BaseModel as Model;
@@ -97,7 +98,7 @@ class Post extends Model
                     $model->published_at = \Carbon\Carbon::now();
                 }
                 if (!Arr::get($model->getAttributes(), 'slug', false)) {
-                    $model->slug = \Auth::getUser()->username . '-' . str_slug($model->getAttribute("title"));
+                    $model->slug = \Auth::getUser()->username . '-' . Str::slug($model->getAttribute("title"));
                 }
                 if (!Arr::get($model->attributes, 'excerpt', false)) {
                     $model->excerpt = substr(strip_tags($model->getAttribute("content")), 0, 140);

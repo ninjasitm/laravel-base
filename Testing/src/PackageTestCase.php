@@ -46,12 +46,27 @@ abstract class PackageTestCase extends BaseTestCase
      * @param mixed $team
      * @return void
      */
-    protected function useAs($role, $team = null)
+    protected function useAs($role = User::ROLE_USER, $team = null)
     {
-        $team = $team ?: $this->team ?: Team::factory()->create();
         $class = NitmContent::userModel();
         $user = $class::factory()->create();
+
+        $team = $team ?: $this->team ?: Team::factory()->create();
         $teamUser = TeamUser::firstOrCreate(['team_id' => $team->id, 'role' => $role, 'user_id' => $user->id, 'is_approved' => true]);
+        auth()->login($user);
+        return $user;
+    }
+
+    /**
+     * Use as the given role for the specified team
+     *
+     * @param mixed $role
+     * @return void
+     */
+    protected function useUserWithoutTeam()
+    {
+        $class = NitmContent::userModel();
+        $user = $class::factory()->create();
         auth()->login($user);
         return $user;
     }

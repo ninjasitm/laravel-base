@@ -33,7 +33,7 @@ trait Model
             $newValue = $this->$attribute === true ? false : true;
             $this->$attribute = $newValue;
         }
-        $this->save();
+        // $this->save();
         return Arr::only($this->toArray(), array_merge(['id'], $allAttributes));
     }
 
@@ -50,7 +50,7 @@ trait Model
     public static function getStats(array $stats, Team $team, $groups = [], User $user = null)
     {
         $user = $user ?: auth()->user();
-        $snakeable = array_merge(array_keys($team->featureNames), ['mentor', 'student', 'mentors', 'students']);
+        $snakeable = array_merge(array_keys($team->featureNames ?? []), ['mentor', 'student', 'mentors', 'students']);
         $availableStats = [];
         foreach ($stats as $key => $stat) {
             if (in_array($stat, $snakeable)) {
@@ -121,7 +121,7 @@ trait Model
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
-        $this->fillable = array_merge($this->fillable, $attributes);
+        $this->fillable = array_merge($this->fillable ?? [], $attributes);
     }
     /**
      * Add fillable attributes for the model.
@@ -133,7 +133,7 @@ trait Model
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
-        $this->appends = array_merge($this->appends, $attributes);
+        $this->appends = array_merge($this->appends ?? [], $attributes);
     }
 
     /**
@@ -146,7 +146,17 @@ trait Model
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
-        $this->jsonable = array_merge($this->jsonable, $attributes);
+        $this->jsonable = array_merge($this->jsonable ?? [], $attributes);
+    }
+
+    /**
+     * Get all the attributes that are jsonable.
+     *
+     * @return array
+     */
+    public function getJsonable()
+    {
+        return $this->jsonable ?? [];
     }
 
     /**
@@ -443,10 +453,10 @@ trait Model
      */
     public function title(): string
     {
-        if (property_exists($this, 'title')) {
+        if (property_exists($this, 'title') || $this->getAttribute('title')) {
             return "{$this->title}";
         }
-        if (property_exists($this, 'name')) {
+        if (property_exists($this, 'name') || $this->getAttribute('name')) {
             return "{$this->name}";
         }
         return '(not set)';

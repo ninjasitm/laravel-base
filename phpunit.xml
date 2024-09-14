@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" backupStaticAttributes="false" bootstrap="vendor/autoload.php" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <coverage processUncoveredFiles="true">
+    <include>
+      <directory suffix=".php">./app</directory>
+    </include>
+  </coverage>
+  <testsuites>
+    <testsuite name="Unit">
+      <directory suffix="Test.php">./tests/Unit</directory>
+    </testsuite>
+    <testsuite name="Feature">
+      <directory suffix="Test.php">./tests/Feature</directory>
+    </testsuite>
+    <testsuite name="Repositories">
+      <directory suffix="Test.php">./tests/Repositories</directory>
+    </testsuite>
+    <testsuite name="APIs">
+        <directory suffix="Test.php">./tests/APIs</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <env name="APP_ENV" value="testing"/>
+    <env name="BCRYPT_ROUNDS" value="4"/>
+    <env name="CACHE_DRIVER" value="array"/>
+    <env name="SESSION_DRIVER" value="array"/>
+    <env name="QUEUE_DRIVER" value="sync"/>
+    <env name="MAIL_DRIVER" value="log"/>
+    <env name="TELESCOPE_ENABLED" value="false"/>
+    <env name="ACTIVITY_LOGGER_ENABLED" value="false"/>
+    <env name="DB_CONNECTION" value="testing"/>
+    <env name="DB_DATABASE" value="testing"/>
+    <env name="DB_USERNAME" value="testing_user"/>
+    <env name="DB_PASSWORD" value="testing"/>
+    <env name="TELESCOPE_ENABLED" value="false"/>
+    <env name="TELESCOPE_DB_CONNECTION" value="testing"/>
+    <env name="ACTIVITY_LOGGER_ENABLED" value="false"/>
+    <env name="STRIPE_CLIENT_ID" value="ca_KyHUjkeKlwmIvpedSg554AHsZnUxDHyT"/>
+    <env name="STRIPE_KEY" value="pk_test_51KIK0bKE4VlDLSnkVtxypVNAMbq0ld5oSsv40WBOafAyvQS9Av8TbBoqafFy93pzhgz9xIIOE2n423gnOB71mXyx00Vr3gucex"/>
+    <env name="STRIPE_SECRET" value="sk_test_51KIK0bKE4VlDLSnkzqKjf8wkKQH892aRgE3J2Q9h5UnFdpQgHkalv3aH34saiueKpcGLLXmbw3AVErhSMyYFNF4u002GP8j6DK"/>
+    <env name="AWS_DEFAULT_REGION" value="us-east-2"/>
+    <env name="AWS_BUCKET" value="rdy-test"/>
+    <env name="AWS_URL" value="https://s3.us-east-2.amazonaws.com/test/"/>
+  </php>
+</phpunit>

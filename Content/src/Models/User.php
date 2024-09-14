@@ -41,7 +41,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -54,33 +55,63 @@ class User extends Authenticatable
     ];
 
     public $visible = [
-        'id', 'username', 'email', 'name', 'surname', 'avatar', 'artCount', 'fullName',
-        'apiToken', 'phone', 'mobile', 'company', 'street_addr', 'city', 'zip',
-        'categories', 'groups', 'profile', 'country', 'state',
+        'id',
+        'username',
+        'email',
+        'name',
+        'surname',
+        'avatar',
+        'artCount',
+        'fullName',
+        'apiToken',
+        'phone',
+        'mobile',
+        'company',
+        'street_addr',
+        'city',
+        'zip',
+        'categories',
+        'groups',
+        'profile',
+        'country',
+        'state',
     ];
 
     public $fillable = [
-        'name', 'surname', 'email', 'username', 'fullName',
-        'password', 'password_confirmation',
-        'iu_gender', 'iu_job', 'iu_about', 'iu_company', 'iu_blog', 'iu_facebook', 'iu_twitter', 'iu_webpage', 'profile',
+        'name',
+        'surname',
+        'email',
+        'username',
+        'fullName',
+        'password',
+        'password_confirmation',
+        'iu_gender',
+        'iu_job',
+        'iu_about',
+        'iu_company',
+        'iu_blog',
+        'iu_facebook',
+        'iu_twitter',
+        'iu_webpage',
+        'profile',
     ];
 
     public $with = [];
 
-    public $appends = ['profile', 'fullName'];
+    public $appends = ['fullName'];
 
     public $eagerWith = [];
 
     /**
      * @inheritDoc
      */
-    public static function boot() 
+    public static function boot()
     {
         parent::boot();
         static::saving(function ($user) {
             $firstName = Arr::get($user->attributes, 'first_name');
             $lastName = Arr::get($user->attributes, 'last_name');
-            if($firstName && $lastName) {
+            if ($firstName && $lastName) {
                 $user->name = "{$firstName} {$lastName}";
             } else {
                 $user->name = $user->name ?: "{$firstName} {$lastName}";

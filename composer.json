@@ -49,6 +49,11 @@
             "Nitm\\Content\\Database\\Factories\\": "Content/src/Database/Factories/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [

@@ -6,21 +6,19 @@
 
 namespace Nitm\Content\Http\Controllers\Traits;
 
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginator;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginator;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Contracts\Pagination\Paginator as Paginator;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
-use Nitm\Content\Models\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use Nitm\Content\Models\Model;
 use Illuminate\Support\Collection;
-use InfyOm\Generator\Utils\ResponseUtil;
-use Illuminate\Http\Response;
+use Illuminate\Pagination\Paginator;
 use Nitm\Content\Jobs\RecordActivity;
 use Illuminate\Database\Query\Builder;
+use InfyOm\Generator\Utils\ResponseUtil;
+use Illuminate\Pagination\CursorPaginator;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait CustomControllerTrait
 {
@@ -44,6 +42,13 @@ trait CustomControllerTrait
      * @var bool
      */
     protected $recordsActivity = false;
+
+    /**
+     * The meta information to be returned with the response
+     *
+     * @var array
+     */
+    protected $responseMeta = [];
 
     /**
      * Use full pagination
@@ -104,6 +109,8 @@ trait CustomControllerTrait
         if (strtolower($using) === 'cursorpaginate') {
             // The 4th argument to cursorPaginate is a cursor and is notably different from simplePaginate and paginate
             $paginator = $query->cursorPaginate($perPage, $columns, $name);
+        } elseif ($query instanceof Paginator || $query instanceof CursorPaginator || $query instanceof LengthAwarePaginator) {
+            $paginator = $query;
         } else {
             $paginator = $query->$using($perPage, $columns, $name, $page);
         }
@@ -205,7 +212,7 @@ trait CustomControllerTrait
      */
     public function sendError($result, $message, $code = 400)
     {
-        return response()->json(ResponseUtil::makeError($message, $result), $code);
+        return response()->json(ResponseUtil::makeError($message, is_array($result) ? $result : [$result]), $code);
     }
 
     /**
@@ -388,7 +395,7 @@ trait CustomControllerTrait
      */
     protected function printSuccessCollection(Collection $items)
     {
-        return $this->paginate(request(), $items);
+        return $this->paginate(request(), new LengthAwarePaginator(['items' => $items], $items->count(), $this->perPage));
     }
 
     /**
