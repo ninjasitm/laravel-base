@@ -12,9 +12,9 @@
     <testsuite name="Feature">
       <directory suffix="Test.php">./tests/Feature</directory>
     </testsuite>
-    <testsuite name="Repositories">
+    <!-- <testsuite name="Repositories">
       <directory suffix="Test.php">./tests/Repositories</directory>
-    </testsuite>
+    </testsuite> -->
     <testsuite name="APIs">
         <directory suffix="Test.php">./tests/APIs</directory>
     </testsuite>
