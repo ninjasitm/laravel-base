@@ -47,8 +47,20 @@ NEEDS_TAG=`git describe --contains $GIT_COMMIT 2>/dev/null`
 #only tag if no tag already (would be better if the git describe command above could have a silent option)
 if [ -z "$NEEDS_TAG" ]; then
     echo "Tagged with $NEW_TAG (Ignoring fatal:cannot describe - this means commit is untagged) "
-    git tag $NEW_TAG
+    git tag $NEW_TAG --force
+    # Use "oauth2" as user. For example for CI_PROJECT_URL=https://gitlab.com/acme/my-project
+    #   set origin to https://oauth2:wSHnMvSmYXtTfXtqRMxs@gitlab.com/acme/my-project.git
+    #
+    git remote add tag-origin https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
+    git tag -a "$NEW_TAG" -m "CI/CD auto tagged release: $NEW_TAG"
+
+    # Don't trigger pipeline again:
+    # -o ci.skip is not well known Gitlab Git option which allows skipping new CI.
+    # Without ci.skip option CI would be triggered recursively by tag push.
+    #
+    git push tag-origin "$NEW_TAG" --force -o ci.skip
     git push --tags
+    git remote -v
 else
     echo "Already a tag on this commit"
 fi
