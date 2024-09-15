@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Container\Container as Application;
 use Nitm\Content\Traits\Repository as RepositoryTrait;
 use Nitm\Content\Contracts\Repository as RepositoryContract;
+use Nitm\Content\Models\BaseModel;
 
 abstract class BaseRepository implements RepositoryContract
 {

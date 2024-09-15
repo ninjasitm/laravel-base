@@ -18,9 +18,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Nitm\Content\Traits\RepositorySyncsRelations;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Contracts\Pagination\Paginator as Paginator;
-use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginator;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginator;
 
 /**
  * Traits for Model.
