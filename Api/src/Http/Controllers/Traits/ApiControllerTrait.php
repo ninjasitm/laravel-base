@@ -17,6 +17,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * Trait ApiControllerTrait
@@ -34,11 +35,11 @@ trait ApiControllerTrait
      *
      * @return void
      */
-    protected function beforePaginateTransform(Request $request, LengthAwarePaginator | CursorPaginator | Paginator $paginator)
+    protected function beforePaginateTransform(Request $request, LengthAwarePaginator|CursorPaginator|Paginator $paginator)
     {
         if (class_exists($this->resource())) {
             $class = $this->resource();
-            $paginator->setItems($class::collection($paginator->items())->collection);
+            $paginator->setCollection($class::collection($paginator->items())->collection);
         } else {
             parent::beforePaginateTransform($request, $paginator);
         }

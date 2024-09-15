@@ -164,7 +164,7 @@ trait Model
      *
      * @method getTableColumns
      *
-     * @return \Illuminate\Support\Collection
+     * @return array
      */
     public function getTableColumns($table = null)
     {
@@ -195,7 +195,7 @@ trait Model
      * Get the foreign keys for the given table.
      *
      * @param string  $tableName
-     * @return \Illuminate\Support\Collection
+     * @return array
      */
     public function getTableForeignKeys($tableName)
     {
@@ -229,7 +229,7 @@ trait Model
      */
     public function hasColumn(string $column): bool
     {
-        return array_key_exists($column, $this->getTableColumns()->toArray());
+        return array_key_exists($column, $this->getTableColumns());
     }
 
     /**
