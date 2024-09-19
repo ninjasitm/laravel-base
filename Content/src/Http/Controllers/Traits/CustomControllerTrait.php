@@ -263,7 +263,7 @@ trait CustomControllerTrait
     protected function appendMeta($data)
     {
         if (!empty($this->responseMeta)) {
-            if ($data instanceof Collection || $data instanceof Paginator || $data instanceof Model) {
+            if ($data instanceof Collection || $data instanceof Paginator || $data instanceof Model) { || $data instanceof LengthAwarePaginator
                 $data = $data->toArray();
             }
             if (is_array($data)) {
