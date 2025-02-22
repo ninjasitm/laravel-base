@@ -51,7 +51,7 @@ trait Sortable
      * undefined, the record identifier is used.
      *
      * @param mixed $itemIds
-     * @param array $itemOrders
+     * @param iterable$itemOrders
      * @return void
      */
     public function setSortableOrder($itemIds, $itemOrders = null)

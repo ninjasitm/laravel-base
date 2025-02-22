@@ -24,7 +24,7 @@ class StringHelper
      * Translate the given message.
      *
      * @param string  $key
-     * @param array  $replace
+     * @param iterable $replace
      * @param string  $locale
      * @return string|array|null
      */

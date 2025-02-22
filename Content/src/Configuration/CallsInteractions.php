@@ -19,7 +19,7 @@ trait CallsInteractions
      * Run an interaction method.
      *
      * @param string $interaction
-     * @param array  $parameters
+     * @param iterable $parameters
      * @return mixed
      */
     public static function call($interaction, array $parameters = [])
@@ -31,7 +31,7 @@ trait CallsInteractions
      * Run an interaction method.
      *
      * @param string $interaction
-     * @param array  $parameters
+     * @param iterable $parameters
      * @return mixed
      */
     public static function interact($interaction, array $parameters = [])
@@ -59,7 +59,7 @@ trait CallsInteractions
      * Run a swapped interaction method.
      *
      * @param string $interaction
-     * @param array  $parameters
+     * @param iterable $parameters
      * @return mixed
      */
     protected static function callSwappedInteraction($interaction, array $parameters, $class)

@@ -16,7 +16,7 @@ interface NotificationRepository
      * Create an user notification.
      *
      * @param mixed $user
-     * @param array $data
+     * @param iterable$data
      * @return \Nitm\Content\Notification
      */
     public function create($user, array $data);
@@ -26,7 +26,7 @@ interface NotificationRepository
      *
      * @param mixed $user
      * @param mixed $from
-     * @param array $data
+     * @param iterable$data
      * @return \Nitm\Content\Notification
      */
     public function personal($user, $from, array $data);

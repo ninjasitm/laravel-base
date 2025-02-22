@@ -96,7 +96,7 @@ trait CustomControllerTrait
      * @param mixed $query The query
      * @param string $using The method to use to paginate the results.
      * @param int|null $perPage The number of items to show per page.
-     * @param array $columns The columns to be selected.
+     * @param iterable$columns The columns to be selected.
      * @param string $name The name of the paginator instance.
      * @param int|null $position The page number to be returned.
      *
@@ -168,14 +168,12 @@ trait CustomControllerTrait
      *
      * @return void
      */
-    protected function beforePaginateTransform(Request $request, LengthAwarePaginator|CursorPaginator|Paginator $paginator)
-    {
-    }
+    protected function beforePaginateTransform(Request $request, LengthAwarePaginator|CursorPaginator|Paginator $paginator) {}
 
     /**
      * Make a response and append meta if needed.
      *
-     * @param array $data
+     * @param iterable$data
      * @param string $message
      *
      * @return array
@@ -263,8 +261,7 @@ trait CustomControllerTrait
     protected function appendMeta($data)
     {
         if (!empty($this->responseMeta)) {
-            if ($data instanceof Collection || $data instanceof Paginator || $data instanceof Model || $data instanceof LengthAwarePaginator)
-            {
+            if ($data instanceof Collection || $data instanceof Paginator || $data instanceof Model || $data instanceof LengthAwarePaginator) {
                 $data = $data->toArray();
             }
             if (is_array($data)) {

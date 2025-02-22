@@ -13,7 +13,7 @@ class SendSupportEmail implements Contract
     /**
      * Get a validator instance for the given data.
      *
-     * @param array $data
+     * @param iterable$data
      * @return \Illuminate\Validation\Validator
      */
     public function validator(array $data)

@@ -48,7 +48,7 @@ class ModelHelper
      *
      * @param string $class
      * @param string $relation
-     * @param array $attributes
+     * @param iterable$attributes
      * @param string|callable $localKey
      * @param string $foreignKey
      *

@@ -41,7 +41,7 @@ class SanitizesData
     /**
      * Cleanup the code for when javascript sends undefined properties
      *
-     * @param array $data
+     * @param iterable$data
      * @return array
      */
     private function cleanData(array $data)

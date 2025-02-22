@@ -40,9 +40,9 @@ trait Model
     /**
      * Get stats for this model
      *
-     * @param array                     $stats
+     * @param iterable                    $stats
      * @param \Nitm\Content\Models\Team $team
-     * @param array                     $groups
+     * @param iterable                    $groups
      * @param \Nitm\Content\Models\User $user
      *
      * @return array
@@ -235,7 +235,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param array $options
+     * @param iterable$options
      * @return void
      */
     public static function getFilterOptions($options = [])
@@ -246,7 +246,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param array $options
+     * @param iterable$options
      * @return array
      */
     public static function getFormOptions($options = [])
@@ -428,8 +428,8 @@ trait Model
     }
 
     /**
-     * @param array $relations
-     * @param array $attributes
+     * @param iterable$relations
+     * @param iterable$attributes
      *
      * @return Model
      */

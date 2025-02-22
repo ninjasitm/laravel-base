@@ -31,7 +31,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Summary of __construct
      * @param mixed $name
-     * @param array $data
+     * @param iterable$data
      * @param string $dataName
      */
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
@@ -62,16 +62,16 @@ abstract class TestCase extends BaseTestCase
         \Illuminate\Database\Connection::resolverFor(
             'sqlite',
             function ($connection, $database, $prefix, $config) {
-                return new class ($connection, $database, $prefix, $config) extends SQLiteConnection {
+                return new class($connection, $database, $prefix, $config) extends SQLiteConnection {
                     public function getSchemaBuilder()
                     {
                         if ($this->schemaGrammar === null) {
                             $this->useDefaultSchemaGrammar();
                         }
-                        return new class ($this) extends SQLiteBuilder {
+                        return new class($this) extends SQLiteBuilder {
                             protected function createBlueprint($table, \Closure $callback = null)
                             {
-                                return new class ($table, $callback) extends Blueprint {
+                                return new class($table, $callback) extends Blueprint {
                                     public function dropForeign($index)
                                     {
                                         return new Fluent();

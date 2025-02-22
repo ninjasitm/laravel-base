@@ -401,7 +401,7 @@ class Metadata extends Model
     }
 
     /**
-     * @param array $value
+     * @param iterable$value
      *
      * @return array
      */

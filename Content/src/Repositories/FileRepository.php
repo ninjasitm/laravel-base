@@ -54,7 +54,7 @@ class FileRepository extends BaseRepository
     /**
      * Create model record
      *
-     * @param array || UploadedFile $input
+     * @param iterable|| UploadedFile $input
      *
      * @return Model Return an up to date fresh model
      */
@@ -67,7 +67,7 @@ class FileRepository extends BaseRepository
     /**
      * Create model records
      *
-     * @param array $input
+     * @param iterable$input
      *
      * @return Model Return an up to date collection of files
      */
@@ -173,7 +173,7 @@ class FileRepository extends BaseRepository
      *
      * @return bool
      */
-    public function delete($model): ? bool
+    public function delete($model): ?bool
     {
         $model = $model instanceof File ? $model : File::find($model);
         static::getStorageDisk()->delete($model->url);
@@ -183,7 +183,7 @@ class FileRepository extends BaseRepository
     /**
      * Delete files
      *
-     * @param array $paths
+     * @param iterable$paths
      * @param string $disk
      *
      * @return boolean
@@ -253,7 +253,7 @@ class FileRepository extends BaseRepository
      * Get the metadata url
      *
      * @param int $id
-     * @param array $value
+     * @param iterable$value
      * @param string $url
      * @param bool $forDownload
      *

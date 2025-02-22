@@ -9,7 +9,7 @@ trait HasCategories
 {
     /**
      * Sync the avatar for a user
-     * @param array $data
+     * @param iterable$data
      */
     public function categories()
     {

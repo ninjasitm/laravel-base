@@ -224,7 +224,7 @@ trait CustomWith
      * Scope Custom With Count
      *
      * @param mixed $query
-     * @param array $withCount
+     * @param iterable$withCount
      *
      * @return Builder
      */

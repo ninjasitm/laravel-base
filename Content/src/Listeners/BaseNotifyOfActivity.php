@@ -66,7 +66,7 @@ abstract class BaseNotifyOfActivity implements NotifiesOfActivity
      * Advanced message creation supporting collection messages
      *
      * @param string $message
-     * @param array $params
+     * @param iterable$params
      * @return void
      */
     public static function prepareMessage(string $message, array $params = [])

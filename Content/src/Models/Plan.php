@@ -124,7 +124,7 @@ class Plan implements JsonSerializable
     /**
      * Specify the plan's features.
      *
-     * @param array $features
+     * @param iterable$features
      * @return $this
      */
     public function features(array $features)
@@ -182,7 +182,7 @@ class Plan implements JsonSerializable
     /**
      * Specify the plan's attributes.
      *
-     * @param array $attributes
+     * @param iterable$attributes
      * @return $this
      */
     public function attributes(array $attributes)

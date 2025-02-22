@@ -67,7 +67,7 @@ trait HasMetadata
      * Sync single metadata
      * TODO: Why do I have two methods that do the same thing?
      *
-     * @param array  $data
+     * @param iterable $data
      * @param string $key
      * @return Model
      */
@@ -116,7 +116,7 @@ trait HasMetadata
     /**
      * Sync single metadata
      *
-     * @param array  $data
+     * @param iterable $data
      * @param string $key
      * @return Model
      */
@@ -129,7 +129,7 @@ trait HasMetadata
      * Sync metadata
      * TODO: Update syncMetadata usage to require the actual data directly instead of in a nested array
      *
-     * @param array   $data
+     * @param iterable  $data
      * @param string  $key
      * @param callable $callable
      * @param boolean $dataIsValue

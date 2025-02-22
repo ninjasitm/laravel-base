@@ -52,7 +52,7 @@ class TeamSubscriptionItem extends Model
      * Swap the subscription item to a new Stripe plan.
      *
      * @param string $plan
-     * @param array  $options
+     * @param iterable $options
      * @return $this
      *
      * @throws \Laravel\Cashier\Exceptions\SubscriptionUpdateFailure
@@ -102,7 +102,7 @@ class TeamSubscriptionItem extends Model
      * Swap the subscription item to a new Stripe plan, and invoice immediately.
      *
      * @param string $plan
-     * @param array  $options
+     * @param iterable $options
      * @return $this
      *
      * @throws \Laravel\Cashier\Exceptions\IncompletePayment

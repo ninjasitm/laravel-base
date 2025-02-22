@@ -26,7 +26,7 @@ interface TeamRepository
      * Create a new team with the given owner.
      *
      * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param array                                      $data
+     * @param iterable                                     $data
      * @return \Nitm\Content\Models\Team
      */
     public function create($user, array $data);
@@ -35,7 +35,7 @@ interface TeamRepository
      * Update the billing address information with the given data.
      *
      * @param \Nitm\Content\Models\Team $team
-     * @param array                     $data
+     * @param iterable                    $data
      * @return void
      */
     public function updateBillingAddress($team, array $data);

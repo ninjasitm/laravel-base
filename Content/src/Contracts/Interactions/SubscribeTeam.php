@@ -10,7 +10,7 @@ interface SubscribeTeam
      * @param \Nitm\Content\Team $team
      * @param \Nitm\Content\Plan $plan
      * @param bool               $fromRegistration
-     * @param array              $data
+     * @param iterable             $data
      * @return \Nitm\Content\Team
      */
     public function handle($team, $plan, $fromRegistration, array $data);

@@ -24,7 +24,7 @@ trait ManagesAppDetails
     /**
      * Define the application information.
      *
-     * @param array $details
+     * @param iterable$details
      * @return void
      */
     public static function details(array $details)
@@ -103,7 +103,7 @@ trait ManagesAppDetails
     /**
      * Set the e-mail addresses that are registered to developers.
      *
-     * @param array $developers
+     * @param iterable$developers
      * @return void
      */
     public static function developers(array $developers)

@@ -2,7 +2,7 @@
 
 namespace Nitm\Content\Traits;
 
-use DB;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -146,7 +146,7 @@ trait Repository
      * Paginate records for scaffold.
      *
      * @param int   $perPage
-     * @param array $columns
+     * @param iterable$columns
      *
      * @return LengthAwarePaginator
      */
@@ -164,7 +164,7 @@ trait Repository
      * @param mixed $query
      * @param string $using The paginator mathod to use
      * @param integer $perPage
-     * @param array $columns
+     * @param iterable$columns
      * @param string $page
      * @param string $position
      *
@@ -224,7 +224,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param array $data
+     * @param iterable$data
      * @return Builder
      */
     public function trashedSearch($data = []): ?Builder
@@ -235,7 +235,7 @@ trait Repository
     /**
      * Build a query for retrieving all records.
      *
-     * @param array    $search
+     * @param iterable   $search
      * @param int|null $skip
      * @param int|null $limit
      * @return Builder
@@ -258,10 +258,10 @@ trait Repository
     /**
      * Retrieve all records with given filter criteria
      *
-     * @param array    $search
+     * @param iterable   $search
      * @param int|null $skip
      * @param int|null $limit
-     * @param array    $columns
+     * @param iterable   $columns
      *
      * @return Collection|static[]
      */
@@ -275,7 +275,7 @@ trait Repository
     /**
      * Create model record
      *
-     * @param array $input
+     * @param iterable$input
      *
      * @return Model Return an up to date fresh model
      */
@@ -309,7 +309,7 @@ trait Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable $columns
      *
      * @throws ModelNotFoundException
      *
@@ -340,7 +340,7 @@ trait Repository
         } else if (is_numeric($id)) {
             $query->where('id', $id);
         } else if (is_string($id)) {
-            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+            if ($this->getKeyName() == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
                 $query->where('id', (int) $id);
@@ -355,7 +355,7 @@ trait Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable$columns
      * @param string $key
      * @param boolean $silently
      *
@@ -440,7 +440,7 @@ trait Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable$columns
      * @param string $key
      * @param boolean $silently
      *
@@ -552,14 +552,12 @@ trait Repository
      *
      * @return void
      */
-    public function syncData(BaseModel|Model $model, array|Collection $data = [])
-    {
-    }
+    public function syncData(BaseModel|Model $model, array|Collection $data = []) {}
 
     /**
      * Import models
      *
-     * @param array $data
+     * @param iterable$data
      *
      * @return array
      */

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 trait SyncsRelations
 {
@@ -49,7 +50,7 @@ trait SyncsRelations
     /**
      * Sync the relation by determining the type and calling the appropriate function
      *
-     * @param array $data
+     * @param iterable$data
      *
      * @param string $relation
      *
@@ -218,30 +219,29 @@ trait SyncsRelations
     /**
      * Sync a relation
      *
-     * @param array    $data
+     * @param iterable   $data
      * @param string   $key
      * @param callback $callback A method that can be used to transform a single entry
-     * @param array    $linkedBy
-     * @return \Illuminate\Support\Collection
+     * @param iterable   $linkedBy
+     * @return \Illuminate\Support\Collection | null
      */
 
-    public function syncHasOneOrManyRelation($data, string $relation, callable $callable = null, $linkedBy = ['id'])
+    public function syncHasOneOrManyRelation(iterable|Collection $data, string $relation, callable $callable = null, $linkedBy = ['id'])
     {
         $data = is_array($data) ? array_filter($data) : $data;
 
         if (
             (is_array($data) && empty($data))
-            && ((CollectionHelper::isCollection($data)) && !$data->count())
+            && ($data instanceof Collection && !$data->count())
         ) {
             return;
         }
 
-        $syncedModels = collect([]);
         $toSync = collect([]);
         $toDelete = collect([]);
 
         if (!empty($data)) {
-            if (CollectionHelper::isCollection($data)) {
+            if ($data instanceof Collection) {
                 $data = $data->filter()->all();
             } else if (is_array($data)) {
                 $data = array_filter($data);
@@ -296,7 +296,7 @@ trait SyncsRelations
     /**
      * Sync the belongs to relation for the given model
      *
-     * @param array  $data
+     * @param iterable $data
      * @param string $relation
      *
      * @return Model
@@ -333,7 +333,7 @@ trait SyncsRelations
     /**
      * Sync a belongs to many relation
      *
-     * @param array    $data
+     * @param iterable   $data
      * @param string   $key
      * @param callback $callback            A method that can be used to transform a single entry
      * @param boolean  $detachBeforeSyncing
@@ -375,10 +375,10 @@ trait SyncsRelations
     /**
      * Sync a single relation
      *
-     * @param array    $data
+     * @param iterable   $data
      * @param string   $key
      * @param callback $callback A method that can be used to transform a single entry
-     * @param array    $linkedBy
+     * @param iterable   $linkedBy
      * @return Model
      */
     public function syncSingleRelation($data, string $relation, callable $callable = null, array $linkedBy = null)
@@ -389,10 +389,10 @@ trait SyncsRelations
     /**
      * Sync a relation
      *
-     * @param array    $data
+     * @param iterable   $data
      * @param string   $key
      * @param callback $callback A method that can be used to transform a single entry
-     * @param array    $linkedBy
+     * @param iterable   $linkedBy
      * @return Model
      */
 
@@ -440,7 +440,7 @@ trait SyncsRelations
      * Get the link condition for data
      *
      * @param object $data
-     * @param array  $linkedBy Can be an associataive array or an indexed array
+     * @param iterable $linkedBy Can be an associataive array or an indexed array
      * @return array
      */
     protected function _getLinkCondition($data, array $linkedBy): array
@@ -465,7 +465,7 @@ trait SyncsRelations
      * Find a relational model
      *
      * @param string      $relation
-     * @param array       $where
+     * @param iterable      $where
      * @param array|Model $data
      * @param string      $method
      * @return Model

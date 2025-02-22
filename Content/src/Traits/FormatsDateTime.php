@@ -213,7 +213,7 @@ trait FormatsDateTime
      * Determine the real start date for a model
      *
      * @param CarbonValue $startDate
-     * @param array $days
+     * @param iterable$days
      * @return CarbonValue
      */
     public static function getRealStartDate($startDate, array $days)
@@ -265,8 +265,8 @@ trait FormatsDateTime
     /**
      * Get the date rule for this model
      *
-     * @param array $requestData
-     * @param array $daysOfWeek
+     * @param iterable$requestData
+     * @param iterable$daysOfWeek
      *
      * @return \Recurr\Rule
      */
@@ -339,8 +339,8 @@ trait FormatsDateTime
      *
      * @param bool $excludeStart Exclude the start datae from the range?
      * @param int $sequenceId Should the entries be assigned to an entry sequence?
-     * @param array $requestData
-     * @param array $daysOfWeek
+     * @param iterable$requestData
+     * @param iterable$daysOfWeek
      * @return array
      */
     public function prepareEntries(bool $excludeStart = false, int $sequenceId = null, array $requestData = [], $daysOfWeek = [])

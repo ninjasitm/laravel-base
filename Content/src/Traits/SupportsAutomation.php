@@ -33,7 +33,7 @@ trait SupportsAutomation
      * Translate the given message.
      *
      * @param string $key
-     * @param array  $replace
+     * @param iterable $replace
      * @param string $locale
      * @return string|array|null
      */
@@ -47,7 +47,7 @@ trait SupportsAutomation
      *
      * i.e.: 'model.title' becomes 'modelTitle' with the $this->model->title value
      *
-     * @param array      $replace   The common key values to replace in the message
+     * @param iterable     $replace   The common key values to replace in the message
      * @param array|null $variables supported by this
      *
      * @return mixed

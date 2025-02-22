@@ -16,7 +16,7 @@ interface Repository
     /**
      * Sync the model's data
      *
-     * @param array $data
+     * @param iterable$data
      */
     public function syncData(BaseModel $model, array|Collection $data = []);
 
@@ -45,7 +45,7 @@ interface Repository
      * Paginate records for scaffold.
      *
      * @param int   $perPage
-     * @param array $columns
+     * @param iterable$columns
      * @return LengthAwarePaginator
      */
     public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginator;
@@ -71,7 +71,7 @@ interface Repository
     /**
      * Build a query for retrieving all records.
      *
-     * @param array    $search
+     * @param iterable   $search
      * @param int|null $skip
      * @param int|null $limit
      * @return \Illuminate\Database\Eloquent\Builder
@@ -81,10 +81,10 @@ interface Repository
     /**
      * Retrieve all records with given filter criteria
      *
-     * @param array    $search
+     * @param iterable   $search
      * @param int|null $skip
      * @param int|null $limit
-     * @param array    $columns
+     * @param iterable   $columns
      *
      * @return Collection|static[]
      */
@@ -108,7 +108,7 @@ interface Repository
     /**
      * Import models
      *
-     * @param array $data
+     * @param iterable$data
      * @return array
      */
     public function import(array $data): array;
@@ -116,7 +116,7 @@ interface Repository
     /**
      * Search the models
      *
-     * @param array $data
+     * @param iterable$data
      * @return Builder     *
      */
     public function search(array $data): ?Builder;
@@ -124,7 +124,7 @@ interface Repository
     /**
      * Search the trashed models
      *
-     * @param array $data
+     * @param iterable$data
      * @return Builder
      */
     public function trashedSearch(array $data): ?Builder;
@@ -133,7 +133,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable$columns
      *
      * @return Model|null
      */
@@ -143,7 +143,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable$columns
      *
      * @return Model|null
      */
@@ -153,7 +153,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable$columns
      *
      * @return bool
      */
@@ -163,7 +163,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable$columns
      *
      * @return Model|null
      */
@@ -173,7 +173,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param array $columns
+     * @param iterable$columns
      *
      * @return bool
      */
@@ -182,7 +182,7 @@ interface Repository
     /**
      * Create a new model
      *
-     * @param array $data
+     * @param iterable$data
      * @return Model     *
      */
     public function create(array $data): ?Model;
@@ -190,7 +190,7 @@ interface Repository
     /**
      * Update a new model
      *
-     * @param array $data
+     * @param iterable$data
      * @return Model     *
      */
     public function update(Collection|array $input, Model $model): ?Model;

@@ -29,7 +29,7 @@ trait FormatsDateTimeLegacy
      * Determine the real start date for a model
      *
      * @param CarbonValue $startDate
-     * @param array       $days
+     * @param iterable      $days
      * @return CarbonValue
      */
     public static function getRealStartDate($startDate, array $days)

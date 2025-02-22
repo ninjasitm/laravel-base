@@ -31,7 +31,7 @@ trait ManagesAvailableRoles
     /**
      * Define the roles available to team members.
      *
-     * @param array $roles
+     * @param iterable$roles
      * @return void
      */
     public static function useRoles(array $roles)

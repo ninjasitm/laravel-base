@@ -11,7 +11,7 @@ trait RepositoryProfile
 {
     /**
      * Sync the avatar for a user
-     * @param array $data
+     * @param iterable$data
      */
     public function syncAvatar($model, $data)
     {
@@ -29,7 +29,7 @@ trait RepositoryProfile
 
     /**
      * Sync the avatar for a user
-     * @param array $data
+     * @param iterable$data
      */
     public function syncProfile($model, $data)
     {

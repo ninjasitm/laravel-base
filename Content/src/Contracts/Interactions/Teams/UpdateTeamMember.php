@@ -9,7 +9,7 @@ interface UpdateTeamMember
      *
      * @param \Nitm\Content\Models\Team                  $team
      * @param \Illuminate\Contracts\Auth\Authenticatable $member
-     * @param array                                      $data
+     * @param iterable                                     $data
      * @return \Illuminate\Validation\Validator
      */
     public function validator($team, $member, array $data);
@@ -19,7 +19,7 @@ interface UpdateTeamMember
      *
      * @param \Nitm\Content\Models\Team                  $team
      * @param \Illuminate\Contracts\Auth\Authenticatable $member
-     * @param array                                      $data
+     * @param iterable                                     $data
      * @return void
      */
     public function handle($team, $member, array $data);

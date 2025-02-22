@@ -172,7 +172,7 @@ class Post extends Model
      *
      * @param string  $type    The list type
      * @param Builder $query   The query being filtered
-     * @param array   $options The items that make upthe filter
+     * @param iterable  $options The items that make upthe filter
      */
     public function scopeFilterByCategory($query, $categories)
     {
@@ -202,7 +202,7 @@ class Post extends Model
      * Allows filtering for specifc categories.
      *
      * @param Illuminate\Query\Builder $query      QueryBuilder
-     * @param array                    $categories List of category ids
+     * @param iterable                   $categories List of category ids
      * @return Illuminate\Query\Builder              QueryBuilder
      */
     public function scopeFilterCategories($query, $categories)
@@ -274,7 +274,7 @@ class Post extends Model
      *     Post::applySibling(['direction' => -1, 'attribute' => 'id'])->first();
      *
      * @param $query
-     * @param array $options
+     * @param iterable$options
      * @return
      */
     public function scopeApplySibling($query, $options = [])

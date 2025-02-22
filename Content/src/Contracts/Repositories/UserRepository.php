@@ -31,7 +31,7 @@ interface UserRepository
     /**
      * Create a new user with the given data.
      *
-     * @param array $data
+     * @param iterable$data
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
     public function create(array $data);
@@ -40,7 +40,7 @@ interface UserRepository
      * Update the billing address information with the given data.
      *
      * @param \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param array                                      $data
+     * @param iterable                                     $data
      * @return void
      */
     public function updateBillingAddress($user, array $data);

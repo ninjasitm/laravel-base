@@ -218,7 +218,7 @@ trait RepositorySyncsRelations
     /**
      * Sync single metadata
      *
-     * @param array $data
+     * @param iterable$data
      * @param string $key
      * @return Model
      */
@@ -311,7 +311,7 @@ trait RepositorySyncsRelations
      * @param array|Collection $data
      * @param string $key
      * @param callback $callback A method that can be used to transform a single entry
-     * @param array $linkedByswe987o0ilp bn
+     * @param iterable$linkedByswe987o0ilp bn
      * @return Illuminate\Support\Collection
      */
 
@@ -385,10 +385,10 @@ trait RepositorySyncsRelations
      * Sync a relation
      *
      * @param Model $subject
-     * @param array $data
+     * @param iterable$data
      * @param string $key
      * @param callback $callback A method that can be used to transform a single entry
-     * @param array $linkedBy
+     * @param iterable$linkedBy
      * @return Illuminate\Support\Collection
      */
 
@@ -435,7 +435,7 @@ trait RepositorySyncsRelations
      * Get the link condition for data
      *
      * @param object $data
-     * @param array $linkedBy Can be an associataive array or an indexed array
+     * @param iterable$linkedBy Can be an associataive array or an indexed array
      * @return array
      */
     protected function _getLinkCondition($data, array $linkedBy): array
@@ -461,7 +461,7 @@ trait RepositorySyncsRelations
      *
      * @param Model $subject
      * @param string $relation
-     * @param array $where
+     * @param iterable$where
      * @param array|Model $data
      * @param string $method
      * @return Model

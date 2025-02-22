@@ -57,7 +57,7 @@ trait ManagesApiOptions
     /**
      * Get or set the abilities that may be assigned to tokens.
      *
-     * @param array $abilities
+     * @param iterable$abilities
      * @return array|void
      */
     public static function tokensCan(array $abilities = null)
@@ -86,7 +86,7 @@ trait ManagesApiOptions
     /**
      * Set the default token abilities to "check" in the UI.
      *
-     * @param array $defaults
+     * @param iterable$defaults
      * @return void
      */
     public static function byDefaultTokensCan(array $defaults)

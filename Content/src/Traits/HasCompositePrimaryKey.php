@@ -73,8 +73,8 @@ trait HasCompositePrimaryKey
     /**
      * Execute a query for a single record by ID.
      *
-     * @param array  $ids Array of keys, like [column => value].
-     * @param array  $columns
+     * @param iterable $ids Array of keys, like [column => value].
+     * @param iterable $columns
      * @return mixed|static
      */
     public static function find($ids, $columns = ['*'])

@@ -210,7 +210,7 @@ trait Search
      *
      * @param Builder  $query   [description]
      * @param Column[] $columns [description]
-     * @param array    $params  [description]
+     * @param iterable   $params  [description]
      * @return void
      */
     public function scopeAddSearchConditions($query, array $columns, array $params)

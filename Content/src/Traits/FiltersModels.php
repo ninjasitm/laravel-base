@@ -150,7 +150,7 @@ trait FiltersModels
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
-     * @param array $morphable
+     * @param iterable$morphable
      * @param bool $exclusive
      * @return mixed
      *
@@ -167,7 +167,7 @@ trait FiltersModels
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
-     * @param array $morphable
+     * @param iterable$morphable
      * @param bool $exclusive
      * @return mixed
      *
@@ -202,7 +202,7 @@ trait FiltersModels
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
-     * @param array $morphable
+     * @param iterable$morphable
      * @param bool $exclusive
      * @return mixed
      *

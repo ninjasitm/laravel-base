@@ -10,7 +10,7 @@ interface Subscribe
      * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @param \Nitm\Content\Plan                         $plan
      * @param bool                                       $fromRegistration
-     * @param array                                      $data
+     * @param iterable                                     $data
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
     public function handle($user, $plan, $fromRegistration, array $data);

@@ -63,15 +63,14 @@ class Search extends \October\Rain\Extension\ExtensionBase
             throw new \Exception('An owner is needed for this behavior');
         }
         $this->owner = $owner;
-        $this->_columns = $owner->getTableColumns();
-        ;
+        $this->_columns = $owner->getTableColumns();;
     }
 
     /**
      * Handle dynamic method calls into the model.
      *
      * @param string  $method
-     * @param array  $parameters
+     * @param iterable $parameters
      * @return mixed
      */
     public function __call($method, $parameters)
@@ -153,7 +152,7 @@ class Search extends \October\Rain\Extension\ExtensionBase
     /**
      * Extract the filter information
      *
-     * @param array $params the Array of parameters
+     * @param iterable$params the Array of parameters
      *
      * @return array
      */
@@ -208,7 +207,7 @@ class Search extends \October\Rain\Extension\ExtensionBase
      *
      * @param Builder  $query     [description]
      * @param Column[] $columns   [description]
-     * @param array    $params    [description]
+     * @param iterable   $params    [description]
      * @return void
      */
     public function scopeAddSearchConditions($query, array $columns, array $params)
