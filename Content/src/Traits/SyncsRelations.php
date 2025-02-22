@@ -137,10 +137,10 @@ trait SyncsRelations
                     return $v;
                 }
             )->filter(
-                    function ($v, $k) {
-                        return filter_var($v, FILTER_VALIDATE_INT);
-                    }
-                );
+                function ($v, $k) {
+                    return filter_var($v, FILTER_VALIDATE_INT);
+                }
+            );
             $this->$relation()->sync($filteredData->toArray());
         }
         return $this->$relation;
@@ -222,7 +222,7 @@ trait SyncsRelations
      * @param string   $key
      * @param callback $callback A method that can be used to transform a single entry
      * @param array    $linkedBy
-     * @return Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection
      */
 
     public function syncHasOneOrManyRelation($data, string $relation, callable $callable = null, $linkedBy = ['id'])
@@ -337,7 +337,7 @@ trait SyncsRelations
      * @param string   $key
      * @param callback $callback            A method that can be used to transform a single entry
      * @param boolean  $detachBeforeSyncing
-     * @return Illuminate\Support\Collection
+     * @return \Illuminate\Support\Collection
      */
 
     public function syncManyToManyRelation($data, string $relation, callable $callable = null, $detachBeforeSyncing = true)
