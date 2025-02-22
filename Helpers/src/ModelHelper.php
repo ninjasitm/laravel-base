@@ -4,6 +4,7 @@ namespace Nitm\Helpers;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * This class provides configuration helper functions for config variables.
@@ -88,7 +89,7 @@ class ModelHelper
         });
 
         $class::macro($relationSort, function ($query, $attribute = 'id', $direction = 'desc') use ($relation, $localKey, $foreignKey) {
-            $relationQuery = $this->$relation();
+            $relationQuery = $query->getModel()->$relation();
             $table = $relationQuery->getModel()->getTable();
             if (is_callable($localKey)) {
                 $query->leftJoin($table, $localKey);
@@ -103,11 +104,11 @@ class ModelHelper
                 $relationAttribute = Str::studly($relation . ' ' . $attribute);
 
                 $class::macro('scopeFilterBy' . $relationAttribute, function ($query, $value, $property = 'id') use ($relationFilter) {
-                    $this->$relationFilter($query, $value, $property);
+                    $query->getModel()->$relationFilter($query, $value, $property);
                 });
 
                 $class::macro('scopeSortBy' . $relationAttribute, function ($query, $attribute = 'id', $direction = 'desc') use ($relationSort, $localKey, $foreignKey) {
-                    $this->$relationSort($query, $attribute, $direction, $localKey, $foreignKey);
+                    $query->getModel()->$relationSort($query, $attribute, $direction, $localKey, $foreignKey);
                 });
             }
         }
@@ -144,5 +145,20 @@ class ModelHelper
 
         $traits = array_unique($traits);
         return isset($traits[$trait]);
+    }
+
+    /**
+     * This function converts the given model into the provided model class
+     * @template T
+     * @param class-string<T> $className
+     * @param Model $model
+     * @return T
+     */
+    public static function convertToModel(string $className, Model $model)
+    {
+        $result = new $className;
+        $result->setRawAttributes($model->getAttributes());
+        $result->setRelations($model->getRelations());
+        return $result;
     }
 }
