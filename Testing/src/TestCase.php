@@ -19,6 +19,16 @@ abstract class TestCase extends BaseTestCase
 {
     use ArraySubsetAsserts, RefreshDatabase, CreatesApplication;
 
+    /**
+     * Summary of response
+     * @var \Illuminate\Testing\TestResponse
+     */
+    protected $response;
+
+    /**
+     * Indicates if the database has been seeded.
+     * @var bool
+     */
     public static $databaseSeeded = false;
 
     /**
@@ -87,16 +97,16 @@ abstract class TestCase extends BaseTestCase
         \Illuminate\Database\Connection::resolverFor(
             'sqlite',
             function ($connection, $database, $prefix, $config) {
-                return new class ($connection, $database, $prefix, $config) extends SQLiteConnection {
+                return new class($connection, $database, $prefix, $config) extends SQLiteConnection {
                     public function getSchemaBuilder()
                     {
                         if ($this->schemaGrammar === null) {
                             $this->useDefaultSchemaGrammar();
                         }
-                        return new class ($this) extends SQLiteBuilder {
+                        return new class($this) extends SQLiteBuilder {
                             protected function createBlueprint($table, \Closure $callback = null)
                             {
-                                return new class ($table, $callback) extends Blueprint {
+                                return new class($table, $callback) extends Blueprint {
                                     public function dropForeign($index)
                                     {
                                         return new Fluent();
