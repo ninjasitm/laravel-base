@@ -157,7 +157,9 @@ class ModelHelper
     public static function convertToModel(string $className, Model $model)
     {
         $result = new $className;
-        $result->forceFill($model->getAttributes());
+        $result->fill($model->getAttributes());
+        $result->id = $model->id;
+        $result->exists = $model->exists;
         $result->setRelations($model->getRelations());
         return $result;
     }
