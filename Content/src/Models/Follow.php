@@ -257,7 +257,7 @@ class Follow extends BaseAction
      * Custom Find a model by custom keys.
      *
      * @param mixed $id
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
@@ -278,7 +278,7 @@ class Follow extends BaseAction
      * Custom Find a model by custom keys.
      *
      * @param mixed $id
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */

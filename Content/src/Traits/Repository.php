@@ -146,7 +146,7 @@ trait Repository
      * Paginate records for scaffold.
      *
      * @param int   $perPage
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return LengthAwarePaginator
      */
@@ -164,7 +164,7 @@ trait Repository
      * @param mixed $query
      * @param string $using The paginator mathod to use
      * @param integer $perPage
-     * @param iterable$columns
+     * @param iterable $columns
      * @param string $page
      * @param string $position
      *
@@ -308,7 +308,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
+     * @param callable|string|int|iterable|Model   $id
      * @param iterable $columns
      *
      * @throws ModelNotFoundException
@@ -354,8 +354,8 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
-     * @param iterable$columns
+     * @param callable|string|int|iterable|Model   $id
+     * @param iterable $columns
      * @param string $key
      * @param boolean $silently
      *
@@ -378,7 +378,7 @@ trait Repository
         $exists = $this->existsOrFail($id, $key, $silently);
 
         if (!$exists && $silently) {
-            return false;
+            return null;
         }
 
         if (is_callable($id)) {
@@ -391,7 +391,7 @@ trait Repository
             } else {
                 $query->where($key, (int) $id);
             }
-        } elseif (is_array($id) || is_callable($id)) {
+        } elseif (is_array($id) || is_callable($id) || $id instanceof Collection) {
             $query->where($id);
         }
         return $query->get($columns)->first();
@@ -400,7 +400,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
+     * @param callable|string|int|iterable|Model   $id
      * @param string $key
      * @param boolean $silently
      *
@@ -410,6 +410,10 @@ trait Repository
      */
     public function existsOrFail($id, $key = 'id', $silently = false): ?bool
     {
+        if ($id instanceof Model) {
+            $id = $id->id;
+        }
+
         $query = $this->model->newQuery();
 
         $id = is_object($id) ? $id->id : $id;
@@ -421,7 +425,7 @@ trait Repository
             } else {
                 $query->where($key, (int) $id);
             }
-        } elseif (is_array($id)) {
+        } elseif (is_array($id) || $id instanceof Collection) {
             $query->where($id);
         } else {
             throw new \Exception('Invalid type for id. Expecting one of [string, integer, boolean, float, array]. Received ' . gettype($id));
@@ -439,8 +443,8 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
-     * @param iterable$columns
+     * @param callable|string|int|iterable|Model   $id
+     * @param iterable $columns
      * @param string $key
      * @param boolean $silently
      *
@@ -455,7 +459,7 @@ trait Repository
         $exists = $this->trashedExistsOrFail($id, $key, $silently);
 
         if (!$exists) {
-            return false;
+            return null;
         }
 
         return $query->withTrashed()->find($id, $columns);
@@ -464,7 +468,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
+     * @param callable|string|int|iterable|Model   $id
      * @param string $key
      * @param boolean $silently
      *

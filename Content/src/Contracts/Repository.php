@@ -45,7 +45,7 @@ interface Repository
      * Paginate records for scaffold.
      *
      * @param int   $perPage
-     * @param iterable$columns
+     * @param iterable $columns
      * @return LengthAwarePaginator
      */
     public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginator;
@@ -133,7 +133,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return Model|null
      */
@@ -143,7 +143,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return Model|null
      */
@@ -153,7 +153,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return bool
      */
@@ -163,7 +163,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return Model|null
      */
@@ -173,7 +173,7 @@ interface Repository
      * Find model record for given id
      *
      * @param int   $id
-     * @param iterable$columns
+     * @param iterable $columns
      *
      * @return bool
      */

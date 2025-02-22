@@ -13,7 +13,7 @@ class UuidBuilder extends Builder
      * Find a model by its primary key.
      *
      * @param mixed $id
-     * @param iterable$columns
+     * @param iterable $columns
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|static[]|static|null
      */
     public function find($id, $columns = ['*'])

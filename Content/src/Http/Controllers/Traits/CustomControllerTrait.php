@@ -96,7 +96,7 @@ trait CustomControllerTrait
      * @param mixed $query The query
      * @param string $using The method to use to paginate the results.
      * @param int|null $perPage The number of items to show per page.
-     * @param iterable$columns The columns to be selected.
+     * @param iterable $columns The columns to be selected.
      * @param string $name The name of the paginator instance.
      * @param int|null $position The page number to be returned.
      *
