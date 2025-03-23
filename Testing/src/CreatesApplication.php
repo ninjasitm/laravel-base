@@ -2,7 +2,7 @@
 
 namespace Nitm\Testing;
 
-use Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Contracts\Console\Kernel;
 
 trait CreatesApplication
