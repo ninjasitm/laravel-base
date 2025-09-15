@@ -224,7 +224,7 @@ trait NestedTree
      */
     public function makeRoot()
     {
-        return $this->moveAfter($this->getRoot());
+        return $this->_moveAfter($this->getRoot());
     }
 
     /**
@@ -244,7 +244,7 @@ trait NestedTree
      */
     public function moveLeft()
     {
-        return $this->moveBefore($this->getLeftSibling());
+        return $this->_moveBefore($this->getLeftSibling());
     }
 
     /**
@@ -254,7 +254,7 @@ trait NestedTree
      */
     public function moveRight()
     {
-        return $this->moveAfter($this->getRightSibling());
+        return $this->_moveAfter($this->getRightSibling());
     }
 
     /**
@@ -262,7 +262,7 @@ trait NestedTree
      *
      * @return Model
      */
-    public function moveBefore($node)
+    public function _moveBefore($node)
     {
         return $this->moveTo($node, 'left');
     }
@@ -272,7 +272,7 @@ trait NestedTree
      *
      * @return Model
      */
-    public function moveAfter($node)
+    public function _moveAfter($node)
     {
         return $this->moveTo($node, 'right');
     }
