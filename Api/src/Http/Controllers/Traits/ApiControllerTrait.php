@@ -2,31 +2,44 @@
 
 /**
  * Custom traits for API controllers
+ *
+ * @category API
+ * @package  Nitm\Api\Http\Controllers\Traits
+ * @author   Malcolm Paul <malcolm@ninjasitm.com>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     https://gitlab.com/ninjasitm/api
  */
 
 namespace Nitm\Api\Http\Controllers\Traits;
 
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
-use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\CursorPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
+/**
+ * Trait ApiControllerTrait
+ *
+ * Custom traits for API controllers
+ */
 trait ApiControllerTrait
 {
 
     /**
      * Do some custom pagination for paginated data using resources if available
      *
-     * @param Request $request
-     * @param mixed   $paginator
+     * @param Request                                        $request   The HTTP request object
+     * @param LengthAwarePaginator|CursorPaginator|Paginator $paginator The paginator instance
      *
-     * @return [type]
+     * @return void
      */
-    protected function beforePaginateTransform(Request $request, LengthAwarePaginatorContract | CursorPaginatorContract | PaginatorContract $paginator)
+    protected function beforePaginateTransform(Request $request, LengthAwarePaginator|CursorPaginator|Paginator $paginator)
     {
         if (class_exists($this->resource())) {
             $class = $this->resource();
-            $paginator->setCollection($class::collection($paginator->getCollection())->collection);
+            $paginator->setCollection($class::collection($paginator->items())->collection);
         } else {
             parent::beforePaginateTransform($request, $paginator);
         }
@@ -37,7 +50,7 @@ trait ApiControllerTrait
      *
      * @param Model $model
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     protected function printModelSuccess($model, $status = 'ok', int $code = 200)
     {

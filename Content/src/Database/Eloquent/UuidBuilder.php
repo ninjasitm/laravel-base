@@ -12,8 +12,8 @@ class UuidBuilder extends Builder
     /**
      * Find a model by its primary key.
      *
-     * @param  mixed $id
-     * @param  array $columns
+     * @param mixed $id
+     * @param iterable $columns
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|static[]|static|null
      */
     public function find($id, $columns = ['*'])
@@ -42,8 +42,8 @@ class UuidBuilder extends Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|array  $ids
-     * @param  array  $columns
+     * @param \Illuminate\Contracts\Support\Arrayable|array  $ids
+     * @param iterable $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function findMany($ids, $columns = ['*'])

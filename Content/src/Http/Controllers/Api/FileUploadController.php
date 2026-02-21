@@ -42,7 +42,12 @@ class FileUploadController extends Controller
     {
         $entity = lcfirst(Str::studly($entity));
 
-        $model = $team->$entity()->findOrFail($entityId);
+        try {
+            $model = $request->user->$entity()->findOrFail($entityId);
+        } catch(\Error $e) {
+            Log::error($e);
+            abort(404);
+        }
 
         return $this->printSuccess($model->syncFiles($request->all()));
     }
@@ -58,8 +63,12 @@ class FileUploadController extends Controller
     public function show(Request $request, $entity, $entityId, $id)
     {
         $entity = lcfirst(Str::studly($entity));
-
-        $model = $team->$entity()->findOrFail($entityId)->allFiles()->findOrFail($id);
+        try {
+            $model = $request->user->$entity()->findOrFail($entityId)->allFiles()->findOrFail($id);
+        } catch(\Error $e) {
+            Log::error($e);
+            abort(404);
+        }
 
         return $this->printSuccess($model->fresh());
     }
@@ -75,8 +84,12 @@ class FileUploadController extends Controller
     public function destroy(Request $request, $entity, $entityId, $id)
     {
         $entity = lcfirst(Str::studly($entity));
-
-        $model = $team->$entity()->findOrFail($entityId)->allFiles()->findOrFail($id);
+        try {
+            $model = $request->user->$entity()->findOrFail($entityId)->allFiles()->findOrFail($id);
+        } catch(\Error $e) {
+            Log::error($e);
+            abort(404);
+        }
 
         return $this->printSuccess($model->delete());
     }

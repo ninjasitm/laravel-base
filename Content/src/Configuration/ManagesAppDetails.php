@@ -24,7 +24,7 @@ trait ManagesAppDetails
     /**
      * Define the application information.
      *
-     * @param  array $details
+     * @param iterable$details
      * @return void
      */
     public static function details(array $details)
@@ -51,36 +51,38 @@ trait ManagesAppDetails
     {
         return array_merge(
             [
-            'vendor' => '',
-            'product' => '',
-            'street' => '',
-            'location' => '',
-            'phone' => '',
-            ], static::$details
+                'vendor' => '',
+                'product' => '',
+                'street' => '',
+                'location' => '',
+                'phone' => '',
+            ],
+            static::$details
         );
     }
 
     /**
      * Get the invoice data payload for the given billable entity.
      *
-     * @param  mixed $billable
+     * @param mixed $billable
      * @return array
      */
     public static function invoiceDataFor($billable)
     {
         return array_merge(
             [
-            'vendor' => 'Vendor',
-            'product' => 'Product',
-            'vat' => new HtmlString(nl2br(e($billable->extra_billing_information))),
-            ], static::generateInvoicesWith()
+                'vendor' => 'Vendor',
+                'product' => 'Product',
+                'vat' => new HtmlString(nl2br(e($billable->extra_billing_information))),
+            ],
+            static::generateInvoicesWith()
         );
     }
 
     /**
      * Determine if the given e-mail address belongs to a developer.
      *
-     * @param  string $email
+     * @param string $email
      * @return bool
      */
     public static function developer($email)
@@ -101,7 +103,7 @@ trait ManagesAppDetails
     /**
      * Set the e-mail addresses that are registered to developers.
      *
-     * @param  array $developers
+     * @param iterable$developers
      * @return void
      */
     public static function developers(array $developers)

@@ -17,7 +17,7 @@ class Cache
             if (is_array($v)) {
                 $ret_val = array_merge($ret_val, static::flatten($v));
             } else {
-                $ret_val[] = $k.':'.$v;
+                $ret_val[] = $k . ':' . $v;
             }
         }
 
@@ -74,7 +74,7 @@ class Cache
                   There's a bug here that results in an incomplete model. Not a bug but a limitation. Removing instantion request
                 */
                 $data = static::instantiate($class, $data['__cacheData']);
-               //  $data = array_get($data, '__cacheData', $data);
+                //  $data = array_get($data, '__cacheData', $data);
             } catch (\Exception $e) {
                 $data = array_get($data, '__cacheData', $data);
             }
@@ -114,7 +114,7 @@ class Cache
 
         $now = Carbon::now();
         if (floatval($duration) < 1 && floatval($duration) > 0) {
-            $now->addSeconds($duration*1000);
+            $now->addSeconds($duration * 1000);
         } else {
             $now->addMinutes($duration);
         }
@@ -124,8 +124,8 @@ class Cache
     /**
      * Utility functin to automatically store and retrieve cached data.
      *
-     * @param array    $keyParts
-     * @param array    $data     [description]
+     * @param iterable   $keyParts
+     * @param iterable   $data     [description]
      * @param int      $duration [description]
      * @param callable $callback [description]
      * @param bool     $many     [description]
@@ -158,7 +158,7 @@ class Cache
     /**
      * Convert an array of objects to an array of arrays.
      *
-     * @param array | Collection $objects [description]
+     * @param iterable| Collection $objects [description]
      *
      * @return array Converted obects
      */
@@ -194,7 +194,7 @@ class Cache
      * Create an objecct from an array of attributes.
      *
      * @param string $class      [description]
-     * @param array  $attributes [description]
+     * @param iterable $attributes [description]
      *
      * @return $class Object
      */
@@ -221,7 +221,7 @@ class Cache
     /**
      * Convert an array of arrays to an array of objects.
      *
-     * @param array $objects [description]
+     * @param iterable$objects [description]
      *
      * @return array Converted objects
      */

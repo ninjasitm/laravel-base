@@ -119,8 +119,8 @@ trait SupportsRepositories
     /**
      * General import method
      *
-     * @param  Request         $request
-     * @param  ImplementsTeams $team
+     * @param Request         $request
+     * @param ImplementsTeams $team
      * @return void
      */
     public function import(Request $request)
@@ -155,8 +155,8 @@ trait SupportsRepositories
     /**
      * General export method
      *
-     * @param  Request         $request
-     * @param  ImplementsTeams $team
+     * @param Request         $request
+     * @param ImplementsTeams $team
      * @return void
      */
     public function export(Request $request)

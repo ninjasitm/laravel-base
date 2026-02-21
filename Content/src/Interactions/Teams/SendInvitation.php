@@ -38,13 +38,15 @@ class SendInvitation implements Contract
     /**
      * E-mail the given invitation instance.
      *
-     * @param  \Nitm\Content\Models\Invitation $invitation
+     * @param \Nitm\Content\Models\Invitation $invitation
      * @return void
      */
     protected function emailInvitation($invitation)
     {
         Mail::send(
-            $this->view($invitation), compact('invitation'), function ($m) use ($invitation) {
+            $this->view($invitation),
+            compact('invitation'),
+            function ($m) use ($invitation) {
                 $m->to($invitation->email)->subject(__('New Invitation!'));
             }
         );
@@ -53,20 +55,20 @@ class SendInvitation implements Contract
     /**
      * Create a new invitation instance.
      *
-     * @param  \Nitm\Content\Models\Team                       $team
-     * @param  string                                          $email
-     * @param  \Illuminate\Contracts\Auth\Authenticatable|null $invitedUser
+     * @param \Nitm\Content\Models\Team                       $team
+     * @param string                                          $email
+     * @param \Illuminate\Contracts\Auth\Authenticatable|null $invitedUser
      * @return \Nitm\Content\Models\Invitation
      */
     protected function createInvitation($team, $email, $invitedUser, $role)
     {
         return $team->invitations()->create(
             [
-            'id' => Uuid::uuid4(),
-            'user_id' => $invitedUser ? $invitedUser->id : null,
-            'role' => $role,
-            'email' => $email,
-            'token' => Str::random(40),
+                'id' => Uuid::uuid4(),
+                'user_id' => $invitedUser ? $invitedUser->id : null,
+                'role' => $role,
+                'email' => $email,
+                'token' => Str::random(40),
             ]
         );
     }
@@ -74,13 +76,13 @@ class SendInvitation implements Contract
     /**
      * Get the proper e-mail view for the given invitation.
      *
-     * @param  \Nitm\Content\Models\Invitation $invitation
+     * @param \Nitm\Content\Models\Invitation $invitation
      * @return string
      */
     protected function view(Invitation $invitation)
     {
         return $invitation->user_id
-                        ? 'spark::settings.teams.emails.invitation-to-existing-user'
-                        : 'spark::settings.teams.emails.invitation-to-new-user';
+            ? 'spark::settings.teams.emails.invitation-to-existing-user'
+            : 'spark::settings.teams.emails.invitation-to-new-user';
     }
 }

@@ -41,10 +41,11 @@ class ScheduleList extends Command
         $events = array_map(
             function ($event) {
                 return [
-                'cron' => $event->expression,
-                'command' => static::fixupCommand($event->command),
+                    'cron' => $event->expression,
+                    'command' => static::fixupCommand($event->command),
                 ];
-            }, $this->schedule->events()
+            },
+            $this->schedule->events()
         );
 
         $this->table(
@@ -56,7 +57,7 @@ class ScheduleList extends Command
     /**
      * If it's an artisan command, strip off the PHP
      *
-     * @param  $command
+     * @param $command
      * @return string
      */
     protected static function fixupCommand($command)

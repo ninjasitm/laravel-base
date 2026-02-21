@@ -3,6 +3,8 @@
 namespace Nitm\Content\Traits;
 
 use Illuminate\Support\Str;
+use Nitm\Content\Models\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 trait CustomWith
 {
@@ -10,7 +12,7 @@ trait CustomWith
      * Scope Custom With
      *
      * @param mixed $query
-     * @param mixed $includeDefaultWith
+     * @param bool $includeDefaultWith
      * @param mixed $with
      *
      * @return Builder
@@ -63,7 +65,7 @@ trait CustomWith
      */
     public function getAllWith(): array
     {
-        return array_filter(array_merge($this->buildWith((array)$this->with), (array)$this->getCustomWith()));
+        return array_filter(array_merge($this->buildWith((array) $this->with), (array) $this->getCustomWith()));
     }
 
     /**
@@ -91,7 +93,7 @@ trait CustomWith
                         $scope = Str::studly(array_shift($parts));
                         $result[Str::camel($scope)] = function ($query) use ($scope, $parts) {
                             if (method_exists($query->getModel(), 'scope' . $scope)) {
-                                $parts = !is_string($parts) ? explode(',', $parts) : [];
+                                $parts = is_string($parts) ? explode(',', $parts) : [];
                                 $scope = Str::camel($scope);
                                 $query->$scope(...$parts);
                             }
@@ -147,8 +149,8 @@ trait CustomWith
     /**
      * Set Eager Counts
      *
-     * @param  mixed $counts
-     * @return void
+     * @param mixed $counts
+     * @return Model
      */
     public function setEagerLoadsCounts(array $counts)
     {
@@ -159,8 +161,9 @@ trait CustomWith
     /**
      * Set Eager Counts
      *
-     * @param  mixed $counts
-     * @return void
+     * @param mixed $counts
+     *
+     * @return Builder
      */
     public function scopeSetEagerCounts($query, array $counts)
     {
@@ -221,14 +224,14 @@ trait CustomWith
      * Scope Custom With Count
      *
      * @param mixed $query
-     * @param array $withCount
+     * @param iterable$withCount
      *
-     * @return void
+     * @return Builder
      */
     public function scopeCustomWithCount($query, array $withCount = [])
     {
         if (!isset($this->customWithCount)) {
-            return;
+            return $query;
         }
 
         return $query->withCount($this->buildWith(array_merge($this->customWithCount, $withCount)));
@@ -237,17 +240,17 @@ trait CustomWith
     /**
      * Get All With Count
      *
-     * @return void
+     * @return array
      */
     public function getAllWithCount()
     {
-        return array_filter(array_merge($this->buildWith((array)$this->withCount), (array)$this->getCustomWithCount()));
+        return array_filter(array_merge($this->buildWith((array) $this->withCount), (array) $this->getCustomWithCount()));
     }
 
     /**
      * Get Custom With Count
      *
-     * @return void
+     * @return array
      */
     public function getCustomWithCount()
     {
@@ -260,7 +263,7 @@ trait CustomWith
     /**
      * Get With Count
      *
-     * @return void
+     * @return array
      */
     public function getWithCount()
     {

@@ -16,7 +16,7 @@ class StripeCouponRepository implements CouponRepository
      */
     public function valid($code)
     {
-        return ! is_null($this->find($code));
+        return !is_null($this->find($code));
     }
 
     /**
@@ -34,7 +34,8 @@ class StripeCouponRepository implements CouponRepository
     {
         try {
             $coupon = StripeCoupon::retrieve(
-                $code, Cashier::stripeOptions()
+                $code,
+                Cashier::stripeOptions()
             );
 
             if ($coupon && $coupon->valid) {
@@ -50,7 +51,7 @@ class StripeCouponRepository implements CouponRepository
      */
     public function forBillable($billable)
     {
-        if (! $billable->stripe_id) {
+        if (!$billable->stripe_id) {
             return;
         }
 
@@ -64,14 +65,16 @@ class StripeCouponRepository implements CouponRepository
     /**
      * Convert the given Stripe coupon into a Coupon instance.
      *
-     * @param  \Stripe\Coupon $coupon
+     * @param \Stripe\Coupon $coupon
      * @return \Nitm\Content\Coupon
      */
     protected function toCoupon($coupon)
     {
         return new Coupon(
-            $coupon->duration, $coupon->duration_in_months,
-            $coupon->amount_off, $coupon->percent_off
+            $coupon->duration,
+            $coupon->duration_in_months,
+            $coupon->amount_off,
+            $coupon->percent_off
         );
     }
 }

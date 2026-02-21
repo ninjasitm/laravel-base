@@ -40,9 +40,9 @@ trait FiltersUsers
     /**
      * Filter Users
      *
-     * @param  mixed $query
-     * @param  mixed $user
-     * @param  mixed $property
+     * @param mixed $query
+     * @param mixed $user
+     * @param mixed $property
      * @return void
      */
     public static function filterUsers($query, $user, $property)

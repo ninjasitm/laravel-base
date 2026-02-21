@@ -64,7 +64,7 @@ class SocialAuthController extends BaseController
      * If there is no response from the social network, redirect the user to the social auth page
      * else make create with information from social network.
      *
-     * @param  SocialProvider $social bound by "Route model binding" feature
+     * @param SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
     public function getAccounts()
@@ -86,7 +86,7 @@ class SocialAuthController extends BaseController
      * If there is no response from the social network, redirect the user to the social auth page
      * else make create with information from social network.
      *
-     * @param  SocialProvider $social bound by "Route model binding" feature
+     * @param SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
     public function getAccountCustom(SocialProvider $social)
@@ -117,8 +117,8 @@ class SocialAuthController extends BaseController
     /**
      * Redirect callback for social network.
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
+     * @param Request        $request
+     * @param SocialProvider $social
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
@@ -176,8 +176,8 @@ class SocialAuthController extends BaseController
     /**
      * Create social account from frontend data
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
+     * @param Request        $request
+     * @param SocialProvider $social
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
@@ -251,16 +251,16 @@ class SocialAuthController extends BaseController
     /**
      * Detaches social account for user.
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
+     * @param Request        $request
+     * @param SocialProvider $social
      * @return array
      * @throws SocialUserAttachException
      */
     public function detachAccountCustom(Request $request, SocialProvider $social)
     {
         /**
- * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user
-*/
+         * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user
+         */
         $user = $request->user();
         // $userSocials = $user->socials();
         $socials = auth()->user()->socials();
@@ -287,9 +287,9 @@ class SocialAuthController extends BaseController
     /**
      * Process user using data from social network.
      *
-     * @param  Request        $request
-     * @param  SocialProvider $social
-     * @param  SocialUser     $socialUser
+     * @param Request        $request
+     * @param SocialProvider $social
+     * @param SocialUser     $socialUser
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     protected function processDataCustom(Request $request, SocialProvider $social, SocialUser $socialUser)
@@ -324,7 +324,7 @@ class SocialAuthController extends BaseController
     /**
      * Refresh User's Google OAuth2 Access Token
      *
-     * @param  [type] $account [description]
+     * @param [type] $account [description]
      * @return [type]         [description]
      */
     protected function refreshGoogleToken(SocialProvider $account)
@@ -369,7 +369,7 @@ class SocialAuthController extends BaseController
     /**
      * Refresh User's Google OAuth2 Access Token
      *
-     * @param  [type] $account [description]
+     * @param [type] $account [description]
      * @return [type]         [description]
      */
     protected function getGoogleOfflineToken(SocialProvider $account, $code)
@@ -398,17 +398,17 @@ class SocialAuthController extends BaseController
     /**
      * Undocumented function
      *
-     * @param  AbstractProvider $provider
-     * @param  SocialProvider   $account
+     * @param AbstractProvider $provider
+     * @param SocialProvider   $account
      * @return void
      */
     protected function getOfflineToken(AbstractProvider $provider, SocialProvider $account, $code)
     {
         $token = [];
         switch ($account->slug) {
-        case 'google':
-            $token = $this->getGoogleOfflineToken($account, $code);
-            break;
+            case 'google':
+                $token = $this->getGoogleOfflineToken($account, $code);
+                break;
         }
         return $token;
     }
@@ -416,29 +416,30 @@ class SocialAuthController extends BaseController
     /**
      * Undocumented function
      *
-     * @param  AbstractProvider $provider
-     * @param  SocialProvider   $account
+     * @param AbstractProvider $provider
+     * @param SocialProvider   $account
      * @return void
      */
     protected function checkToken(AbstractProvider $provider, SocialProvider $account = null)
     {
-        if ($account && $account->token && (!$account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in))))
+        if (
+            $account && $account->token && (!$account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in))))
         ) {
             $token = null;
             switch ($account->slug) {
-            case 'google':
-                $token = $this->refreshGoogleToken($account);
-                break;
+                case 'google':
+                    $token = $this->refreshGoogleToken($account);
+                    break;
             }
             if ($token) {
                 $where = array_filter(Arr::only($account->token->getAttributes(), ['team_id', 'user_id', 'social_provider_id']));
-                $newExpiry =  Carbon::now()->addSeconds(Arr::get($token, 'expires_in'));
+                $newExpiry = Carbon::now()->addSeconds(Arr::get($token, 'expires_in'));
                 $accessToken = Arr::get($token, 'access_token') ?: Arr::get($token, 'token');
                 if ($accessToken) {
                     $account->token->where($where)->update(
                         [
-                        'token' => $accessToken,
-                        'expires_in' => $newExpiry
+                            'token' => $accessToken,
+                            'expires_in' => $newExpiry
                         ]
                     );
                     $account->token->token = Arr::get($token, 'access_token', $account->token->token);
@@ -451,14 +452,14 @@ class SocialAuthController extends BaseController
     /**
      * Undocumented function
      *
-     * @param  SocialProvider $account
+     * @param SocialProvider $account
      * @return void
      */
     protected function deleteToken(SocialProvider $social)
     {
         switch ($social->slug) {
-        case 'google':
-            return $this->deleteGoogleToken($social);
+            case 'google':
+                return $this->deleteGoogleToken($social);
                 break;
         }
     }
@@ -466,7 +467,7 @@ class SocialAuthController extends BaseController
     /**
      * Undocumented function
      *
-     * @param  SocialProvider $account
+     * @param SocialProvider $account
      * @param
      * @return bool
      */
@@ -485,7 +486,8 @@ class SocialAuthController extends BaseController
             $client->setClientId($client_id);
             $client->setClientSecret($client_secret);
             $token = $account->token->token;
-            if (!$account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in)))
+            if (
+                !$account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in)))
             ) {
                 $token = Arr::get($this->refreshGoogleToken($account), 'access_token');
             }

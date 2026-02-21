@@ -12,14 +12,14 @@ class ResolvesTeam
      * When this happens, it can cause problems with functions that depend on team route binding
      * There are currently no logical reasons to attach the team route
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
      * @return mixed
      */
     public function handle($request, \Closure $next)
     {
         $teamModel = config('nitm-api.team_model');
-        if(!class_exists($teamModel)) {
+        if (!class_exists($teamModel)) {
             throw new \Error('Unable to find team model for team resolver middleware');
         }
         $parameters = collect($request->route()->parameters());

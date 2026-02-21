@@ -18,10 +18,12 @@ class CreateTeam implements Contract
      */
     public function validator($user, array $data)
     {
-        $validator = Validator::make($data, NitmContent::call(static::class.'@rules'));
+        $validator = Validator::make($data, NitmContent::call(static::class . '@rules'));
 
         $validator->sometimes(
-            'slug', 'required|alpha_dash|max:255|unique:teams,slug', function () {
+            'slug',
+            'required|alpha_dash|max:255|unique:teams,slug',
+            function () {
                 return NitmContent::teamsIdentifiedByPath();
             }
         );
@@ -38,13 +40,13 @@ class CreateTeam implements Contract
     /**
      * Validate that the maximum number of teams hasn't been exceeded.
      *
-     * @param  \Illuminate\Validation\Validator           $validator
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param \Illuminate\Validation\Validator           $validator
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return void
      */
     protected function validateMaximumTeamsNotExceeded($validator, $user)
     {
-        if (! $plan = $user->sparkPlan()) {
+        if (!$plan = $user->sparkPlan()) {
             return;
         }
 
@@ -54,7 +56,8 @@ class CreateTeam implements Contract
 
         if ($plan->teams <= $user->ownedTeams()->count()) {
             $validator->errors()->add(
-                'name', __('teams.please_upgrade_to_create_more_teams')
+                'name',
+                __('teams.please_upgrade_to_create_more_teams')
             );
         }
     }
@@ -79,21 +82,26 @@ class CreateTeam implements Contract
         event(
             new TeamCreated(
                 $team = NitmContent::interact(
-                    TeamRepository::class.'@create', [$user, $data]
+                    TeamRepository::class . '@create',
+                    [$user, $data]
                 )
             )
         );
 
         NitmContent::interact(
-            AddTeamMemberContract::class, [
-            $team, $user, 'owner'
+            AddTeamMemberContract::class,
+            [
+                $team,
+                $user,
+                'owner'
             ]
         );
 
         event(new TeamOwnerAdded($team, $user));
 
         try {
-            if (NitmContent::chargesUsersPerTeam() && $user->subscription()
+            if (
+                NitmContent::chargesUsersPerTeam() && $user->subscription()
                 && $user->ownedTeams()->count() > 1
             ) {
                 $user->addSeat();

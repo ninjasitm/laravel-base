@@ -7,8 +7,10 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Nitm\Content\Models\Team;
 use Nitm\Content\Models\User;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use PhpParser\Node\Expr\ArrayItem;
 
 /**
  * Traits for Model.
@@ -21,39 +23,34 @@ trait Model
     /**
      * Toggle a single atribute on the model
      *
-     * @param  string|array $attributes The atributes to be toggled
+     * @param string|array $attributes The atributes to be toggled
      * @return array The toggled attributes
      */
     public function toggle($attributes = 'is_active')
     {
-        $allAttributes = is_array($attributes) ? $attributes : (array)$attributes;
+        $allAttributes = is_array($attributes) ? $attributes : (array) $attributes;
         foreach ($allAttributes as $attribute) {
             $newValue = $this->$attribute === true ? false : true;
             $this->$attribute = $newValue;
         }
-        $this->save();
+        // $this->save();
         return Arr::only($this->toArray(), array_merge(['id'], $allAttributes));
     }
 
     /**
      * Get stats for this model
      *
-     * @param array                     $stats
+     * @param iterable                    $stats
      * @param \Nitm\Content\Models\Team $team
-     * @param array                     $groups
+     * @param iterable                    $groups
      * @param \Nitm\Content\Models\User $user
      *
-     * @return void
+     * @return array
      */
     public static function getStats(array $stats, Team $team, $groups = [], User $user = null)
     {
         $user = $user ?: auth()->user();
-        $snakeable = array_merge(array_keys($team->featureNames), ['mentor', 'student', 'mentors', 'students']);
-        if ($user->isMentorOn($team)) {
-            $stats = Arr::only($stats, Arr::get($groups, 'mentor', array_keys($stats)));
-        } elseif ($user->isStudentOn($team)) {
-            $stats = Arr::only($stats, Arr::get($groups, 'student', array_keys($stats)));
-        }
+        $snakeable = array_merge(array_keys($team->featureNames ?? []), ['mentor', 'student', 'mentors', 'students']);
         $availableStats = [];
         foreach ($stats as $key => $stat) {
             if (in_array($stat, $snakeable)) {
@@ -111,45 +108,55 @@ trait Model
     public static function getMacros()
     {
         $class = static::class;
-        return $class::$macros;
+        return $class::$macros ?? [];
     }
 
     /**
      * Add fillable attributes for the model.
      *
-     * @param  array|string|null $attributes
+     * @param array|string|null $attributes
      * @return void
      */
     public function addFillable($attributes = null)
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
-        $this->fillable = array_merge($this->fillable, $attributes);
+        $this->fillable = array_merge($this->fillable ?? [], $attributes);
     }
     /**
      * Add fillable attributes for the model.
      *
-     * @param  array|string|null $attributes
+     * @param array|string|null $attributes
      * @return void
      */
     public function addAppends($attributes = null)
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
-        $this->appends = array_merge($this->appends, $attributes);
+        $this->appends = array_merge($this->appends ?? [], $attributes);
     }
 
     /**
      * Add jsonable attributes for the model.
      *
-     * @param  array|string|null $attributes
+     * @param array|string|null $attributes
      * @return void
      */
     public function addJsonable($attributes = null)
     {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
-        $this->jsonable = array_merge($this->jsonable, $attributes);
+        $this->jsonable = array_merge($this->jsonable ?? [], $attributes);
+    }
+
+    /**
+     * Get all the attributes that are jsonable.
+     *
+     * @return array
+     */
+    public function getJsonable()
+    {
+        return $this->jsonable ?? [];
     }
 
     /**
@@ -157,7 +164,7 @@ trait Model
      *
      * @method getTableColumns
      *
-     * @return [type] [description]
+     * @return array
      */
     public function getTableColumns($table = null)
     {
@@ -171,10 +178,24 @@ trait Model
     }
 
     /**
+     * Get the table columns for a particular model as a collection.
+     *
+     * @param string $table
+     *
+     * @method getTableColumnsAsCollection
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getTableColumnsAsCollection($table = null)
+    {
+        return collect($this->getTableColumns($table));
+    }
+
+    /**
      * Get the foreign keys for the given table.
      *
-     * @param  string  $tableName
-     * @return \Illuminate\Support\Collection
+     * @param string  $tableName
+     * @return array
      */
     public function getTableForeignKeys($tableName)
     {
@@ -189,8 +210,8 @@ trait Model
     /**
      * Determine if the given table has a foreign key.
      *
-     * @param  string  $tableName
-     * @param  string  $columnName
+     * @param string  $tableName
+     * @param string  $columnName
      * @return bool
      */
     public function hasForeignKey($tableName, $columnName)
@@ -214,7 +235,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  array $options
+     * @param iterable$options
      * @return void
      */
     public static function getFilterOptions($options = [])
@@ -225,14 +246,14 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  array $options
-     * @return void
+     * @param iterable$options
+     * @return array
      */
     public static function getFormOptions($options = [])
     {
         $data = [];
         $modelClass = static::class;
-        $options = Arr::get($options, 'all', ['form', 'filter', 'status', 'day_of_week'], $options);
+        $options = Arr::get($options, 'all', ['form', 'filter', 'status', 'day_of_week']);
         if (in_array('status', $options) && method_exists($modelClass, 'getStatusOptions')) {
             $data['status'] = $modelClass::getStatusOptions();
         }
@@ -261,8 +282,8 @@ trait Model
     /**
      * Set a given attribute on the model directly without mutators.
      *
-     * @param  string $key
-     * @param  mixed  $value
+     * @param string $key
+     * @param mixed  $value
      * @return mixed
      */
     public function setAttributeDirectly($key, $value)
@@ -273,7 +294,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  [type] $value
+     * @param [type] $value
      * @return void
      */
     public function setIsActiveAttribute($value = null)
@@ -284,7 +305,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  [type] $value
+     * @param [type] $value
      * @return void
      */
     public function setIsPublicAttribute($value = null)
@@ -295,7 +316,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  [type] $value
+     * @param [type] $value
      * @return void
      */
     public function setIsPrivateAttribute($value = null)
@@ -306,7 +327,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  [type] $value
+     * @param [type] $value
      * @return void
      */
     public function setIsRecurringAttribute($value = null)
@@ -317,7 +338,7 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  [type] $value
+     * @param [type] $value
      * @return void
      */
     public function setIsRequiredAttribute($value = null)
@@ -328,9 +349,9 @@ trait Model
     /**
      * Undocumented function
      *
-     * @param  string $date
-     * @param  string $format
-     * @return Carbon || null
+     * @param string $date
+     * @param string $format
+     * @return Carbon|null
      */
     protected function parseDate($date, $format = 'Y-m-d H:i:s')
     {
@@ -351,7 +372,7 @@ trait Model
     /**
      * Only get items that are active
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeIsActive($query)
@@ -362,9 +383,9 @@ trait Model
     /**
      * Save a relation
      *
-     * @param  [type] $relation
-     * @param  [type] $value
-     * @param  string $method
+     * @param [type] $relation
+     * @param [type] $value
+     * @param string $method
      * @return void
      */
     public function saveRelation($relation, $value, $method = 'save')
@@ -386,7 +407,7 @@ trait Model
     /**
      * Has Relation
      *
-     * @param  mixed $name
+     * @param mixed $name
      * @return bool
      */
     public function hasRelation(string $name): bool
@@ -397,7 +418,7 @@ trait Model
     /**
      * Has Trait
      *
-     * @param  mixed $trait
+     * @param mixed $trait
      * @return bool
      */
     public function hasTrait(string $trait): bool
@@ -407,8 +428,8 @@ trait Model
     }
 
     /**
-     * @param array $relations
-     * @param array $attributes
+     * @param iterable$relations
+     * @param iterable$attributes
      *
      * @return Model
      */
@@ -432,27 +453,28 @@ trait Model
      */
     public function title(): string
     {
-        if (property_exists($this, 'title')) {
+        if (property_exists($this, 'title') || $this->getAttribute('title')) {
             return "{$this->title}";
         }
-        if (property_exists($this, 'name')) {
+        if (property_exists($this, 'name') || $this->getAttribute('name')) {
             return "{$this->name}";
         }
         return '(not set)';
     }
 
     /**
-     * If the `` property is set, return only those properties, otherwise return all
-     * properties
+     * If the property is set, return only those properties, otherwise return all
+     * properties.
      *
-     * @return The result of the parent::toArray() method, but only the fields that are specified in
-     * the  property.
+     * Return the result of the parent::toArray() method, but only the fields that are specified in visibleTpApi property.
+     *
+     * @return array
      */
     public function toArray()
     {
         $result = parent::toArray();
-        if(property_exists($this, 'visibleToApi')) {
-            return !empty($only = $this->visibleToApi)  ? Arr::only($result, (array) $only) : $result;
+        if (property_exists($this, 'visibleToApi')) {
+            return !empty($only = $this->visibleToApi) ? Arr::only($result, (array) $only) : $result;
         }
         return $result;
     }

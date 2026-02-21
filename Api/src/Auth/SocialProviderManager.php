@@ -12,7 +12,7 @@ use MadWeb\SocialAuth\SocialProviderManager as BaseSocialProviderManager;
 class SocialProviderManager extends BaseSocialProviderManager
 {
     /**
-     * @param  string $key
+     * @param string $key
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function socialTeamQuery(string $key)
@@ -23,7 +23,7 @@ class SocialProviderManager extends BaseSocialProviderManager
     /**
      * Gets user by unique social identifier.
      *
-     * @param  string $key
+     * @param string $key
      * @return mixed
      */
     public function getTeamByKey(string $key)

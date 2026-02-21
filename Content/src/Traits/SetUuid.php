@@ -18,7 +18,7 @@ trait SetUuid
                     return;
                 }
 
-                foreach ((array)$model->uuidFields as $field) {
+                foreach ((array) $model->uuidFields as $field) {
                     $model->$field = $model->$field ?? Str::uuid();
                 }
             }
@@ -28,7 +28,7 @@ trait SetUuid
     /**
      * Create a new Eloquent query builder for the model.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param \Illuminate\Database\Query\Builder  $query
      * @return \Illuminate\Database\Eloquent\Builder|static
      */
     public function newEloquentBuilder($query)

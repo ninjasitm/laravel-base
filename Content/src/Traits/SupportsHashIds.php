@@ -25,8 +25,8 @@ trait SupportsHashIds
     /**
      * Resolve Route Binding using hashids
      *
-     * @param  mixed $value
-     * @param  mixed $field
+     * @param mixed $value
+     * @param mixed $field
      * @return void
      */
     public function resolveRouteBindingUsingHashId($value, $field = null)

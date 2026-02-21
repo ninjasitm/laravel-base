@@ -24,19 +24,19 @@ abstract class TestCase extends BaseTestCase
 
     use CreatesApplication, RefreshDatabase, WithoutMiddleware;
     /**
-     * @var App\Team
+     * @var App\Models\Team
      */
     protected $team;
 
-    protected function setupTeam($team)
-    {
-        $this->team = $team;
-    }
-
-
+    /**
+     * Summary of __construct
+     * @param mixed $name
+     * @param iterable$data
+     * @param string $dataName
+     */
     public function __construct(?string $name = null, array $data = [], string $dataName = '')
     {
-        if(class_exists('Laravel\Cashier\Cashier')) {
+        if (class_exists('Laravel\Cashier\Cashier')) {
             \Laravel\Cashier\Cashier::ignoreMigrations();
         }
         parent::__construct($name, $data, $dataName);
@@ -44,25 +44,34 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     *
+     * Summary of setupTeam
+     * @param mixed $team
+     * @return void
+     */
+    protected function setupTeam($team)
+    {
+        $this->team = $team;
+    }
+
+    /**
+     * Summary of hotfixSqlite
+     * @return void
      */
     public function hotfixSqlite()
     {
         \Illuminate\Database\Connection::resolverFor(
-            'sqlite', function ($connection, $database, $prefix, $config) {
-                return new class ($connection, $database, $prefix, $config) extends SQLiteConnection
-            {
+            'sqlite',
+            function ($connection, $database, $prefix, $config) {
+                return new class($connection, $database, $prefix, $config) extends SQLiteConnection {
                     public function getSchemaBuilder()
                     {
                         if ($this->schemaGrammar === null) {
                             $this->useDefaultSchemaGrammar();
                         }
-                        return new class ($this) extends SQLiteBuilder
-                    {
+                        return new class($this) extends SQLiteBuilder {
                             protected function createBlueprint($table, \Closure $callback = null)
                             {
-                                return new class ($table, $callback) extends Blueprint
-                            {
+                                return new class($table, $callback) extends Blueprint {
                                     public function dropForeign($index)
                                     {
                                         return new Fluent();
@@ -79,9 +88,9 @@ abstract class TestCase extends BaseTestCase
     /**
      * Generate models from a factory with some common options
      *
-     * @param  string  $class
-     * @param  mixed   $options [states => states]
-     * @param  integer $count
+     * @param string  $class
+     * @param mixed   $options [states => states]
+     * @param integer $count
      * @return Factory
      */
     protected function generateModels(string $class, $options = null, int $count = 3)
@@ -89,7 +98,7 @@ abstract class TestCase extends BaseTestCase
         $factory = factory($class, $count);
         if (is_array($options)) {
             if ($states = Arr::get($options, 'states')) {
-                call_user_func_array([$factory, 'states'], (array)$states);
+                call_user_func_array([$factory, 'states'], (array) $states);
             }
         }
         return $factory;
@@ -98,9 +107,9 @@ abstract class TestCase extends BaseTestCase
     /**
      * Generate models from a factory with some common options
      *
-     * @param  string  $class
-     * @param  mixed   $options [states => states]
-     * @param  integer $count
+     * @param string  $class
+     * @param mixed   $options [states => states]
+     * @param integer $count
      * @return Factory
      */
     protected function generateModel(string $class, $options = null)
@@ -108,7 +117,7 @@ abstract class TestCase extends BaseTestCase
         $factory = factory($class, $count);
         if (is_array($options)) {
             if ($states = Arr::get($options, 'states')) {
-                call_user_func_array([$factory, 'states'], (array)$states);
+                call_user_func_array([$factory, 'states'], (array) $states);
             }
         }
         return $factory;
@@ -117,13 +126,14 @@ abstract class TestCase extends BaseTestCase
     /**
      * Get the relation for a factory generator
      *
-     * @param  string|array $from
+     * @param string|array $from
      * @return string
      */
     protected function getFactoryRelation($from)
     {
         return is_array($from) ? Arr::get($from, 'relation') : $from;
     }
+
 
     protected function getFactoryAndRelation($class, $options, $count = null)
     {

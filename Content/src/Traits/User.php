@@ -28,14 +28,14 @@ trait User
     }
 
     /**
-    * Custom API query function.
-    *
-    * @param array   $options  Array of parameters for the query builder
-    * @param bool    $multiple Is this a request for multiple records?
-    * @param Builder $query    The query to use
-    *
-    * @return [type] [description]
-    */
+     * Custom API query function.
+     *
+     * @param iterable  $options  Array of parameters for the query builder
+     * @param bool    $multiple Is this a request for multiple records?
+     * @param Builder $query    The query to use
+     *
+     * @return [type] [description]
+     */
     public static function apiQuery($options = [], $multiple = false, $query = null)
     {
         extract($options);
@@ -53,8 +53,8 @@ trait User
     {
         if (!$this->apiToken) {
             $token = $this->apiToken()->create([
-        'user_id' => $this->id,
-        ]);
+                'user_id' => $this->id,
+            ]);
             $this->setRelation('apiToken', $token);
         }
     }
@@ -80,18 +80,18 @@ trait User
     }
 
     /**
-    * Necessary to limit relations when loading a User based relation, otherwise all relations load.
-    *
-    * @param [type] $query [description]
-    *
-    * @return [type] [description]
-    */
+     * Necessary to limit relations when loading a User based relation, otherwise all relations load.
+     *
+     * @param [type] $query [description]
+     *
+     * @return [type] [description]
+     */
     public function scopeLimitRelations($query)
     {
         $eagerLoads = $query->getEagerLoads();
 
         return $query->setEagerLoads(array_intersect_key($eagerLoads, [
-        'avatar' => [],
+            'avatar' => [],
         ]));
     }
 
@@ -134,7 +134,7 @@ trait User
 
     public function getFullNameAttribute()
     {
-        return $this->name.' '.$this->surname;
+        return $this->name . ' ' . $this->surname;
     }
 
     public function setFullNameAttribute($name)

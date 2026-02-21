@@ -3,14 +3,16 @@
 namespace Nitm\Helpers;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Collection;
+
 /*
  * This is the DB helper class and attempts to fill in the gap to allow smoother DB abstraction.
  * @author malcolm@ninjasitm.com
  */
 
-use Config;
-use DB;
-use Cache;
 
 class DbHelper
 {
@@ -31,7 +33,7 @@ class DbHelper
     {
         static::afterQuery();
 
-        return $result;
+        return collect($result);
         // return array_map(function ($array) {
         // 	return (object) $array;
         // }, array_map('array_change_key_case', $result));
@@ -40,9 +42,9 @@ class DbHelper
     /**
      * Get the tables based on the database driver.
      *
-     * @param [type] $catalog [description]
+     * @param string $catalog The name of the database to use. If not specified, the default database will be used.
      *
-     * @return [type] [description]
+     * @return Collection
      */
     public static function getTables($catalog = null)
     {
@@ -61,9 +63,9 @@ class DbHelper
     /**
      * Get the tables based on the database driver.
      *
-     * @param [type] $catalog [description]
+     * @param string $catalog The name of the database to use. If not specified, the default database will be used.
      *
-     * @return [type] [description]
+     * @return Collection
      */
     public static function getTableNames($catalog = null)
     {
@@ -75,7 +77,7 @@ class DbHelper
         $cacheKey = 'tables-' . $catalog;
 
         return Cache::remember($cacheKey, 5, function () use ($catalog) {
-            return static::normalizeResult(array_filter(DB::getDoctrineSchemaManager()->listTableNames()), function ($table) {
+            return static::normalizeResult(array_filter(DB::getDoctrineSchemaManager()->listTableNames()), function ($table) use($catalog) {
                 $table = explode('.', $table);
                 if (count($table) == 1 || $table[0] == $catalog) {
                     return true;
@@ -91,7 +93,7 @@ class DbHelper
      * @param dbName The name of the database to use. If not specified, the default database will be
      * used.
      *
-     * @return An array of indexes for the table.
+     * @return Collection of indexes for the table.
      */
     public static function getIndexes($tableName = null, $dbName = null)
     {
@@ -101,19 +103,33 @@ class DbHelper
     }
 
     /**
+     * > Get the columns for a table
+     *
+     * @param tableName The name of the table you want to get the columns for.
+     * @param dbName The name of the database to use. If not specified, the default database will be
+     * used.
+     *
+     * @return Collection of columns for the table.
+     */
+    public static function getColumns($tableName = null, $dbName = null)
+    {
+        static::beforeQuery();
+
+        return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableColumns($tableName));
+    }
+
+    /**
      * > It returns a list of columns for a given table
      *
      * @param tableName The name of the table you want to get the fields from.
      * @param dbName The name of the database to connect to. If not specified, the default database
      * will be used.
      *
-     * @return An array of column names
+     * @return Collection of column names
      */
     public static function getFields($tableName = null, $dbName = null)
     {
-        static::beforeQuery();
-
-        return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableColumns($tableName));
+        return static::getColumns($tableName, $dbName);
     }
 
     /**
@@ -123,7 +139,7 @@ class DbHelper
      * @param dbName The name of the database to use. If not specified, the default database will be
      * used.
      *
-     * @return An array of foreign keys for the table.
+     * @return Collection of foreign keys for the table.
      */
     public static function getForeignConstraints($tableName = null, $dbName = null)
     {
@@ -139,11 +155,11 @@ class DbHelper
      * @param dbName The name of the database to look in. If not provided, the default database will be
      * used.
      *
-     * @return A collection of foreign key constraints.
+     * @return Collection of foreign key constraints.
      */
     public static function getForeignConstraintNames($tableName = null, $dbName = null)
     {
-        return collect(static::getForeignConstraints($tableName, $dbName))->map(
+        return static::getForeignConstraints($tableName, $dbName)->map(
             function ($c) {
                 return $c->getName();
             }
@@ -156,10 +172,12 @@ class DbHelper
      * @param tableName The name of the table you want to check.
      * @param constraint The name of the foreign key constraint.
      * @param dbName The database name. If not provided, the default database will be used.
+     *
+     * @return boolean
      */
     public static function hasForeignConstraint($tableName, $constraint, $dbName = null)
     {
-        return collect(static::getForeignConstraints($tableName, $dbName))->map(
+        return static::getForeignConstraints($tableName, $dbName)->map(
             function ($fkColumn) {
                 return $fkColumn->getName();
             }
@@ -173,10 +191,12 @@ class DbHelper
      * @param tableName The name of the table you want to check.
      * @param columns The column name(s) you want to check for foreign key constraints.
      * @param dbName The database name. If not provided, it will use the default database.
+     *
+     * @return boolean
      */
     public static function hasForeignConstraintColumns($tableName, $columns, $dbName = null)
     {
-        return collect(static::getForeignConstraints($tableName, $dbName))->map(
+        return static::getForeignConstraints($tableName, $dbName)->map(
             function ($fkColumn) {
                 return $fkColumn->getColumns();
             }
@@ -188,7 +208,7 @@ class DbHelper
      *
      * @param query The query object you want to get the SQL and bindings for.
      *
-     * @return The query with the bindings replaced with the actual values.
+     * @return string The query with the bindings replaced with the actual values.
      */
     public static function getQueryWithBindings($query)
     {
@@ -201,6 +221,8 @@ class DbHelper
      *
      * @param query The query builder instance
      * @param table The table name to check for.
+     *
+     * @return boolean
      */
     public static function isJoinedOn($query, $table)
     {

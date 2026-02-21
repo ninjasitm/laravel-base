@@ -23,7 +23,10 @@ trait CanJoinTeams
     public function teams()
     {
         return $this->belongsToMany(
-            NitmContent::teamModel(), 'team_users', 'user_id', 'team_id'
+            NitmContent::teamModel(),
+            'team_users',
+            'user_id',
+            'team_id'
         )->withPivot(['role'])->orderBy('name', 'asc');
     }
 
@@ -38,7 +41,7 @@ trait CanJoinTeams
     /**
      * Determine if the user is on the given team.
      *
-     * @param  \Nitm\Content\Models\Team $team
+     * @param \Nitm\Content\Models\Team $team
      * @return bool
      */
     public function onTeam($team)
@@ -49,7 +52,7 @@ trait CanJoinTeams
     /**
      * Determine if the given team is owned by the user.
      *
-     * @param  \Nitm\Content\Models\Team $team
+     * @param \Nitm\Content\Models\Team $team
      * @return bool
      */
     public function ownsTeam($team)
@@ -96,7 +99,7 @@ trait CanJoinTeams
             $this->switchToTeam($this->teams->first());
 
             return $this->currentTeam();
-        } elseif (! is_null($this->current_team_id)) {
+        } elseif (!is_null($this->current_team_id)) {
             $currentTeam = $this->teams->find($this->current_team_id);
 
             return $currentTeam ?: $this->refreshCurrentTeam();
@@ -126,12 +129,12 @@ trait CanJoinTeams
     /**
      * Switch the current team for the user.
      *
-     * @param  \Nitm\Content\Models\Team $team
+     * @param \Nitm\Content\Models\Team $team
      * @return void
      */
     public function switchToTeam($team)
     {
-        if (! $this->onTeam($team)) {
+        if (!$this->onTeam($team)) {
             throw new InvalidArgumentException(__("teams.user_doesnt_belong_to_team"));
         }
 
@@ -169,12 +172,12 @@ trait CanJoinTeams
             }
         ) - $this->ownedTeams->count();
     }
-    
+
 
     /**
      * Get the user's role on a given team.
      * @param TeamContract $team The team
-     * 
+     *
      * @return string
      */
     public function roleOn(TeamContract $team): string
@@ -195,7 +198,7 @@ trait CanJoinTeams
     /**
      * Is the user an admin on the given team?
      * @param TeamContract $team The team
-     * 
+     *
      * @return bool
      */
     public function isAdminOn(TeamContract $team = null): bool
@@ -205,7 +208,7 @@ trait CanJoinTeams
 
     /**
      * Is the user a super admin?
-     * 
+     *
      * @return bool
      */
     public function isSuperAdmin(): bool
@@ -216,7 +219,7 @@ trait CanJoinTeams
     /**
      * Is the user an admin on the given team?
      * @param TeamContract $team The team
-     * 
+     *
      * @return bool
      */
     public function isOrganizationAdmin(TeamContract $team = null): bool
@@ -228,7 +231,7 @@ trait CanJoinTeams
     /**
      * Is the user on the given team?
      * @param TeamContract $team The team
-     * 
+     *
      * @return bool
      */
     public function isUserOn(TeamContract $team = null): bool
@@ -240,7 +243,7 @@ trait CanJoinTeams
     /**
      * Is the user approved on the given team?
      * @param TeamContract $team The team
-     * 
+     *
      * @return bool
      */
     public function isPendingOn(TeamContract $team = null): bool
@@ -252,7 +255,7 @@ trait CanJoinTeams
     /**
      * Is the user the owner of the given team?
      * @param TeamContract $team The team
-     * 
+     *
      * @return bool
      */
     public function isOwnerOf(TeamContract $team = null): bool
@@ -260,11 +263,11 @@ trait CanJoinTeams
         $team = $team ?: request()->team ?: $this->team ?: $this->currentTeam;
         return $team instanceof TeamContract ? $team->owner_id === $this->id : false;
     }
-    
+
     /**
      * Is the user approved on the given team?
      * @param TeamContract $team The team
-     * 
+     *
      * @return bool
      */
     public function isApprovedOn(TeamContract $team = null): bool

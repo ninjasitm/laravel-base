@@ -23,7 +23,7 @@ class PendingInvitationController extends Controller
     /**
      * Get all of the pending invitations for the user.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function all(Request $request)
@@ -34,8 +34,8 @@ class PendingInvitationController extends Controller
     /**
      * Accept the given invitations.
      *
-     * @param  \Illuminate\Http\Request        $request
-     * @param  \Nitm\Content\Models\Invitation $invitation
+     * @param \Illuminate\Http\Request        $request
+     * @param \Nitm\Content\Models\Invitation $invitation
      * @return \Illuminate\Http\Response
      */
     public function accept(Request $request, Invitation $invitation)
@@ -43,8 +43,11 @@ class PendingInvitationController extends Controller
         abort_unless($request->user()->id === $invitation->user_id, 404);
 
         NitmContent::interact(
-            AddTeamMember::class, [
-            $invitation->team, $request->user(), $invitation->role
+            AddTeamMember::class,
+            [
+                $invitation->team,
+                $request->user(),
+                $invitation->role
             ]
         );
 
@@ -54,8 +57,8 @@ class PendingInvitationController extends Controller
     /**
      * Reject the given invitations.
      *
-     * @param  \Illuminate\Http\Request        $request
-     * @param  \Nitm\Content\Models\Invitation $invitation
+     * @param \Illuminate\Http\Request        $request
+     * @param \Nitm\Content\Models\Invitation $invitation
      * @return \Illuminate\Http\Response
      */
     public function reject(Request $request, Invitation $invitation)

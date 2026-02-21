@@ -56,9 +56,9 @@ class TreeCollection extends Collection
 
     /**
      * Gets an array with values of a given column. Values are indented according to their depth.
-     * @param  string $value  Array values
-     * @param  string $key    Array keys
-     * @param  string $indent Character to indent depth
+     * @param string $value  Array values
+     * @param string $key    Array keys
+     * @param string $indent Character to indent depth
      * @return array
      */
     public function listsNested($value, $key = null, $indent = '&nbsp;&nbsp;&nbsp;')

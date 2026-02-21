@@ -43,11 +43,27 @@ class Follow extends BaseAction
     ];
 
     public $fillable = [
-        'followee', 'follower', 'title', 'type', 'start_date', 'end_date', 'follower_id', 'followee_id', 'is_admin_action', 'deleted_at',
+        'followee',
+        'follower',
+        'title',
+        'type',
+        'start_date',
+        'end_date',
+        'follower_id',
+        'followee_id',
+        'is_admin_action',
+        'deleted_at',
     ];
 
     public $visible = [
-        'id', 'followee', 'follower', 'title', 'type', 'start_date', 'end_date', 'count',
+        'id',
+        'followee',
+        'follower',
+        'title',
+        'type',
+        'start_date',
+        'end_date',
+        'count',
     ];
 
     public $with = ['follower', 'followee'];
@@ -241,7 +257,7 @@ class Follow extends BaseAction
      * Custom Find a model by custom keys.
      *
      * @param mixed $id
-     * @param array $columns
+     * @param iterable $columns
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
@@ -262,7 +278,7 @@ class Follow extends BaseAction
      * Custom Find a model by custom keys.
      *
      * @param mixed $id
-     * @param array $columns
+     * @param iterable $columns
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */

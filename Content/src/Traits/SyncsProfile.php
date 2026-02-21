@@ -11,7 +11,7 @@ trait SyncsProfile
 {
     /**
      * Sync the avatar for a user
-     * @param array $data
+     * @param iterable$data
      */
     public function syncAvatar($data)
     {
@@ -29,7 +29,7 @@ trait SyncsProfile
 
     /**
      * Sync the avatar for a user
-     * @param array $data
+     * @param iterable$data
      */
     public function syncProfile($data)
     {

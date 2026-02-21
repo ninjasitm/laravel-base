@@ -7,7 +7,7 @@ interface NotificationRepository
     /**
      * Get the most recent notifications for the given user.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function recent($user);
@@ -15,8 +15,8 @@ interface NotificationRepository
     /**
      * Create an user notification.
      *
-     * @param  mixed $user
-     * @param  array $data
+     * @param mixed $user
+     * @param iterable$data
      * @return \Nitm\Content\Notification
      */
     public function create($user, array $data);
@@ -24,9 +24,9 @@ interface NotificationRepository
     /**
      * Create a personal notification from another user.
      *
-     * @param  mixed $user
-     * @param  mixed $from
-     * @param  array $data
+     * @param mixed $user
+     * @param mixed $from
+     * @param iterable$data
      * @return \Nitm\Content\Notification
      */
     public function personal($user, $from, array $data);

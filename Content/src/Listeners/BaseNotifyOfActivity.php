@@ -15,7 +15,7 @@ abstract class BaseNotifyOfActivity implements NotifiesOfActivity
     /**
      * Handle the event.
      *
-     * @param  object  $event
+     * @param object  $event
      * @return void
      */
     public function handle($event)
@@ -66,13 +66,13 @@ abstract class BaseNotifyOfActivity implements NotifiesOfActivity
      * Advanced message creation supporting collection messages
      *
      * @param string $message
-     * @param array $params
+     * @param iterable$params
      * @return void
      */
     public static function prepareMessage(string $message, array $params = [])
     {
         if (!Arr::get($params, 'subMessages')) {
-            return strlen($message) ? __($message, Arr::dot($params))  : $message;
+            return strlen($message) ? __($message, Arr::dot($params)) : $message;
         } else {
             $subMessageParams = Arr::pull($params, 'subMessages');
             $collection = Arr::pull($subMessageParams, 'collection');

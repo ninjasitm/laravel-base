@@ -112,8 +112,8 @@ trait ManagesBillingProviders
     /**
      * Indicate that the application should charge users per seat.
      *
-     * @param  string   $name
-     * @param  \Closure $callback
+     * @param string   $name
+     * @param \Closure $callback
      * @return void
      */
     public static function chargePerSeat($name, $callback)
@@ -147,8 +147,8 @@ trait ManagesBillingProviders
     /**
      * Indicate that the application should charge teams per seat.
      *
-     * @param  string   $name
-     * @param  \Closure $callback
+     * @param string   $name
+     * @param \Closure $callback
      * @return void
      */
     public static function chargeTeamsPerSeat($name, $callback)
@@ -231,7 +231,7 @@ trait ManagesBillingProviders
     /**
      * The number of seats the user occupies.
      *
-     * @param  \Nitm\Content\Models\User $user
+     * @param \Nitm\Content\Models\User $user
      * @return mixed
      */
     public static function seatsCount($user)
@@ -242,7 +242,7 @@ trait ManagesBillingProviders
     /**
      * The number of seats the team occupies.
      *
-     * @param  \Nitm\Content\Models\Team $team
+     * @param \Nitm\Content\Models\Team $team
      * @return mixed
      */
     public static function teamSeatsCount($team)
@@ -297,7 +297,7 @@ trait ManagesBillingProviders
     /**
      * Determine if the application bills customers using a given provider.
      *
-     * @param  string $provider
+     * @param string $provider
      * @return bool
      */
     public static function billsUsing($provider)
@@ -330,7 +330,7 @@ trait ManagesBillingProviders
     /**
      * Indicate that the application should collect the customer's billing address.
      *
-     * @param  bool $value
+     * @param bool $value
      * @return static
      *
      * @throws \Exception
@@ -355,8 +355,8 @@ trait ManagesBillingProviders
     /**
      * Indicate that the application should collect European VAT.
      *
-     * @param  string|null $homeCountry
-     * @param  bool        $value
+     * @param string|null $homeCountry
+     * @param bool        $value
      * @return static
      */
     public static function collectEuropeanVat($homeCountry = null, $value = true)

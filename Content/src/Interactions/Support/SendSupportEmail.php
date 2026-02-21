@@ -13,16 +13,17 @@ class SendSupportEmail implements Contract
     /**
      * Get a validator instance for the given data.
      *
-     * @param  array $data
+     * @param iterable$data
      * @return \Illuminate\Validation\Validator
      */
     public function validator(array $data)
     {
         return Validator::make(
-            $data, [
-            'from' => 'required',
-            'subject' => 'required|max:2048',
-            'message' => 'required',
+            $data,
+            [
+                'from' => 'required',
+                'subject' => 'required|max:2048',
+                'message' => 'required',
             ]
         );
     }
@@ -32,13 +33,14 @@ class SendSupportEmail implements Contract
      */
     public function handle(array $data)
     {
-        if (! NitmContent::hasSupportAddress()) {
+        if (!NitmContent::hasSupportAddress()) {
             throw new RuntimeException(__("No customer support request recipient is defined."));
         }
 
         Mail::raw(
-            $data['message'], function ($m) use ($data) {
-                $m->to(NitmContent::supportAddress())->subject(__('Support Request: ').$data['subject']);
+            $data['message'],
+            function ($m) use ($data) {
+                $m->to(NitmContent::supportAddress())->subject(__('Support Request: ') . $data['subject']);
 
                 $m->replyTo($data['from']);
             }

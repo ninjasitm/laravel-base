@@ -2,7 +2,7 @@
 
 namespace Nitm\Testing;
 
-use Artisan;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Contracts\Console\Kernel;
 
 trait CreatesApplication
@@ -44,7 +44,7 @@ trait CreatesApplication
      *
      * @return void
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Artisan::call('config:clear');
@@ -65,7 +65,7 @@ trait CreatesApplication
     /**
      * @inheritDoc
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         // Artisan::call('migrate:reset');
         parent::tearDown();

@@ -4,6 +4,7 @@ namespace Nitm\Helpers;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * This class provides configuration helper functions for config variables.
@@ -18,7 +19,7 @@ class ModelHelper
      * @param string $key The value to get from the config
      * @param string $db  The name of the database
      *
-     * @return [type] [description]
+     * @return string
      */
     public static function getIs($model)
     {
@@ -26,7 +27,7 @@ class ModelHelper
         $str = array_pop($parts);
         preg_match_all('/((?:^|[A-Z])[a-z]+)/', $str, $matches);
 
-        return strtolower(implode($matches[0], '-'));
+        return strtolower(implode('-', $matches[0]));
     }
 
     /**
@@ -34,7 +35,7 @@ class ModelHelper
      *
      * @param [type] $value
      * @param boolean $returnNull
-     * @return void
+     * @return boolean
      */
     public static function boolval($value, $returnNull = false)
     {
@@ -47,8 +48,8 @@ class ModelHelper
      *
      * @param string $class
      * @param string $relation
-     * @param array $attributes
-     * @param string|Callable $localKey
+     * @param iterable$attributes
+     * @param string|callable $localKey
      * @param string $foreignKey
      *
      * @return void
@@ -88,12 +89,12 @@ class ModelHelper
         });
 
         $class::macro($relationSort, function ($query, $attribute = 'id', $direction = 'desc') use ($relation, $localKey, $foreignKey) {
-            $relationQuery = $this->$relation();
+            $relationQuery = $query->getModel()->$relation();
             $table = $relationQuery->getModel()->getTable();
             if (is_callable($localKey)) {
                 $query->leftJoin($table, $localKey);
             } else {
-                $query->leftJoin($table, $table . '.' . $foreignKey, '=', $this->getTable() . '.' . $localKey)
+                $query->leftJoin($table, $table . '.' . $foreignKey, '=', $query->getModel()->getTable() . '.' . $localKey)
                     ->orderBy("$table.$attribute", $direction);
             }
         });
@@ -103,11 +104,11 @@ class ModelHelper
                 $relationAttribute = Str::studly($relation . ' ' . $attribute);
 
                 $class::macro('scopeFilterBy' . $relationAttribute, function ($query, $value, $property = 'id') use ($relationFilter) {
-                    $this->$relationFilter($query, $value, $property);
+                    $query->getModel()->$relationFilter($query, $value, $property);
                 });
 
                 $class::macro('scopeSortBy' . $relationAttribute, function ($query, $attribute = 'id', $direction = 'desc') use ($relationSort, $localKey, $foreignKey) {
-                    $this->$relationSort($query, $attribute, $direction, $localKey, $foreignKey);
+                    $query->getModel()->$relationSort($query, $attribute, $direction, $localKey, $foreignKey);
                 });
             }
         }
@@ -120,7 +121,7 @@ class ModelHelper
      * @param [type] $class
      * @param boolean $autoload
      *
-     * @return void
+     * @return boolean
      */
     public static function usesTrait($trait, $class, $autoload = true)
     {
@@ -144,5 +145,22 @@ class ModelHelper
 
         $traits = array_unique($traits);
         return isset($traits[$trait]);
+    }
+
+    /**
+     * This function converts the given model into the provided model class
+     * @template T
+     * @param class-string<T> $className
+     * @param Model $model
+     * @return T
+     */
+    public static function convertToModel(string $className, Model $model)
+    {
+        $result = new $className;
+        $result->forceFill($model->getAttributes());
+        $result->id = $model->id;
+        $result->exists = $model->exists;
+        $result->setRelations($model->getRelations());
+        return $result;
     }
 }

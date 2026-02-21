@@ -2,9 +2,10 @@
 
 namespace Nitm\Content\Database\Eloquent;
 
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder as BaseBuilder;
 use Nitm\Content\Database\Eloquent\Builder as NitmBuilder;
-use Str;
 
 /**
  * Custom Eloquent Builder
@@ -52,7 +53,7 @@ class Builder extends BaseBuilder
                     try {
                         $models = $this->eagerLoadRelation($models, $name, $constraints);
                     } catch (\Exception $e) {
-                        \Log::error($e);
+                        Log::error($e);
                     }
                 }
             }
@@ -65,7 +66,7 @@ class Builder extends BaseBuilder
     /**
      * Eagerly load the relationship on a set of models.
      *
-     * @param array    $models
+     * @param iterable   $models
      * @param string   $name
      * @param \Closure $constraints
      *
@@ -99,7 +100,7 @@ class Builder extends BaseBuilder
     /**
      * Parse a list of relations into individuals.
      *
-     * @param array $relations
+     * @param iterable$relations
      *
      * @return array
      */
@@ -114,8 +115,7 @@ class Builder extends BaseBuilder
                 $name = $constraints;
                 list($name, $constraints) = Str::contains($name, ':')
                     ? $this->createSelectWithConstraint($name)
-                    : [$name, function () {
-                    }];
+                    : [$name, function () {}];
             }
             // We need to separate out any nested includes. Which allows the developers
             // to load deep relationships using "dots" without stating each level of
@@ -131,7 +131,7 @@ class Builder extends BaseBuilder
      * Parse the nested relationships in a relation.
      *
      * @param string $name
-     * @param array  $results
+     * @param iterable $results
      *
      * @return array
      */
@@ -144,8 +144,7 @@ class Builder extends BaseBuilder
         foreach (explode('.', $name) as $segment) {
             $progress[] = $segment;
             if (!isset($results[$last = implode('.', $progress)])) {
-                $results[$last] = function () {
-                };
+                $results[$last] = function () {};
             }
         }
 

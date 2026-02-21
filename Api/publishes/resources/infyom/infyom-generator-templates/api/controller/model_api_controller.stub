@@ -5,9 +5,9 @@ namespace $NAMESPACE_API_CONTROLLER$;
 use $NAMESPACE_API_REQUEST$\Create$MODEL_NAME$APIRequest;
 use $NAMESPACE_API_REQUEST$\Update$MODEL_NAME$APIRequest;
 use $NAMESPACE_MODEL$\$MODEL_NAME$;
+use $NAMESPACE_APP$\Http\Controllers\C ontroller;
 use Illuminate\Http\Request;
-use $NAMESPACE_APP$\Http\Controllers\Controller;
-use Response;
+use Illuminate\Http\JsonResponse;
 
 $DOC_CONTROLLER$
 class $MODEL_NAME$Controller extends Controller

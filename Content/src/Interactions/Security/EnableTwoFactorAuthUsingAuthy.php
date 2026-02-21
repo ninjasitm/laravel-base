@@ -17,7 +17,7 @@ class EnableTwoFactorAuthUsingAuthy implements Contract
     /**
      * Create a new interaction instance.
      *
-     * @param  \Nitm\Content\Services\Security\Authy $authy
+     * @param \Nitm\Content\Services\Security\Authy $authy
      * @return void
      */
     public function __construct(Authy $authy)
@@ -32,9 +32,11 @@ class EnableTwoFactorAuthUsingAuthy implements Contract
     {
         $user->forceFill(
             [
-            'authy_id' => $this->authy->enable(
-                $user->email, $phoneNumber, $countryCode
-            ),
+                'authy_id' => $this->authy->enable(
+                    $user->email,
+                    $phoneNumber,
+                    $countryCode
+                ),
             ]
         )->save();
 

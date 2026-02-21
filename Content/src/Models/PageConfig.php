@@ -89,7 +89,7 @@ class PageConfig extends BaseModel
     /**
      * Get Page
      *
-     * @param  mixed $id
+     * @param mixed $id
      * @return void
      */
     public static function getPage($id)
@@ -102,8 +102,8 @@ class PageConfig extends BaseModel
     /**
      * Get the cache key for this model
      *
-     * @param  [type] $id     [description]
-     * @param  [type] $params [description]
+     * @param [type] $id     [description]
+     * @param [type] $params [description]
      * @return string         [description]
      */
     protected static function getCacheKey($id = null, $params = []): string
@@ -113,7 +113,7 @@ class PageConfig extends BaseModel
         return implode(
             '-',
             array_merge(
-                (array)$params,
+                (array) $params,
                 [
                     md5(get_called_class()),
                     $id,
@@ -149,7 +149,7 @@ class PageConfig extends BaseModel
     {
         $id = $id ?: strtolower(class_basename(get_called_class()));
         $routeParams = $id != 'pageconfigglobal' ? (\Route::current() ? \Route::current()->parameters() : []) : [];
-        $key = static::getCacheKey($id, array_merge((array)$_GET, (array)$routeParams));
+        $key = static::getCacheKey($id, array_merge((array) $_GET, (array) $routeParams));
 
         return \Cache::remember(
             $key,
@@ -213,7 +213,7 @@ class PageConfig extends BaseModel
     /**
      * Get Pagination
      *
-     * @param  mixed $items
+     * @param mixed $items
      * @return array
      */
     protected function getPagination($items = null): array
@@ -238,7 +238,7 @@ class PageConfig extends BaseModel
     /**
      * Get Showcase Item
      *
-     * @param  mixed $config
+     * @param mixed $config
      * @return array
      */
     protected static function getShowcaseItem($config): array
@@ -451,8 +451,8 @@ class PageConfig extends BaseModel
     /**
      * Prepare Config
      *
-     * @param  mixed $config
-     * @param  mixed $routeParameters
+     * @param mixed $config
+     * @param mixed $routeParameters
      * @return void
      */
     public function prepareConfig($config = [], $routeParameters = []): array

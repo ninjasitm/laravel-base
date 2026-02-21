@@ -1,4 +1,5 @@
-<?php namespace Nitm\Api\Http\Middleware;
+<?php
+namespace Nitm\Api\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
@@ -26,8 +27,8 @@ class Timezone
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -84,7 +85,7 @@ class Timezone
                 return $response->withCookie(cookie('X-Timezone', $timezone, 120))
                     ->withHeaders(
                         [
-                        'X-Timezone' => $timezone
+                            'X-Timezone' => $timezone
                         ]
                     );
             }

@@ -16,8 +16,8 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": "^8.0",
-        "laravel/framework": "^9.0",
+        "php": "^8.0|^8.1|8.2|^8.3",
+        "laravel/framework": "^9.0|^10.0",
         "spatie/laravel-activitylog": "*",
         "vinkla/hashids": "^10.0"
     },
@@ -27,6 +27,7 @@
         "infyomlabs/swagger-generator": "To support swagger annotations for models"
     },
     "require-dev": {
+        "brianium/paratest": "^6.2",
         "dms/phpunit-arraysubset-asserts": "^0.4.0",
         "fakerphp/faker": "^1.14.0",
         "laravel/pint": "^1.4",
@@ -46,6 +47,11 @@
             "Nitm\\Helpers\\": "Helpers/src",
             "Nitm\\Testing\\": "Testing/src",
             "Nitm\\Content\\Database\\Factories\\": "Content/src/Database/Factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "extra": {

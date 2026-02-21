@@ -14,7 +14,7 @@ interface UserRepository
     /**
      * Get the user with the given ID.
      *
-     * @param  int $id
+     * @param int $id
      * @return \Illuminate\Contracts\Auth\Authenticatable|null
      */
     public function find($id);
@@ -22,8 +22,8 @@ interface UserRepository
     /**
      * Perform a basic user search by name or e-mail address.
      *
-     * @param  string                                          $query
-     * @param  \Illuminate\Contracts\Auth\Authenticatable|null $excludeUser
+     * @param string                                          $query
+     * @param \Illuminate\Contracts\Auth\Authenticatable|null $excludeUser
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function search($query, $excludeUser = null);
@@ -31,7 +31,7 @@ interface UserRepository
     /**
      * Create a new user with the given data.
      *
-     * @param  array $data
+     * @param iterable$data
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
     public function create(array $data);
@@ -39,8 +39,8 @@ interface UserRepository
     /**
      * Update the billing address information with the given data.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param  array                                      $data
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param iterable                                     $data
      * @return void
      */
     public function updateBillingAddress($user, array $data);
@@ -48,8 +48,8 @@ interface UserRepository
     /**
      * Update the European VAT ID number for the given user.
      *
-     * @param  \Illuminate\Contracts\Auth\Authenticatable $user
-     * @param  string                                     $vatId
+     * @param \Illuminate\Contracts\Auth\Authenticatable $user
+     * @param string                                     $vatId
      * @return void
      */
     public function updateVatId($user, $vatId);

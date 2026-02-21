@@ -12,7 +12,7 @@ class MyAPIRequest extends APIRequest
     /**
      * Get the proper failed validation response for the request.
      *
-     * @param array $errors
+     * @param iterable$errors
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -23,7 +23,7 @@ class MyAPIRequest extends APIRequest
 
     /**
      * @param string $errors
-     * @param array  $data
+     * @param iterable $data
      *
      * @return array
      */
@@ -39,5 +39,5 @@ class MyAPIRequest extends APIRequest
         }
 
         return $res;
-    }  
+    }
 }

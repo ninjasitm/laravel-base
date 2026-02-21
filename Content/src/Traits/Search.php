@@ -208,9 +208,9 @@ trait Search
      *
      * @method StringConditions
      *
-     * @param  Builder  $query   [description]
-     * @param  Column[] $columns [description]
-     * @param  array    $params  [description]
+     * @param Builder  $query   [description]
+     * @param Column[] $columns [description]
+     * @param iterable   $params  [description]
      * @return void
      */
     public function scopeAddSearchConditions($query, array $columns, array $params)
@@ -310,7 +310,7 @@ trait Search
      *
      * @method addSearchCondition
      *
-     * @param  Builder $query [description]
+     * @param Builder $query [description]
      * @return void
      */
     public function scopeApplySearchConditions($query)
@@ -723,7 +723,7 @@ trait Search
     /**
      * Disable pagination
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeWithoutPagination($query)
@@ -735,7 +735,7 @@ trait Search
     /**
      * Enable pagination
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeWithPagination($query)
@@ -747,7 +747,7 @@ trait Search
     /**
      * Enable pagination
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeCanFilterRelations($query)
@@ -759,7 +759,7 @@ trait Search
     /**
      * Enable pagination
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeCannotFilterRelations($query)
@@ -772,7 +772,7 @@ trait Search
      * Enable  search inclusivity
      * Basically use Or clauses
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeInclusive($query)
@@ -785,7 +785,7 @@ trait Search
      * Disable search inclusivity
      * Basically DON'T use Or clauses
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeExclusive($query)
@@ -797,7 +797,7 @@ trait Search
     /**
      * Enable search wildcard inclusion
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeEnableWildcardExpansion($query)
@@ -809,7 +809,7 @@ trait Search
     /**
      * Disable search wildcard inclusion
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeDisableWildcardExpansion($query)
@@ -822,7 +822,7 @@ trait Search
      * Enable search  directinclusivity
      * Basically use Or clauses
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeDirectInclusivity($query)
@@ -849,7 +849,7 @@ trait Search
      * Enable search  directinclusivity
      * Basically use Or clauses
      *
-     * @param  [type] $query
+     * @param [type] $query
      * @return void
      */
     public function scopeStrictInclusivity($query)

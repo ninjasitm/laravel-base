@@ -201,24 +201,24 @@ class Metadata extends Model
     public function defaultValue()
     {
         switch ($this->type) {
-        case 'File':
-        case 'Image':
-        case 'Video':
-            return [
+            case 'File':
+            case 'Image':
+            case 'Video':
+                return [
                     'url' => null,
                     'simple_type' => static::DEFAULT_SIMPLE_TYPE
                 ];
                 break;
 
-        case 'Google Drive':
-        case 'Dropdown':
-        case 'Checkbox':
-        case 'Question':
-            return [];
+            case 'Google Drive':
+            case 'Dropdown':
+            case 'Checkbox':
+            case 'Question':
+                return [];
                 break;
 
-        default:
-            return null;
+            default:
+                return null;
         }
     }
 
@@ -230,79 +230,80 @@ class Metadata extends Model
     public function setValueAttribute($value)
     {
         switch ($this->type) {
-        case 'File':
-        case 'Image':
-            if ($value instanceof UploadedFile || $value instanceof UploadedTestFile) {
-                $this->storeFileValue($value);
-            } elseif (is_array($value) || is_string($value) && preg_match('/^data:image\/(\w+);base64,/', $value)) {
-                $url = is_array($value) ? Arr::get($value, 'url') : $value;
-                if (is_string($url) && strlen($url) && preg_match('/^data:image\/(\w+);base64,/', $url)) {
-                    try {
-                        $data = substr($url, strpos($url, ",") + 1);
-                        $data = base64_decode($data);
-                        $mimeType = FileFacade::streamMimeType($data);
-                        $extension = FileFacade::mimeExtension($mimeType);
-                        $size = FileFacade::streamSize($data);
-                        $name = uniqid('decoded_') . '.' . $extension;
-                        $path = tempnam(sys_get_temp_dir(), uniqid('laravel', true));
-                        FileFacade::put($path, $data);
+            case 'File':
+            case 'Image':
+                if ($value instanceof UploadedFile || $value instanceof UploadedTestFile) {
+                    $this->storeFileValue($value);
+                } elseif (is_array($value) || is_string($value) && preg_match('/^data:image\/(\w+);base64,/', $value)) {
+                    $url = is_array($value) ? Arr::get($value, 'url') : $value;
+                    if (is_string($url) && strlen($url) && preg_match('/^data:image\/(\w+);base64,/', $url)) {
+                        try {
+                            $data = substr($url, strpos($url, ",") + 1);
+                            $data = base64_decode($data);
+                            $mimeType = FileFacade::streamMimeType($data);
+                            $extension = FileFacade::mimeExtension($mimeType);
+                            $size = FileFacade::streamSize($data);
+                            $name = uniqid('decoded_') . '.' . $extension;
+                            $path = tempnam(sys_get_temp_dir(), uniqid('laravel', true));
+                            FileFacade::put($path, $data);
 
-                        $file = app(
-                            UploadedFile::class,
-                            array_merge(
-                                is_array($value) ? $value : [],
-                                [
-                                    'path' => $path,
-                                    'originalName' => $name,
-                                    'mimeType' => $mimeType,
-                                    'size' => $size,
-                                    'error' => null
-                                ]
-                            )
-                        );
-                        $this->storeFileValue($file);
-                    } catch (\Exception $e) {
-                        \Log::error($e);
+                            $file = app(
+                                UploadedFile::class,
+                                array_merge(
+                                    is_array($value) ? $value : [],
+                                    [
+                                        'path' => $path,
+                                        'originalName' => $name,
+                                        'mimeType' => $mimeType,
+                                        'size' => $size,
+                                        'error' => null
+                                    ]
+                                )
+                            );
+                            $this->storeFileValue($file);
+                        } catch (\Exception $e) {
+                            \Log::error($e);
+                            $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
+                        }
+                    } elseif (is_array($value) && Arr::get($value, 'url') == null) {
+                        $this->attributes['value'] = json_encode($this->defaultValue());
+                    } else {
                         $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
                     }
-                } elseif (is_array($value) && Arr::get($value, 'url') == null) {
-                    $this->attributes['value'] = json_encode($this->defaultValue());
-                } else {
-                    $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
                 }
-            }
-            break;
+                break;
 
-        case 'Google Drive':
-            if (!empty($value) && is_array($value)) {
-                $model = $this->valueFile ?? $this->valueFile()->make();
-                $model->fill($value);
-                $this->saveRelation('valueFile', $model);
-            }
-            $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
-            break;
+            case 'Google Drive':
+                if (!empty($value) && is_array($value)) {
+                    $model = $this->valueFile ?? $this->valueFile()->make();
+                    $model->fill($value);
+                    $this->saveRelation('valueFile', $model);
+                }
+                $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
+                break;
 
-        case 'Video':
-            $this->attributes['value'] = is_array($value) ? json_encode(
-                array_merge(
-                    [
-                        "url" => ""
-                        ], $value
-                )
-            ) : $value;
-            break;
+            case 'Video':
+                $this->attributes['value'] = is_array($value) ? json_encode(
+                    array_merge(
+                        [
+                            "url" => ""
+                        ],
+                        $value
+                    )
+                ) : $value;
+                break;
 
-        case 'Textarea':
-        case 'TextArea':
-        case 'Text':
-            // $maxLength = intval(Arr::get($this->options, 'maxLength'));
-            // $this->attributes['value'] = $maxLength && $maxLength > 0 ? substr($value, 0, $maxLength) : $value;
-            $this->attributes['value'] = $value;
-            break;
+            case 'Textarea':
+            case 'TextArea':
+            case 'Text':
+                // $maxLength = intval(Arr::get($this->options, 'maxLength'));
+                // $this->attributes['value'] = $maxLength && $maxLength > 0 ? substr($value, 0, $maxLength) : $value;
+                $this->attributes['value'] = $value;
+                break;
 
-        default:
-            $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
-            break;
+            default:
+                $this->attributes['value'] = is_array($value) ? json_encode($value) : $value;
+                break;
         }
     }
 
@@ -320,23 +321,23 @@ class Metadata extends Model
     {
         $value = Arr::get($this->attributes, 'value');
         switch ($this->type) {
-        case 'File':
-        case 'Image':
-        case 'Video':
-        case 'Google Drive':
-            $value = is_array($value) ? $value : (json_decode($value, true) ?? []);
-            if (is_array($value)) {
-                $value = array_merge($this->defaultValue(), $value);
-                $value['simple_type'] = Arr::get($value, 'type') ?? static::DEFAULT_SIMPLE_TYPE;
-            }
-            if ($this->type !== 'Google Drive' && is_array($value)) {
-                $value = $this->ensureValueFileUrl($value);
-            }
-            break;
+            case 'File':
+            case 'Image':
+            case 'Video':
+            case 'Google Drive':
+                $value = is_array($value) ? $value : (json_decode($value, true) ?? []);
+                if (is_array($value)) {
+                    $value = array_merge($this->defaultValue(), $value);
+                    $value['simple_type'] = Arr::get($value, 'type') ?? static::DEFAULT_SIMPLE_TYPE;
+                }
+                if ($this->type !== 'Google Drive' && is_array($value)) {
+                    $value = $this->ensureValueFileUrl($value);
+                }
+                break;
 
-        default:
-            $value = json_decode($value, true) ?? $value;
-            break;
+            default:
+                $value = json_decode($value, true) ?? $value;
+                break;
         }
         return $value;
     }
@@ -366,9 +367,9 @@ class Metadata extends Model
     public function getVariableAttribute()
     {
         if ($this->name) {
-            $tokenized =  StringHelper::tokenize(
+            $tokenized = StringHelper::tokenize(
                 [
-                substr($this->name, 0, 16) . $this->id => 'Value of: ' . $this->name
+                    substr($this->name, 0, 16) . $this->id => 'Value of: ' . $this->name
                 ]
             );
             return [
@@ -400,7 +401,7 @@ class Metadata extends Model
     }
 
     /**
-     * @param array $value
+     * @param iterable$value
      *
      * @return array
      */
@@ -417,7 +418,8 @@ class Metadata extends Model
     {
         return $query->whereIsRequired(true)
             ->orHas(
-                'linkedMetadata', function ($query) {
+                'linkedMetadata',
+                function ($query) {
                     $query->isRequired();
                 }
             );
@@ -442,7 +444,7 @@ class Metadata extends Model
     /**
      * Store an uploaded file
      *
-     * @param  UploadedFile $value
+     * @param UploadedFile $value
      * @return void
      */
     private function storeFileValue(UploadedFile $value): void

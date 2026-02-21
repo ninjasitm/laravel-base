@@ -14,8 +14,8 @@ class SanitizesData
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -31,7 +31,7 @@ class SanitizesData
     /**
      * Clean the request's data
      *
-     * @param  \Symfony\Component\HttpFoundation\ParameterBag $bag
+     * @param \Symfony\Component\HttpFoundation\ParameterBag $bag
      * @return void
      */
     private function clean(ParameterBag $bag)
@@ -41,14 +41,15 @@ class SanitizesData
     /**
      * Cleanup the code for when javascript sends undefined properties
      *
-     * @param  array $data
+     * @param iterable$data
      * @return array
      */
     private function cleanData(array $data)
     {
         return collect($data)->map(
             function ($value, $key) {
-                if (is_string($value)
+                if (
+                    is_string($value)
                     && $value === 'null'
                     || $value === 'undefined'
                     && $value !== 0
@@ -58,7 +59,8 @@ class SanitizesData
                 }
                 if (is_array($value)) {
                     return array_filter(
-                        $this->cleanData($value), function ($value) {
+                        $this->cleanData($value),
+                        function ($value) {
                             return $value !== null;
                         }
                     );

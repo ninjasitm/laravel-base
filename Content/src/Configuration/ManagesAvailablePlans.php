@@ -99,7 +99,7 @@ trait ManagesAvailablePlans
     /**
      * Define or retrieve an application wide promotion for new registrations.
      *
-     * @param  string|null $coupon
+     * @param string|null $coupon
      * @return static|string
      */
     public static function promotion($coupon = null)
@@ -116,7 +116,7 @@ trait ManagesAvailablePlans
     /**
      * Get or set the number of days for the generic trial.
      *
-     * @param  int|null $trialDays
+     * @param int|null $trialDays
      * @return static|int
      */
     public static function trialDays($trialDays = null)
@@ -133,7 +133,7 @@ trait ManagesAvailablePlans
     /**
      * Get or set the number of days for the generic team trial.
      *
-     * @param  int|null $teamTrialDays
+     * @param int|null $teamTrialDays
      * @return static|int
      */
     public static function teamTrialDays($teamTrialDays = null)
@@ -150,7 +150,7 @@ trait ManagesAvailablePlans
     /**
      * Create a new free plan instance.
      *
-     * @param  string $name
+     * @param string $name
      * @return \Nitm\Content\Plan
      */
     public static function freePlan($name = 'Free')
@@ -161,7 +161,7 @@ trait ManagesAvailablePlans
     /**
      * Create a new free team plan instance.
      *
-     * @param  string $name
+     * @param string $name
      * @return \Nitm\Content\Models\TeamPlan
      */
     public static function freeTeamPlan($name = 'Free')
@@ -172,8 +172,8 @@ trait ManagesAvailablePlans
     /**
      * Create a new plan instance.
      *
-     * @param  string $name
-     * @param  string $id
+     * @param string $name
+     * @param string $id
      * @return \Nitm\Content\Plan
      */
     public static function plan($name, $id)
@@ -186,8 +186,8 @@ trait ManagesAvailablePlans
     /**
      * Create a new team plan instance.
      *
-     * @param  string $name
-     * @param  string $id
+     * @param string $name
+     * @param string $id
      * @return \Nitm\Content\Models\TeamPlan
      */
     public static function teamPlan($name, $id)
@@ -364,7 +364,7 @@ trait ManagesAvailablePlans
      */
     public static function onlyTeamPlans()
     {
-        return static::plans()->isEmpty() && ! static::teamPlans()->isEmpty();
+        return static::plans()->isEmpty() && !static::teamPlans()->isEmpty();
     }
 
     /**

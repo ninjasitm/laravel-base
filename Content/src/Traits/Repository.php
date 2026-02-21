@@ -2,7 +2,7 @@
 
 namespace Nitm\Content\Traits;
 
-use DB;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -18,9 +18,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Nitm\Content\Traits\RepositorySyncsRelations;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
-use Illuminate\Contracts\Pagination\CursorPaginator as CursorPaginatorContract;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 
 /**
  * Traits for Model.
@@ -81,7 +78,7 @@ trait Repository
     /**
      * Allow the user to define the fields to return for the collection
      *
-     * @param  Collection|Paginator|LengthAwarePaginator $collection
+     * @param Collection|Paginator|LengthAwarePaginator $collection
      *
      * @return Collection|Paginator|LengthAwarePaginator
      */
@@ -131,8 +128,8 @@ trait Repository
     /**
      * Get Meta Input
      *
-     * @param  mixed $key
-     * @param  mixed $default
+     * @param mixed $key
+     * @param mixed $default
      *
      * @return mixed
      */
@@ -148,12 +145,12 @@ trait Repository
     /**
      * Paginate records for scaffold.
      *
-     * @param  int   $perPage
-     * @param  array $columns
+     * @param int   $perPage
+     * @param iterable $columns
      *
-     * @return LengthAwarePaginatorContract
+     * @return LengthAwarePaginator
      */
-    public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginatorContract
+    public function paginate($perPage, $columns = ['*']): ?LengthAwarePaginator
     {
         $query = $this->allQuery();
 
@@ -163,15 +160,15 @@ trait Repository
     /**
      * Paginate the given query using the request
      *
-     * @param  mixed $request
-     * @param  mixed $query
-     * @param  string $using The paginator mathod to use
-     * @param  integer $perPage
-     * @param  array $columns
-     * @param  string $page
-     * @param  string $position
+     * @param mixed $request
+     * @param mixed $query
+     * @param string $using The paginator mathod to use
+     * @param integer $perPage
+     * @param iterable $columns
+     * @param string $page
+     * @param string $position
      *
-     * @return LengthAwarePaginatorContract|CursorPaginatorContract|PaginatorContract
+     * @return LengthAwarePaginator|CursorPaginator|Paginator
      */
     public function paginateUsing(Request $request, $query, $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null)
     {
@@ -216,7 +213,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param  array|Collection $data
+     * @param array|Collection $data
      * @return Builder
      */
     public function search($data = []): ?Builder
@@ -227,7 +224,7 @@ trait Repository
     /**
      * Search for data on the model
      *
-     * @param  array $data
+     * @param iterable$data
      * @return Builder
      */
     public function trashedSearch($data = []): ?Builder
@@ -238,9 +235,9 @@ trait Repository
     /**
      * Build a query for retrieving all records.
      *
-     * @param  array    $search
-     * @param  int|null $skip
-     * @param  int|null $limit
+     * @param iterable   $search
+     * @param int|null $skip
+     * @param int|null $limit
      * @return Builder
      */
     public function allQuery($search = [], $skip = null, $limit = null): ?Builder
@@ -261,10 +258,10 @@ trait Repository
     /**
      * Retrieve all records with given filter criteria
      *
-     * @param array    $search
+     * @param iterable   $search
      * @param int|null $skip
      * @param int|null $limit
-     * @param array    $columns
+     * @param iterable   $columns
      *
      * @return Collection|static[]
      */
@@ -278,7 +275,7 @@ trait Repository
     /**
      * Create model record
      *
-     * @param array $input
+     * @param iterable$input
      *
      * @return Model Return an up to date fresh model
      */
@@ -311,8 +308,8 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
-     * @param array $columns
+     * @param callable|string|int|iterable|Model   $id
+     * @param iterable $columns
      *
      * @throws ModelNotFoundException
      *
@@ -343,10 +340,10 @@ trait Repository
         } else if (is_numeric($id)) {
             $query->where('id', $id);
         } else if (is_string($id)) {
-            if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
+            if ($this->getKeyName() == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
-                $query->where('id', (int)$id);
+                $query->where('id', (int) $id);
             }
         } elseif (is_array($id) || is_callable($id)) {
             $query->where($id);
@@ -357,8 +354,8 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
-     * @param array $columns
+     * @param callable|string|int|iterable|Model   $id
+     * @param iterable $columns
      * @param string $key
      * @param boolean $silently
      *
@@ -381,7 +378,7 @@ trait Repository
         $exists = $this->existsOrFail($id, $key, $silently);
 
         if (!$exists && $silently) {
-            return false;
+            return null;
         }
 
         if (is_callable($id)) {
@@ -392,9 +389,9 @@ trait Repository
             if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
-                $query->where($key, (int)$id);
+                $query->where($key, (int) $id);
             }
-        } elseif (is_array($id) || is_callable($id)) {
+        } elseif (is_array($id) || is_callable($id) || $id instanceof Collection) {
             $query->where($id);
         }
         return $query->get($columns)->first();
@@ -403,7 +400,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
+     * @param callable|string|int|iterable|Model   $id
      * @param string $key
      * @param boolean $silently
      *
@@ -413,6 +410,10 @@ trait Repository
      */
     public function existsOrFail($id, $key = 'id', $silently = false): ?bool
     {
+        if ($id instanceof Model) {
+            $id = $id->id;
+        }
+
         $query = $this->model->newQuery();
 
         $id = is_object($id) ? $id->id : $id;
@@ -422,9 +423,9 @@ trait Repository
             if ($key == 'id' && $this->model->hasTrait('\Nitm\Content\Traits\SetUuid')) {
                 $query->whereUuid($id);
             } else {
-                $query->where($key, (int)$id);
+                $query->where($key, (int) $id);
             }
-        } elseif (is_array($id)) {
+        } elseif (is_array($id) || $id instanceof Collection) {
             $query->where($id);
         } else {
             throw new \Exception('Invalid type for id. Expecting one of [string, integer, boolean, float, array]. Received ' . gettype($id));
@@ -442,8 +443,8 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
-     * @param array $columns
+     * @param callable|string|int|iterable|Model   $id
+     * @param iterable $columns
      * @param string $key
      * @param boolean $silently
      *
@@ -458,7 +459,7 @@ trait Repository
         $exists = $this->trashedExistsOrFail($id, $key, $silently);
 
         if (!$exists) {
-            return false;
+            return null;
         }
 
         return $query->withTrashed()->find($id, $columns);
@@ -467,7 +468,7 @@ trait Repository
     /**
      * Find model record for given id
      *
-     * @param int   $id
+     * @param callable|string|int|iterable|Model   $id
      * @param string $key
      * @param boolean $silently
      *
@@ -555,14 +556,12 @@ trait Repository
      *
      * @return void
      */
-    public function syncData(BaseModel|Model $model, array|Collection $data = [])
-    {
-    }
+    public function syncData(BaseModel|Model $model, array|Collection $data = []) {}
 
     /**
      * Import models
      *
-     * @param array $data
+     * @param iterable$data
      *
      * @return array
      */

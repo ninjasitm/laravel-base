@@ -25,7 +25,7 @@ class UpdateStripePaymentMethod implements UpdatePaymentMethod
             );
         }
 
-        if (! $billable->stripe_id) {
+        if (!$billable->stripe_id) {
             $billable->createAsStripeCustomer();
         }
 
@@ -35,13 +35,13 @@ class UpdateStripePaymentMethod implements UpdatePaymentMethod
     /**
      * Get the repository class name for a given billable instance.
      *
-     * @param  mixed $billable
+     * @param mixed $billable
      * @return string
      */
     protected function updateBillingAddressMethod($billable)
     {
         return ($billable instanceof User
-                    ? UserRepository::class
-                    : TeamRepository::class).'@updateBillingAddress';
+            ? UserRepository::class
+            : TeamRepository::class) . '@updateBillingAddress';
     }
 }

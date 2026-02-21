@@ -7,8 +7,8 @@ interface UpdateTeamPhoto
     /**
      * Get a validator instance for the given data.
      *
-     * @param  \Nitm\Content\Models\Team $team
-     * @param  array                     $data
+     * @param \Nitm\Content\Models\Team $team
+     * @param iterable                    $data
      * @return \Illuminate\Validation\Validator
      */
     public function validator($team, array $data);
@@ -16,8 +16,8 @@ interface UpdateTeamPhoto
     /**
      * Update the team's photo.
      *
-     * @param  \Nitm\Content\Models\Team $team
-     * @param  array                     $data
+     * @param \Nitm\Content\Models\Team $team
+     * @param iterable                    $data
      * @return \Nitm\Content\Models\Team
      */
     public function handle($team, array $data);

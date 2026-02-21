@@ -21,8 +21,8 @@ class TeamOwnerAdded
     /**
      * Create a new event instance.
      *
-     * @param  \Nitm\Content\Models\Team $team
-     * @param  mixed                     $owner
+     * @param \Nitm\Content\Models\Team $team
+     * @param mixed                     $owner
      * @return void
      */
     public function __construct($team, $owner)

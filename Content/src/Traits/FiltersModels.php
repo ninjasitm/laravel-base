@@ -87,12 +87,20 @@ trait FiltersModels
                     $returnType = $reflectionMethod->getReturnType();
                     // \Log::info("{$reflectionMethod->getName()} | Return type: $returnType\n");
                     if ($returnType) {
-                        if (in_array(class_basename($returnType->getName()), [
-                            'Relation',
-                            'HasOne', 'HasMany', 'BelongsTo',
-                            'BelongsToMany', 'MorphToMany', 'MorphTo',
-                            'HasOneThrough', 'HasManyThrough', 'MorphMany'
-                        ])) {
+                        if (
+                            in_array(class_basename($returnType->getName()), [
+                                'Relation',
+                                'HasOne',
+                                'HasMany',
+                                'BelongsTo',
+                                'BelongsToMany',
+                                'MorphToMany',
+                                'MorphTo',
+                                'HasOneThrough',
+                                'HasManyThrough',
+                                'MorphMany'
+                            ])
+                        ) {
                             $relations[$reflectionMethod->name] = true;
                         }
                     }
@@ -101,10 +109,10 @@ trait FiltersModels
             }
         );
     }
-    
+
     /**
      * Filter the given relation by the name
-     * 
+     *
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
@@ -119,7 +127,7 @@ trait FiltersModels
             $data = collect(is_array($data) ? $data : [$data]);
         }
         if ($data->count()) {
-            $method = $exclusive? 'whereHas' : 'orWhereHas';
+            $method = $exclusive ? 'whereHas' : 'orWhereHas';
             $query->$method(
                 $relationName,
                 function ($query) use ($data) {
@@ -138,11 +146,11 @@ trait FiltersModels
 
     /**
      * Filter by the given relation
-     * 
+     *
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
-     * @param array $morphable
+     * @param iterable$morphable
      * @param bool $exclusive
      * @return mixed
      *
@@ -152,14 +160,14 @@ trait FiltersModels
     {
         $this->filterByRelation($query, $relationName, $data, $exclusive);
     }
-    
+
     /**
      * Filter the given morph relation by the name
-     * 
+     *
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
-     * @param array $morphable
+     * @param iterable$morphable
      * @param bool $exclusive
      * @return mixed
      *
@@ -190,11 +198,11 @@ trait FiltersModels
 
     /**
      * Filter by the morphable relation
-     * 
+     *
      * @param mixed $query
      * @param string $relationName
      * @param mixed $data
-     * @param array $morphable
+     * @param iterable$morphable
      * @param bool $exclusive
      * @return mixed
      *
@@ -208,8 +216,8 @@ trait FiltersModels
     /**
      * Filter By Created
      *
-     * @param  mixed $query
-     * @param  mixed $value
+     * @param mixed $query
+     * @param mixed $value
      * @return void
      */
     public function scopeFilterByCreatedAt($query, $value)
@@ -220,8 +228,8 @@ trait FiltersModels
     /**
      * Filter By Updated
      *
-     * @param  mixed $query
-     * @param  mixed $value
+     * @param mixed $query
+     * @param mixed $value
      * @return void
      */
     public function scopeFilterByUpdatedAt($query, $value)
@@ -232,23 +240,25 @@ trait FiltersModels
     /**
      * Filter By Date
      *
-     * @param  mixed $query
-     * @param  mixed $field
-     * @param  mixed $value
+     * @param mixed $query
+     * @param mixed $field
+     * @param mixed $value
      * @return void
      */
     public function filterByDate($query, $value, $field = 'created_at')
     {
-        if (is_array($value) && !empty(array_filter($value, function ($value) {
-            $isStringDate = (is_string($value) && DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false);
-            $isTimestamp = ((string) (int) $value === (string) $value) && ($value <= PHP_INT_MAX) && ($value >= ~PHP_INT_MAX);
-            return $isStringDate || $isTimestamp;
-        }))) {
+        if (
+            is_array($value) && !empty(array_filter($value, function ($value) {
+                $isStringDate = (is_string($value) && DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false);
+                $isTimestamp = ((string) (int) $value === (string) $value) && ($value <= PHP_INT_MAX) && ($value >= ~PHP_INT_MAX);
+                return $isStringDate || $isTimestamp;
+            }))
+        ) {
             $start = Carbon::parse(array_shift($value));
             $end = empty($value) ? Carbon::now() : Carbon::parse(array_pop($value));
             $query->whereBetween($field, [$start, $end]);
         } else if (is_string($value)) {
-            $query->where($field, Carbon::parse((string)$value));
+            $query->where($field, Carbon::parse((string) $value));
         }
     }
 }

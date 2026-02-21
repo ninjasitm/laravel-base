@@ -204,7 +204,7 @@ class Favorite extends BaseAction
      * Custom Find a model by custom keys.
      *
      * @param mixed $id
-     * @param array $columns
+     * @param iterable $columns
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
@@ -223,7 +223,7 @@ class Favorite extends BaseAction
     /**
      * Custom Find a model by custom keys.
      *
-     * @param array $params
+     * @param iterable$params
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */

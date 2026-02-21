@@ -23,9 +23,9 @@ class StringHelper
     /**
      * Translate the given message.
      *
-     * @param  string  $key
-     * @param  array  $replace
-     * @param  string  $locale
+     * @param string  $key
+     * @param iterable $replace
+     * @param string  $locale
      * @return string|array|null
      */
     public static function __($key, $replace = [], $locale = null)

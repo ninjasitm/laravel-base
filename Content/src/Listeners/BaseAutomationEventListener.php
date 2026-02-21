@@ -86,7 +86,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Handle the event.
      *
-     * @param  object $event
+     * @param object $event
      * @return void
      */
     public function handle($event)
@@ -221,7 +221,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get Event Contruct Params
      *
-     * @param  mixed $event
+     * @param mixed $event
      * @return array
      */
     public function getEventContructParams($event): array
@@ -237,7 +237,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Has Event Constructor Mappting For the given class
      *
-     * @param  mixed $event
+     * @param mixed $event
      * @return bool
      */
     protected function hasEventConstructorMappingFor(string $event): bool
@@ -248,7 +248,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * hasEventConstructorMapptingFor
      *
-     * @param  mixed $event
+     * @param mixed $event
      * @return callable
      */
     protected function extractEventConstructorParamatersFor(string $event): callable
@@ -271,7 +271,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the user from the event
      *
-     * @param  mixed $event
+     * @param mixed $event
      * @return Team
      */
     protected function getTeam($event)
@@ -282,7 +282,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the user from the event
      *
-     * @param  mixed $event
+     * @param mixed $event
      * @return User
      */
     protected function getOwner($event)
@@ -296,7 +296,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the user from the event
      *
-     * @param  mixed $event
+     * @param mixed $event
      * @return Collection
      */
     protected function getUsers($event): Collection
@@ -317,7 +317,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Core Data
      *
-     * @param  mixed $team
+     * @param mixed $team
      * @return array
      */
     protected function getCoreData($event): array
@@ -341,7 +341,7 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Team Data
      *
-     * @param  mixed $team
+     * @param mixed $team
      * @return array
      */
     protected function getTeamData(Team $team): array
@@ -358,8 +358,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the event Message
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getMessage($event): string
@@ -370,8 +370,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Action Text
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionText($event): string
@@ -382,8 +382,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get Message Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageData($event): array
@@ -399,8 +399,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Message For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getMessageForAdmin($event): string
@@ -411,8 +411,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Message For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getMessageForOwner($event): string
@@ -423,8 +423,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get Message Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageDataForOwner($event): array
@@ -437,8 +437,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Action Text For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionTextForAdmin($event): string
@@ -449,8 +449,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get Message Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageDataForAdmin($event): array
@@ -463,8 +463,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getDataForAdmin($event): array
@@ -478,8 +478,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Params For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageParamsForAdmin($event): array
@@ -491,8 +491,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get Data
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getData($event): array
@@ -528,8 +528,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the event Params
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return array
      */
     public function getMessageParams($event): array
@@ -543,8 +543,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Action Url
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionUrl($event): string
@@ -555,8 +555,8 @@ abstract class BaseAutomationEventListener implements ListensToAutomationEvents
     /**
      * Get the Action Url For Admin
      *
-     * @param  mixed $team
-     * @param  mixed $event
+     * @param mixed $team
+     * @param mixed $event
      * @return string
      */
     public function getActionUrlForAdmin($event): string

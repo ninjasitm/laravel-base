@@ -4,6 +4,7 @@ namespace Nitm\Content\Models;
 
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Nitm\Helpers\ImageHelper;
 use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Models\BaseModel as Model;
@@ -55,15 +56,15 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'id'           => 'integer',
-        'user_id'      => 'integer',
-        'title'        => 'string',
-        'slug'         => 'string',
-        'excerpt'      => 'string',
-        'content'      => 'string',
+        'id' => 'integer',
+        'user_id' => 'integer',
+        'title' => 'string',
+        'slug' => 'string',
+        'excerpt' => 'string',
+        'content' => 'string',
         'content_html' => 'string',
         'published_at' => 'datetime',
-        'published'    => 'boolean',
+        'published' => 'boolean',
     ];
 
     /**
@@ -97,7 +98,7 @@ class Post extends Model
                     $model->published_at = \Carbon\Carbon::now();
                 }
                 if (!Arr::get($model->getAttributes(), 'slug', false)) {
-                    $model->slug = \Auth::getUser()->username . '-' . str_slug($model->getAttribute("title"));
+                    $model->slug = \Auth::getUser()->username . '-' . Str::slug($model->getAttribute("title"));
                 }
                 if (!Arr::get($model->attributes, 'excerpt', false)) {
                     $model->excerpt = substr(strip_tags($model->getAttribute("content")), 0, 140);
@@ -113,10 +114,10 @@ class Post extends Model
      */
     public function toArray($fullContent = false): array
     {
-        $attributes           = parent::toArray();
-        $genericAvatar        = ImageHelper::getPlaceHolderAvatar();
+        $attributes = parent::toArray();
+        $genericAvatar = ImageHelper::getPlaceHolderAvatar();
         $attributes['author'] = [
-            'name'  => $this->user ? $this->user->name : 'NITM',
+            'name' => $this->user ? $this->user->name : 'NITM',
             'image' => $this->user ? ($this->user->avatar ? $this->user->avatar->getPath() : $genericAvatar) : $genericAvatar,
         ];
         // $attributes['image'] = $this->images->count() ? $this->images->first()->getPath() : ImageHelper::getPlaceHolderBackground();
@@ -171,7 +172,7 @@ class Post extends Model
      *
      * @param string  $type    The list type
      * @param Builder $query   The query being filtered
-     * @param array   $options The items that make upthe filter
+     * @param iterable  $options The items that make upthe filter
      */
     public function scopeFilterByCategory($query, $categories)
     {
@@ -200,8 +201,8 @@ class Post extends Model
     /**
      * Allows filtering for specifc categories.
      *
-     * @param  Illuminate\Query\Builder $query      QueryBuilder
-     * @param  array                    $categories List of category ids
+     * @param Illuminate\Query\Builder $query      QueryBuilder
+     * @param iterable                   $categories List of category ids
      * @return Illuminate\Query\Builder              QueryBuilder
      */
     public function scopeFilterCategories($query, $categories)
@@ -272,8 +273,8 @@ class Post extends Model
      *     // Get the previous post, ordered by the ID attribute instead
      *     Post::applySibling(['direction' => -1, 'attribute' => 'id'])->first();
      *
-     * @param  $query
-     * @param  array $options
+     * @param $query
+     * @param iterable$options
      * @return
      */
     public function scopeApplySibling($query, $options = [])
@@ -292,8 +293,8 @@ class Post extends Model
             )
         );
 
-        $isPrevious        = in_array($direction, ['previous', -1]);
-        $directionOrder    = $isPrevious ? 'asc' : 'desc';
+        $isPrevious = in_array($direction, ['previous', -1]);
+        $directionOrder = $isPrevious ? 'asc' : 'desc';
         $directionOperator = $isPrevious ? '>' : '<';
 
         $query->where('id', '<>', $this->id);

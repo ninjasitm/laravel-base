@@ -17,7 +17,7 @@ class DisableTwoFactorAuthUsingAuthy implements Contract
     /**
      * Create a new interaction instance.
      *
-     * @param  \Nitm\Content\Services\Security\Authy $authy
+     * @param \Nitm\Content\Services\Security\Authy $authy
      * @return void
      */
     public function __construct(Authy $authy)
@@ -34,7 +34,7 @@ class DisableTwoFactorAuthUsingAuthy implements Contract
 
         $user->forceFill(
             [
-            'authy_id' => null,
+                'authy_id' => null,
             ]
         )->save();
 
