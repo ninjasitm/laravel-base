@@ -1,0 +1,12 @@
+---
+description: Component structure and organization standards
+globs:
+alwaysApply: agent
+---
+
+- Organize classes by domain layer (`Http`, `Models`, `Repositories`, `Traits`, `Providers`).
+- Follow layered package module patterns for all classes.
+- Use clear and descriptive naming for props, events, and methods.
+- Keep logic within components focused and manageable.
+- Add code comments for complex logic or non-obvious implementations.
+- Use bracketed identifiers for logs: `[ComponentName]: message`.

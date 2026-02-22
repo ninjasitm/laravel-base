@@ -6,22 +6,21 @@
 
 namespace Nitm\Content\Http\Controllers\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
-use Nitm\Content\Models\Model;
-use Illuminate\Support\Collection;
-use Illuminate\Pagination\Paginator;
-use Nitm\Content\Jobs\RecordActivity;
-use Illuminate\Database\Query\Builder;
-use InfyOm\Generator\Utils\ResponseUtil;
-use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Pagination\CursorPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use InfyOm\Generator\Utils\ResponseUtil;
+use Nitm\Content\Jobs\RecordActivity;
+use Nitm\Content\Models\Model;
 
-trait CustomControllerTrait
-{
+trait CustomControllerTrait {
     /**
      * The model that should be used for pagination.
      *
@@ -58,8 +57,7 @@ trait CustomControllerTrait
      *
      * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
-    public function paginate(Request $request, $query)
-    {
+    public function paginate(Request $request, $query) {
         return $this->afterPaginate($request, $query, 'paginate');
     }
 
@@ -71,8 +69,7 @@ trait CustomControllerTrait
      *
      * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
-    public function cursorPaginate(Request $request, $query)
-    {
+    public function cursorPaginate(Request $request, $query) {
         return $this->afterPaginate($request, $query, 'cursorPaginate');
     }
 
@@ -84,8 +81,7 @@ trait CustomControllerTrait
      *
      * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
-    public function simplePaginate(Request $request, $query)
-    {
+    public function simplePaginate(Request $request, $query) {
         return $this->afterPaginate($request, $query, 'simplePaginate');
     }
 
@@ -102,9 +98,8 @@ trait CustomControllerTrait
      *
      * @return LengthAwarePaginator|CursorPaginator|Paginator|array A paginator result
      */
-    public function afterPaginate(Request $request, $query, string $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null): LengthAwarePaginator|CursorPaginator|Paginator|array
-    {
-        $page = $position ?: abs(intval($request->get('page')));
+    public function afterPaginate(Request $request, $query, string $using = 'paginate', $perPage = null, $columns = ['*'], $name = 'page', $position = null): LengthAwarePaginator | CursorPaginator | Paginator | array {
+        $page    = $position ?: abs(intval($request->get('page')));
         $perPage = $perPage ?: abs(intval($request->get('perPage', $this->perPage)));
         if (strtolower($using) === 'cursorpaginate') {
             // The 4th argument to cursorPaginate is a cursor and is notably different from simplePaginate and paginate
@@ -119,11 +114,11 @@ trait CustomControllerTrait
 
         $this->beforePaginateTransform($request, $paginator);
 
-        $fields = request()->input('_fields');
+        $fields    = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = array_merge((array) $fields, (array) $relations);
 
-        if (!empty($allFields)) {
+        if (! empty($allFields)) {
             $paginator->getCollection()->transform(
                 function ($data) use ($allFields) {
                     if ($data instanceof Model || is_array($data)) {
@@ -141,7 +136,7 @@ trait CustomControllerTrait
             // Work around for chunking cursor pagination
             // TODO: See if Laravel resolves this
             if (strtolower($using) == 'cursorpaginate') {
-                $result = $paginator->toArray();
+                $result         = $paginator->toArray();
                 $result['data'] = $paginator->getCollection()->chunk($chunk)->map(
                     function ($group) {
                         return $group->values();
@@ -168,7 +163,7 @@ trait CustomControllerTrait
      *
      * @return void
      */
-    protected function beforePaginateTransform(Request $request, LengthAwarePaginator|CursorPaginator|Paginator $paginator) {}
+    protected function beforePaginateTransform(Request $request, LengthAwarePaginator | CursorPaginator | Paginator $paginator) {}
 
     /**
      * Make a response and append meta if needed.
@@ -178,9 +173,12 @@ trait CustomControllerTrait
      *
      * @return array
      */
-    protected function makeResponse($data, $message = 'Success!')
-    {
-        $result = $this->appendMeta(ResponseUtil::makeResponse($message, $data));
+    protected function makeResponse($data, $message = 'Success!') {
+        $response = class_exists(ResponseUtil::class)
+            ? ResponseUtil::makeResponse($message, $data)
+            : ['success' => true, 'message' => $message, 'data' => $data];
+
+        $result = $this->appendMeta($response);
         return $result;
     }
 
@@ -192,8 +190,7 @@ trait CustomControllerTrait
      * @param mixed $code
      * @return \Illuminate\Http\JsonResponse
      */
-    public function sendResponse($result, $message, $code = 200)
-    {
+    public function sendResponse($result, $message, $code = 200) {
         // 15 = Symfony\Component\HttpFoundation::DEFAULT_ENCODING_OPTIONS
         return response()->json($this->makeResponse($result, $message), $code, [], 15 | JSON_INVALID_UTF8_SUBSTITUTE);
     }
@@ -208,9 +205,13 @@ trait CustomControllerTrait
      * @return \Illuminate\Http\JsonResponse
      * ```
      */
-    public function sendError($result, $message, $code = 400)
-    {
-        return response()->json(ResponseUtil::makeError($message, is_array($result) ? $result : [$result]), $code);
+    public function sendError($result, $message, $code = 400) {
+        $errors   = is_array($result) ? $result : [$result];
+        $response = class_exists(ResponseUtil::class)
+            ? ResponseUtil::makeError($message, $errors)
+            : ['success' => false, 'message' => $message, 'data' => $errors];
+
+        return response()->json($response, $code);
     }
 
     /**
@@ -221,10 +222,9 @@ trait CustomControllerTrait
      *
      * @return mixed
      */
-    protected function getMetaInput($key, $default = null)
-    {
+    protected function getMetaInput($key, $default = null) {
         $value = request()->input($key);
-        if (!$value) {
+        if (! $value) {
             return $default;
         }
         return is_array($value) ? $value : (json_decode($value, true) ?? $value);
@@ -236,8 +236,7 @@ trait CustomControllerTrait
      * @param mixed $meta
      * @return void
      */
-    protected function addMeta($meta = [])
-    {
+    protected function addMeta($meta = []) {
         $this->responseMeta = array_merge($this->responseMeta, $meta);
     }
 
@@ -247,8 +246,7 @@ trait CustomControllerTrait
      * @param mixed $meta
      * @return void
      */
-    protected function setMeta($meta = [])
-    {
+    protected function setMeta($meta = []) {
         $this->responseMeta = $meta;
     }
 
@@ -258,9 +256,8 @@ trait CustomControllerTrait
      * @param mixed $data
      * @return array
      */
-    protected function appendMeta($data)
-    {
-        if (!empty($this->responseMeta)) {
+    protected function appendMeta($data) {
+        if (! empty($this->responseMeta)) {
             if ($data instanceof Collection || $data instanceof Paginator || $data instanceof Model || $data instanceof LengthAwarePaginator) {
                 $data = $data->toArray();
             }
@@ -280,12 +277,11 @@ trait CustomControllerTrait
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function printSuccess(mixed $data, string $status = 'ok', int $code = 200)
-    {
-        $fields = request()->input('_fields');
+    protected function printSuccess(mixed $data, string $status = 'ok', int $code = 200) {
+        $fields    = request()->input('_fields');
         $relations = request()->input('_relations');
         $allFields = $fields !== 'all' ? array_merge((array) $fields, (array) $relations) : [];
-        if (!empty($allFields)) {
+        if (! empty($allFields)) {
             $allFields = array_merge($allFields, array_map('Str::snake', $allFields));
             if (is_array($data)) {
                 $data = Arr::only($data, $allFields);
@@ -303,9 +299,8 @@ trait CustomControllerTrait
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function printModelSuccess($model, $status = 'ok', int $code = 200)
-    {
-        if ($model instanceof Model && !empty($allWith = (array) request()->input('_with'))) {
+    protected function printModelSuccess($model, $status = 'ok', int $code = 200) {
+        if ($model instanceof Model && ! empty($allWith = (array) request()->input('_with'))) {
             foreach ($allWith as $with) {
                 try {
                     $model->load($with);
@@ -316,12 +311,12 @@ trait CustomControllerTrait
             if ($model instanceof Model && is_callable([$model, 'getCustomWith'])) {
                 try {
                     $allWith = $model->getAllWith();
-                    if (!empty($allWith)) {
+                    if (! empty($allWith)) {
                         $model->load($allWith);
                     }
 
                     $allWithCount = $model->getAllWithCount();
-                    if (!empty($allWithCount)) {
+                    if (! empty($allWithCount)) {
                         $model->loadCount($allWithCount);
                     }
                 } catch (\Exception $e) {
@@ -329,12 +324,12 @@ trait CustomControllerTrait
             } elseif (($model instanceof \Illuminate\Contracts\Support\Responsable) && property_exists($model, 'resource') && $model->resource instanceof Model && is_callable([$model, 'getCustomWith'])) {
                 try {
                     $allWith = $model->resource->getAllWith();
-                    if (!empty($allWith)) {
+                    if (! empty($allWith)) {
                         $model->resource->load($allWith);
                     }
 
                     $allWithCount = $model->resource->getAllWithCount();
-                    if (!empty($allWithCount)) {
+                    if (! empty($allWithCount)) {
                         $model->resource->loadCount($allWithCount);
                     }
                 } catch (\Exception $e) {
@@ -344,10 +339,10 @@ trait CustomControllerTrait
 
         if ($this->recordsActivity) {
             RecordActivity::dispatch(auth()->user(), $model, [
-                'ip' => request()->ip(),
+                'ip'         => request()->ip(),
                 'user_agent' => request()->userAgent(),
-                'url' => request()->url(),
-                'method' => request()->method(),
+                'url'        => request()->url(),
+                'method'     => request()->method(),
             ]);
         }
 
@@ -363,8 +358,7 @@ trait CustomControllerTrait
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    protected function printModelSuccessWithMeta($model, $status = 'ok', int $code = 200)
-    {
+    protected function printModelSuccessWithMeta($model, $status = 'ok', int $code = 200) {
         if (is_object($model) && method_exists($model, 'getMeta')) {
             $this->addMeta($model->getMeta());
         }
@@ -378,11 +372,9 @@ trait CustomControllerTrait
      * @param mixed $model
      * @return void
      */
-    protected function beforeSendModel(Request $request, $model)
-    {
+    protected function beforeSendModel(Request $request, $model) {
         // Consider adding logic here if needed
     }
-
 
     /**
      * Load a collection response
@@ -391,8 +383,7 @@ trait CustomControllerTrait
      *
      * @return LengthAwarePaginator|CursorPaginator|Paginator|array
      */
-    protected function printSuccessCollection(Collection $items)
-    {
+    protected function printSuccessCollection(Collection $items) {
         return $this->paginate(request(), new LengthAwarePaginator(['items' => $items], $items->count(), $this->perPage));
     }
 
@@ -406,14 +397,13 @@ trait CustomControllerTrait
      *
      * @return bool
      */
-    protected function existsOrFail($builder, $model, $key = 'id', $silently = false): bool
-    {
+    protected function existsOrFail($builder, $model, $key = 'id', $silently = false): bool {
         $id = is_object($model) ? $model->id : $model;
-        if (!is_scalar($id) && !is_array($id)) {
+        if (! is_scalar($id) && ! is_array($id)) {
             throw new \Exception('Invalid type for id. Expecting one of [string, integer, boolean, float, array]. Received ' . gettype($id));
         }
 
-        if (!$builder->where($key, $id)->exists()) {
+        if (! $builder->where($key, $id)->exists()) {
             if ($silently) {
                 return false;
             }
@@ -432,9 +422,8 @@ trait CustomControllerTrait
      *
      * @return bool
      */
-    protected function userOwnsOrFail(Authenticatable $user, Model|EloquentModel $model, string $property = null)
-    {
-        if (!$this->userOwns($user, $model, $property)) {
+    protected function userOwnsOrFail(Authenticatable $user, Model | EloquentModel $model, string $property = null) {
+        if (! $this->userOwns($user, $model, $property)) {
             abort(403);
         }
         return true;
@@ -449,8 +438,7 @@ trait CustomControllerTrait
      *
      * @return bool
      */
-    protected function userOwns(Authenticatable $user, Model|EloquentModel $model, string $property = null)
-    {
+    protected function userOwns(Authenticatable $user, Model | EloquentModel $model, string $property = null) {
         $property = $property ?? (property_exists($model, 'author_id') ? 'author_id' : 'user_id');
         if ($user->getAuthIdentifier() == $model->$property) {
             return true;

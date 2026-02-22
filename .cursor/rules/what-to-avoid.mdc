@@ -1,0 +1,12 @@
+---
+description: Deprecated patterns and anti-practices to avoid
+globs:
+alwaysApply: agent
+---
+
+- No deprecated Laravel features.
+- No frontend styling/CSS concerns in this backend package.
+- No frontend DOM manipulation patterns; keep package logic backend-focused.
+- No custom solutions for problems solved by core libraries.
+- No inconsistent naming for events or handlers.
+- No mixing server and client code inappropriately.

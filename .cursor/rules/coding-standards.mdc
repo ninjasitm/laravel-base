@@ -1,0 +1,11 @@
+---
+description: PHP and Laravel development standards
+globs:
+alwaysApply: agent
+---
+
+- All code must be PHP 8.0+ with strict typing where possible.
+- Follow PSR-12 formatting and package conventions.
+- Follow Laravel's recommended folder and naming conventions.
+- Keep functions focused and manageable (under 50-75 lines).
+- Use try-catch for risky operations; leverage Laravel exception handling and logging.
