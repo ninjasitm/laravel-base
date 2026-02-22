@@ -1,12 +1,10 @@
 <?php
-
 namespace Nitm\Testing;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
-trait ApiTestTrait
-{
+trait ApiTestTrait {
     /**
      * Base API URL
      *
@@ -31,12 +29,11 @@ trait ApiTestTrait
     /**
      * @inheritDoc
      */
-    public function json($method, $url, array $data = [], array $headers = [])
-    {
-        $url = ltrim($url, '/');
+    public function json($method, $uri, array $data = [], array $headers = [], $options = 0) {
+        $url    = ltrim($uri, '/');
         $apiUrl = trim($this->getApiBase($url), '/');
         echo "Url: " . strtoupper($method) . " /{$apiUrl}\n";
-        return parent::json($method, $apiUrl, $data, $headers);
+        return parent::json($method, $apiUrl, $data, $headers, $options);
     }
 
     /**
@@ -44,8 +41,7 @@ trait ApiTestTrait
      *
      * @return void
      */
-    public function ddResponseJson()
-    {
+    public function ddResponseJson() {
         dd($this->response->json());
     }
 
@@ -54,8 +50,7 @@ trait ApiTestTrait
      *
      * @return void
      */
-    public function ddResponse()
-    {
+    public function ddResponse() {
         dd($this->response);
     }
 
@@ -64,8 +59,7 @@ trait ApiTestTrait
      *
      * @return void
      */
-    public function dumpResponseJson()
-    {
+    public function dumpResponseJson() {
         dump($this->response->json());
     }
 
@@ -74,8 +68,7 @@ trait ApiTestTrait
      *
      * @return void
      */
-    public function dumpResponse()
-    {
+    public function dumpResponse() {
         dump($this->response);
     }
 
@@ -84,15 +77,14 @@ trait ApiTestTrait
      *
      * @return void
      */
-    public function dumpRoutes()
-    {
+    public function dumpRoutes() {
         $routes = collect(array_map(function (\Illuminate\Routing\Route $route) {
             return [
-                "method" => $route->methods[0],
+                "method"     => $route->methods[0],
                 // 'action' => $route->action,
                 'controller' => $route->action['controller'],
-                "uri" => $route->uri,
-                'as' => Arr::get($route->action, 'as'),
+                "uri"        => $route->uri,
+                'as'         => Arr::get($route->action, 'as'),
                 'middleware' => Arr::get($route->action, 'middleware'),
             ];
         }, (array) Route::getRoutes()->getIterator()))->keyBy('uri');
@@ -103,8 +95,7 @@ trait ApiTestTrait
     /**
      * @return string]
      */
-    public function getApiBase($url = '')
-    {
+    public function getApiBase($url = '') {
         if ($this->usesTeams) {
             $teamId = $this->team ? "{$this->team->id}" : "";
             return "{$this->apiBase}/{$this->teamsBase}/{$teamId}/" . str_replace("{$this->apiBase}", '', str_replace(ltrim($this->apiBase, '/') . '/', '', $url));
@@ -118,11 +109,10 @@ trait ApiTestTrait
      * @param mixed $actualData
      * @return void
      */
-    public function assertApiResponse(array $actualData)
-    {
+    public function assertApiResponse(array $actualData) {
         $this->assertApiSuccess();
 
-        $response = json_decode($this->response->getContent(), true);
+        $response     = json_decode($this->response->getContent(), true);
         $responseData = $response['data'];
         // $id = Arr::get($responseData, 'id') ?? Arr::get($responseData, 'uuid');
         // $this->assertNotEmpty($id);
@@ -134,8 +124,7 @@ trait ApiTestTrait
      *
      * @return void
      */
-    public function assertApiSuccess()
-    {
+    public function assertApiSuccess() {
         $this->response->assertJson(['success' => true]);
     }
 
@@ -145,8 +134,7 @@ trait ApiTestTrait
      * @param mixed $code
      * @return void
      */
-    public function assertApiResponseCode($code = 200)
-    {
+    public function assertApiResponseCode($code = 200) {
         $this->response->assertStatus($code);
     }
 
@@ -156,8 +144,7 @@ trait ApiTestTrait
      * @param mixed $code
      * @return void
      */
-    public function assertApiStatus($code = 200)
-    {
+    public function assertApiStatus($code = 200) {
         $this->assertApiResponseCode($code);
     }
 
@@ -168,8 +155,7 @@ trait ApiTestTrait
      * @param mixed $expectedData
      * @return void
      */
-    public function assertModelData(array $actualData, array $expectedData)
-    {
+    public function assertModelData(array $actualData, array $expectedData) {
         foreach ($actualData as $key => $value) {
             $this->assertEquals(Arr::get($actualData, $key, "{$key}: (not set)"), Arr::get($expectedData, $key, "{$key}: (not set)"));
         }

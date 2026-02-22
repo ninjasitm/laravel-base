@@ -1,0 +1,11 @@
+---
+description: API development and server-side implementation guidelines
+globs:
+alwaysApply: agent
+---
+
+- Define routes in Laravel route files and map to thin controllers that delegate to repositories/services.
+- Validate all input data before processing.
+- Return consistent response formats.
+- Use proper HTTP status codes.
+- Document API endpoints in `docs/api/`.
