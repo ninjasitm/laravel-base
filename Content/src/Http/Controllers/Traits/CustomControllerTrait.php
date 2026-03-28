@@ -16,7 +16,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use InfyOm\Generator\Utils\ResponseUtil;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Nitm\Content\Jobs\RecordActivity;
 use Nitm\Content\Models\Model;
 
@@ -94,7 +95,7 @@ trait CustomControllerTrait {
      * @param int|null $perPage The number of items to show per page.
      * @param iterable $columns The columns to be selected.
      * @param string $name The name of the paginator instance.
-     * @param int|null $position The page number to be returned.
+    RecordActivity::dispatch(Auth::user(), $model, [
      *
      * @return LengthAwarePaginator|CursorPaginator|Paginator|array A paginator result
      */
@@ -174,8 +175,9 @@ trait CustomControllerTrait {
      * @return array
      */
     protected function makeResponse($data, $message = 'Success!') {
-        $response = class_exists(ResponseUtil::class)
-            ? ResponseUtil::makeResponse($message, $data)
+        $responseUtilClass = 'InfyOm\Generator\Utils\ResponseUtil';
+        $response          = class_exists($responseUtilClass)
+            ? $responseUtilClass::makeResponse($message, $data)
             : ['success' => true, 'message' => $message, 'data' => $data];
 
         $result = $this->appendMeta($response);
@@ -206,9 +208,10 @@ trait CustomControllerTrait {
      * ```
      */
     public function sendError($result, $message, $code = 400) {
-        $errors   = is_array($result) ? $result : [$result];
-        $response = class_exists(ResponseUtil::class)
-            ? ResponseUtil::makeError($message, $errors)
+        $errors            = is_array($result) ? $result : [$result];
+        $responseUtilClass = 'InfyOm\Generator\Utils\ResponseUtil';
+        $response          = class_exists($responseUtilClass)
+            ? $responseUtilClass::makeError($message, $errors)
             : ['success' => false, 'message' => $message, 'data' => $errors];
 
         return response()->json($response, $code);
@@ -282,7 +285,7 @@ trait CustomControllerTrait {
         $relations = request()->input('_relations');
         $allFields = $fields !== 'all' ? array_merge((array) $fields, (array) $relations) : [];
         if (! empty($allFields)) {
-            $allFields = array_merge($allFields, array_map('Str::snake', $allFields));
+            $allFields = array_merge($allFields, array_map(fn($f) => Str::snake($f), $allFields));
             if (is_array($data)) {
                 $data = Arr::only($data, $allFields);
             } elseif ($data instanceof Model) {
@@ -338,7 +341,7 @@ trait CustomControllerTrait {
         }
 
         if ($this->recordsActivity) {
-            RecordActivity::dispatch(auth()->user(), $model, [
+            RecordActivity::dispatch(Auth::user(), $model, [
                 'ip'         => request()->ip(),
                 'user_agent' => request()->userAgent(),
                 'url'        => request()->url(),
@@ -422,7 +425,7 @@ trait CustomControllerTrait {
      *
      * @return bool
      */
-    protected function userOwnsOrFail(Authenticatable $user, Model | EloquentModel $model, string $property = null) {
+    protected function userOwnsOrFail(Authenticatable $user, Model | EloquentModel $model, ?string $property = null) {
         if (! $this->userOwns($user, $model, $property)) {
             abort(403);
         }
@@ -438,7 +441,7 @@ trait CustomControllerTrait {
      *
      * @return bool
      */
-    protected function userOwns(Authenticatable $user, Model | EloquentModel $model, string $property = null) {
+    protected function userOwns(Authenticatable $user, Model | EloquentModel $model, ?string $property = null) {
         $property = $property ?? (property_exists($model, 'author_id') ? 'author_id' : 'user_id');
         if ($user->getAuthIdentifier() == $model->$property) {
             return true;

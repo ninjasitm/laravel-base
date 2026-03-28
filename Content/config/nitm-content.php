@@ -4,11 +4,11 @@ return [
     /**
      * User model
      */
-    'user_model' => env('NITM_CONTENT_USER_MODEL', 'App\User'),
+    'user_model'         => env('NITM_CONTENT_USER_MODEL', 'App\User'),
     /**
      * User model
      */
-    'team_model' => env('NITM_CONTENT_TEAM_MODEL', 'App\Team'),
+    'team_model'         => env('NITM_CONTENT_TEAM_MODEL', 'App\Team'),
     /**
      * User profile model
      */
@@ -16,17 +16,21 @@ return [
     /**
      * The domain for the app
      */
-    'domain' => null,
+    'domain'             => null,
     /**
      * The route prefis
      */
-    'route-prefix' => 'api',
+    'route-prefix'       => 'api',
     /**
      * The extra route middleware to use
      */
-    'route-midleware' => [],
+    'route-midleware'    => [],
     /**
-     * The controller namespace for the routes
+     * The extra route middleware to use
      */
-    'route-namespace' => 'Nitm\Content\Http\Controllers'
+    'route-middleware'   => [],
+    /**
+     * The controller namespace for the routes (deprecated - no longer used for routing)
+     */
+    'route-namespace'    => 'Nitm\Content\Http\Controllers',
 ];

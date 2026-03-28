@@ -1,23 +1,20 @@
 <?php
-
 namespace Nitm\Content;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Nitm\Content\Console\Commands\SyncSequences;
 use Nitm\Content\Console\Commands\AddUserRoles;
 use Nitm\Content\Console\Commands\ForeignKeyChecks;
 use Nitm\Content\Console\Commands\ScheduleList;
+use Nitm\Content\Console\Commands\SyncSequences;
 
-class NitmContentServiceProvider extends ServiceProvider
-{
+class NitmContentServiceProvider extends ServiceProvider {
     /**
      * Bootstrap any package services.
      *
      * @return void
      */
-    public function boot()
-    {
+    public function boot() {
         $this->registerRoutes();
         $this->registerMigrations();
         $this->registerPublishing();
@@ -35,8 +32,7 @@ class NitmContentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function registerRoutes()
-    {
+    private function registerRoutes() {
         Route::group(
             $this->routeConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
@@ -49,27 +45,23 @@ class NitmContentServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    private function routeConfiguration()
-    {
+    private function routeConfiguration() {
         return [
-            'domain' => config('nitm-content.domain', null),
-            'namespace' => config('nitm-content.route-namespace'),
-            'prefix' => config('nitm-content.route-prefix'),
-            'middleware' => config('nitm-content.route-middleware'),
+            'domain'     => config('nitm-content.domain', null),
+            'prefix'     => config('nitm-content.route-prefix'),
+            'middleware' => config('nitm-content.route-middleware', config('nitm-content.route-midleware', [])),
         ];
     }
-
 
     /**
      * Define the NitmContent route model bindings.
      *
      * @return void
      */
-    protected function defineRouteBindings()
-    {
-        Route::model('team', NitmContent::teamModel());
+    protected function defineRouteBindings() {
+        Route::model('team', \Nitm\Content\NitmContent::teamModel());
 
-        Route::model('team_member', NitmContent::userModel());
+        Route::model('team_member', \Nitm\Content\NitmContent::userModel());
     }
 
     /**
@@ -77,21 +69,18 @@ class NitmContentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function registerMigrations()
-    {
-        if ($this->app->runningInConsole() && !env('NITM_CONTENT_DISABLE_MIGRATIONS')) {
+    private function registerMigrations() {
+        if ($this->app->runningInConsole() && ! env('NITM_CONTENT_DISABLE_MIGRATIONS')) {
             $this->loadMigrationsFrom(__DIR__ . '/Database/migrations');
         }
     }
 
-
     /**
      * Register the package's migrations.
      *
      * @return void
      */
-    private function registerCommands()
-    {
+    private function registerCommands() {
         if ($this->app->runningInConsole()) {
             $this->commands(
                 [
@@ -104,43 +93,41 @@ class NitmContentServiceProvider extends ServiceProvider
         }
     }
 
-
     /**
      * Register the NitmContent services.
      *
      * @return void
      */
-    protected function registerServices()
-    {
+    protected function registerServices() {
         $services = [
-            'Contracts\Repositories\AnnouncementRepository' => 'Repositories\AnnouncementRepository',
-            'Contracts\Repositories\NotificationRepository' => 'Repositories\NotificationRepository',
-            'Contracts\Repositories\TeamRepository' => 'Repositories\TeamRepository',
-            'Contracts\Repositories\UserRepository' => 'Repositories\UserRepository',
-            'Contracts\Repositories\LocalInvoiceRepository' => 'Repositories\StripeLocalInvoiceRepository',
-            'Contracts\Repositories\Geography\StateRepository' => 'Repositories\Geography\StateRepository',
-            'Contracts\Repositories\Geography\CountryRepository' => 'Repositories\Geography\CountryRepository',
-            'Contracts\Interactions\Support\SendSupportEmail' => 'Interactions\Support\SendSupportEmail',
-            'Contracts\Interactions\Subscribe' => 'Interactions\SubscribeUsingStripe',
-            'Contracts\Interactions\SubscribeTeam' => 'Interactions\SubscribeTeamUsingStripe',
-            'Contracts\Interactions\CheckPlanEligibility' => 'Interactions\CheckPlanEligibility',
-            'Contracts\Interactions\CheckTeamPlanEligibility' => 'Interactions\CheckTeamPlanEligibility',
-            'Contracts\Interactions\Profile\UpdateProfilePhoto' => 'Interactions\Profile\UpdateProfilePhoto',
-            'Contracts\Interactions\Profile\UpdateContactInformation' => 'Interactions\Profile\UpdateContactInformation',
-            'Contracts\Interactions\Teams\CreateTeam' => 'Interactions\Teams\CreateTeam',
-            'Contracts\Interactions\Teams\AddTeamMember' => 'Interactions\Teams\AddTeamMember',
-            'Contracts\Interactions\Teams\UpdateTeamMember' => 'Interactions\Teams\UpdateTeamMember',
-            'Contracts\Interactions\Teams\UpdateTeamPhoto' => 'Interactions\Teams\UpdateTeamPhoto',
-            'Contracts\Interactions\Teams\SendInvitation' => 'Interactions\Teams\SendInvitation',
-            'Contracts\Interactions\Security\EnableTwoFactorAuth' => 'Interactions\Security\EnableTwoFactorAuthUsingAuthy',
+            'Contracts\Repositories\AnnouncementRepository'            => 'Repositories\AnnouncementRepository',
+            'Contracts\Repositories\NotificationRepository'            => 'Repositories\NotificationRepository',
+            'Contracts\Repositories\TeamRepository'                    => 'Repositories\TeamRepository',
+            'Contracts\Repositories\UserRepository'                    => 'Repositories\UserRepository',
+            'Contracts\Repositories\LocalInvoiceRepository'            => 'Repositories\StripeLocalInvoiceRepository',
+            'Contracts\Repositories\Geography\StateRepository'         => 'Repositories\Geography\StateRepository',
+            'Contracts\Repositories\Geography\CountryRepository'       => 'Repositories\Geography\CountryRepository',
+            'Contracts\Interactions\Support\SendSupportEmail'          => 'Interactions\Support\SendSupportEmail',
+            'Contracts\Interactions\Subscribe'                         => 'Interactions\SubscribeUsingStripe',
+            'Contracts\Interactions\SubscribeTeam'                     => 'Interactions\SubscribeTeamUsingStripe',
+            'Contracts\Interactions\CheckPlanEligibility'              => 'Interactions\CheckPlanEligibility',
+            'Contracts\Interactions\CheckTeamPlanEligibility'          => 'Interactions\CheckTeamPlanEligibility',
+            'Contracts\Interactions\Profile\UpdateProfilePhoto'        => 'Interactions\Profile\UpdateProfilePhoto',
+            'Contracts\Interactions\Profile\UpdateContactInformation'  => 'Interactions\Profile\UpdateContactInformation',
+            'Contracts\Interactions\Teams\CreateTeam'                  => 'Interactions\Teams\CreateTeam',
+            'Contracts\Interactions\Teams\AddTeamMember'               => 'Interactions\Teams\AddTeamMember',
+            'Contracts\Interactions\Teams\UpdateTeamMember'            => 'Interactions\Teams\UpdateTeamMember',
+            'Contracts\Interactions\Teams\UpdateTeamPhoto'             => 'Interactions\Teams\UpdateTeamPhoto',
+            'Contracts\Interactions\Teams\SendInvitation'              => 'Interactions\Teams\SendInvitation',
+            'Contracts\Interactions\Security\EnableTwoFactorAuth'      => 'Interactions\Security\EnableTwoFactorAuthUsingAuthy',
             'Contracts\Interactions\Security\VerifyTwoFactorAuthToken' => 'Interactions\Security\VerifyTwoFactorAuthTokenUsingAuthy',
-            'Contracts\Interactions\Security\DisableTwoFactorAuth' => 'Interactions\Security\DisableTwoFactorAuthUsingAuthy',
+            'Contracts\Interactions\Security\DisableTwoFactorAuth'     => 'Interactions\Security\DisableTwoFactorAuthUsingAuthy',
             'Contracts\Interactions\PaymentMethod\UpdatePaymentMethod' => 'Interactions\PaymentMethod\UpdateStripePaymentMethod',
-            'Contracts\Interactions\PaymentMethod\RedeemCoupon' => 'Interactions\PaymentMethod\RedeemStripeCoupon',
+            'Contracts\Interactions\PaymentMethod\RedeemCoupon'        => 'Interactions\PaymentMethod\RedeemStripeCoupon',
         ];
 
         foreach ($services as $key => $value) {
-            $this->app->singleton('Nitm\Content\\'.$key, 'Nitm\Content\\'.$value);
+            $this->app->singleton('Nitm\Content\\' . $key, 'Nitm\Content\\' . $value);
         }
     }
 
@@ -149,12 +136,11 @@ class NitmContentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function registerPublishing()
-    {
+    private function registerPublishing() {
         if ($this->app->runningInConsole()) {
             $this->publishes(
                 [
-                __DIR__ . '/Database/migrations' => database_path('migrations'),
+                    __DIR__ . '/Database/migrations' => database_path('migrations'),
                 ], 'nitm-content-migrations'
             );
 
@@ -164,14 +150,14 @@ class NitmContentServiceProvider extends ServiceProvider
 
             $this->publishes(
                 [
-                __DIR__ . '/../publishes/config/nitm-content.php' => config_path('nitm-content.php'),
+                    __DIR__ . '/../publishes/config/nitm-content.php' => config_path('nitm-content.php'),
                 ], 'nitm-content-config'
             );
 
             $this->publishes(
                 [
-                    __DIR__.'/../stubs/Model.stub.php' => app_path('Models/Model.php'),
-                    __DIR__.'/../stubs/BaseRepository.stub.php' => app_path('Repositories/BaseRepository.php'),
+                    __DIR__ . '/../stubs/Model.stub.php'          => app_path('Models/Model.php'),
+                    __DIR__ . '/../stubs/BaseRepository.stub.php' => app_path('Repositories/BaseRepository.php'),
                 ], 'nitm-content'
             );
         }
@@ -182,11 +168,10 @@ class NitmContentServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
+    public function register() {
 
         if (! class_exists('NitmContent')) {
-            class_alias('Nitm\Content\NitmContent', 'NitmContent');
+            class_alias(\Nitm\Content\NitmContent::class, 'NitmContent');
         }
 
         $this->mergeConfigFrom(
