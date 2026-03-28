@@ -1,5 +1,4 @@
 <?php
-
 namespace Tests;
 
 use function Orchestra\Testbench\artisan;
@@ -8,15 +7,12 @@ use Nitm\Content\NitmContent;
 use Nitm\Content\NitmContentServiceProvider;
 use Nitm\Testing\ApiTestTrait;
 use Nitm\Testing\PackageTestCase as BaseTestCase;
-use Orchestra\Testbench\Attributes\WithMigration;
-use Nitm\Testing\RefreshDatabase;
-abstract class TestCase extends BaseTestCase
-{
+
+abstract class TestCase extends BaseTestCase {
     use ApiTestTrait;
     private $dbMigrated = false;
 
-    protected function getPackageProviders($app)
-    {
+    protected function getPackageProviders($app) {
         return [
             NitmContentServiceProvider::class,
         ];
@@ -27,24 +23,28 @@ abstract class TestCase extends BaseTestCase
      * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
-    protected function defineEnvironment($app)
-    {
+    protected function defineEnvironment($app) {
         NitmContent::useUserModel(User::class);
-        $app['config']->set('database.default', 'testing');
+        $app['config']->set('database.default', 'pgsql');
+        $app['config']->set('database.connections.pgsql', [
+            'driver'   => 'pgsql',
+            'host'     => env('DB_HOST', '127.0.0.1'),
+            'port'     => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'testing'),
+            'username' => env('DB_USERNAME', 'testing_user'),
+            'password' => env('DB_PASSWORD', 'testing'),
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => 'public',
+        ]);
     }
-    protected function defineDatabaseMigrations()
-    {
-        // $this->loadMigrationsFrom(
-        //     [__DIR__ . '/../Content/src/Database/migrations']
-        // );
-
-
-        if (!$this->dbMigrated) {
-            $this->artisan('migrate', ['--database' => 'testing']);
+    protected function defineDatabaseMigrations() {
+        if (! $this->dbMigrated) {
+            $this->artisan('migrate:fresh', ['--database' => 'pgsql']);
             $this->dbMigrated = true;
 
             $this->beforeApplicationDestroyed(
-                fn() => artisan($this, 'migrate:rollback', ['--database' => 'testing'])
+                fn() => artisan($this, 'migrate:rollback', ['--database' => 'pgsql'])
             );
         }
     }

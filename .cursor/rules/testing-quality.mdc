@@ -1,0 +1,11 @@
+---
+description: Testing and code quality guidelines
+globs:
+alwaysApply: agent
+---
+
+- Ensure lint, test, and build pass before committing.
+- Use PHPUnit + Orchestra Testbench for unit/component/integration tests.
+- E2E browser tests are not part of the default package workflow.
+- Place tests alongside implementation files or in `tests/` directory.
+- Aim for meaningful test coverage of business logic.
