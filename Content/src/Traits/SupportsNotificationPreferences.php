@@ -3,8 +3,8 @@
 namespace Nitm\Content\Traits;
 
 use Carbon\Carbon;
-use App\Helpers\CollectionHelper;
-use App\Models\NotificationPreference;
+use Illuminate\Support\Facades\Auth;
+use Nitm\Helpers\CollectionHelper;
 
 trait SupportsNotificationPreferences
 {
@@ -19,7 +19,7 @@ trait SupportsNotificationPreferences
 
     public function notificationPreferencesForUser()
     {
-        $id = auth()->check() ? auth()->user()->id : -1;
+        $id = Auth::check() ? Auth::user()->id : -1;
         return $this->notificationPreferences()->whereUserId($id);
     }
 

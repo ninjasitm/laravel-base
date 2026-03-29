@@ -2,7 +2,9 @@
 
 namespace Nitm\Content\Traits\User;
 
-use App\Models\NotificationPreference;
+use Nitm\Content\Models\Announcement;
+use Nitm\Content\Models\Notification;
+use Nitm\Content\Models\NotificationPreference;
 
 trait HasNotifications
 {
@@ -27,7 +29,7 @@ trait HasNotifications
 
     public function notifications()
     {
-        return $this->hasMany(\Laravel\Spark\Notification::class);
+        return $this->hasMany(Notification::class);
     }
 
     public function unreadNotifications()
@@ -37,12 +39,12 @@ trait HasNotifications
 
     public function announcements()
     {
-        return $this->hasMany(\Laravel\Spark\Announcement::class);
+        return $this->hasMany(Announcement::class);
     }
 
     public function unreadAnnouncements()
     {
-        return $this->hasMany(\Laravel\Spark\Announcement::class)
+        return $this->hasMany(Announcement::class)
             ->join('users', 'users.id', '=', 'announcements.user_id')
             ->whereRaw('announcements.created_at > users.last_read_announcements_at OR announcements.updated_at > users.last_read_announcements_at');
     }

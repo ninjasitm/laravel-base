@@ -1,24 +1,21 @@
 <?php
-
 namespace Nitm\Content\Traits;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Nitm\Content\Models\Team;
 use Nitm\Content\Models\User;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
-use PhpParser\Node\Expr\ArrayItem;
 
 /**
  * Traits for Model.
  */
-trait Model
-{
+trait Model {
     public static $tableColumns = [];
-    public static $foreignKeys = [];
+    public static $foreignKeys  = [];
 
     /**
      * Toggle a single atribute on the model
@@ -26,11 +23,10 @@ trait Model
      * @param string|array $attributes The atributes to be toggled
      * @return array The toggled attributes
      */
-    public function toggle($attributes = 'is_active')
-    {
+    public function toggle($attributes = 'is_active') {
         $allAttributes = is_array($attributes) ? $attributes : (array) $attributes;
         foreach ($allAttributes as $attribute) {
-            $newValue = $this->$attribute === true ? false : true;
+            $newValue         = $this->$attribute === true ? false : true;
             $this->$attribute = $newValue;
         }
         // $this->save();
@@ -47,10 +43,8 @@ trait Model
      *
      * @return array
      */
-    public static function getStats(array $stats, Team $team, $groups = [], User $user = null)
-    {
-        $user = $user ?: auth()->user();
-        $snakeable = array_merge(array_keys($team->featureNames ?? []), ['mentor', 'student', 'mentors', 'students']);
+    public static function getStats(array $stats, Team $team, $groups = [], ?User $user = null) {
+        $snakeable      = array_merge(array_keys($team->featureNames ?? []), ['mentor', 'student', 'mentors', 'students']);
         $availableStats = [];
         foreach ($stats as $key => $stat) {
             if (in_array($stat, $snakeable)) {
@@ -67,24 +61,23 @@ trait Model
      *
      * @return Model
      */
-    public function toRepository()
-    {
-        $class = get_class($this);
+    public function toRepository() {
+        $class           = get_class($this);
         $repositoryClass = str_replace('Nitm\Content\\Models', 'Nitm\Content\\Models\\Repositories', $class);
-        if (!class_exists($repositoryClass)) {
+        if (! class_exists($repositoryClass)) {
             $repositoryClass = 'Nitm\Content\\Models\\Repositories\\' . class_basename($class);
         }
-        if (!class_exists($repositoryClass)) {
+        if (! class_exists($repositoryClass)) {
             $repositoryClass = str_replace('Nitm\Content\\Models', 'Nitm\Content\\Repositories', class_basename($class));
         }
 
-        if (!class_exists($repositoryClass)) {
+        if (! class_exists($repositoryClass)) {
             throw new \Exception("$repositoryClass doesn't exist!");
         }
-        $model = new $repositoryClass($this->getAttributes());
-        $model->id = $this->id;
+        $model         = new $repositoryClass($this->getAttributes());
+        $model->id     = $this->id;
         $model->exists = $this->exists;
-        if (is_array($this->_relations) && !empty($this->_relations)) {
+        if (is_array($this->_relations) && ! empty($this->_relations)) {
             foreach ($this->_relations as $relation => $value) {
                 $model->setRelation($relation, $value);
             }
@@ -99,14 +92,11 @@ trait Model
      *
      * @return array
      */
-    public function getFillableForUser(User $user = null): array
-    {
-        $user = $user ?? auth()->user();
+    public function getFillableForUser(?User $user = null): array {
         return array_unique(array_merge($this->fillable, $this->getAllWith()));
     }
 
-    public static function getMacros()
-    {
+    public static function getMacros() {
         $class = static::class;
         return $class::$macros ?? [];
     }
@@ -117,8 +107,7 @@ trait Model
      * @param array|string|null $attributes
      * @return void
      */
-    public function addFillable($attributes = null)
-    {
+    public function addFillable($attributes = null) {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
         $this->fillable = array_merge($this->fillable ?? [], $attributes);
@@ -129,8 +118,7 @@ trait Model
      * @param array|string|null $attributes
      * @return void
      */
-    public function addAppends($attributes = null)
-    {
+    public function addAppends($attributes = null) {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
         $this->appends = array_merge($this->appends ?? [], $attributes);
@@ -142,8 +130,7 @@ trait Model
      * @param array|string|null $attributes
      * @return void
      */
-    public function addJsonable($attributes = null)
-    {
+    public function addJsonable($attributes = null) {
         $attributes = is_array($attributes) ? $attributes : func_get_args();
 
         $this->jsonable = array_merge($this->jsonable ?? [], $attributes);
@@ -154,8 +141,7 @@ trait Model
      *
      * @return array
      */
-    public function getJsonable()
-    {
+    public function getJsonable() {
         return $this->jsonable ?? [];
     }
 
@@ -166,11 +152,10 @@ trait Model
      *
      * @return array
      */
-    public function getTableColumns($table = null)
-    {
+    public function getTableColumns($table = null) {
         $table = $table ?: $this->getTable();
-        if (!isset(static::$tableColumns[$table])) {
-            $manager = $this->getConnection()->getDoctrineSchemaManager();
+        if (! isset(static::$tableColumns[$table])) {
+            $manager                      = $this->getConnection()->getDoctrineSchemaManager();
             static::$tableColumns[$table] = $manager->listTableColumns($table);
         }
 
@@ -186,8 +171,7 @@ trait Model
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getTableColumnsAsCollection($table = null)
-    {
+    public function getTableColumnsAsCollection($table = null) {
         return collect($this->getTableColumns($table));
     }
 
@@ -197,12 +181,11 @@ trait Model
      * @param string  $tableName
      * @return array
      */
-    public function getTableForeignKeys($tableName)
-    {
-        if (!isset(self::$foreignKeys[$tableName])) {
+    public function getTableForeignKeys($tableName) {
+        if (! isset(self::$foreignKeys[$tableName])) {
             self::$foreignKeys[$tableName] = collect(Schema::getConnection()->getDoctrineSchemaManager()->listTableForeignKeys($tableName))->map(function ($foreignKey) {
                 return $foreignKey->getName();
-            });
+            })->all();
         }
         return self::$foreignKeys[$tableName];
     }
@@ -214,10 +197,11 @@ trait Model
      * @param string  $columnName
      * @return bool
      */
-    public function hasForeignKey($tableName, $columnName)
-    {
+    public function hasForeignKey($tableName, $columnName) {
         $foreignKeys = $this->getTableForeignKeys($tableName);
-        return in_array($columnName, $foreignKeys->toArray()) || in_array(substr($tableName . '_' . $columnName . '_foreign', 0, 63), $foreignKeys->toArray());
+
+        return in_array($columnName, $foreignKeys, true)
+        || in_array(substr($tableName . '_' . $columnName . '_foreign', 0, 63), $foreignKeys, true);
     }
 
     /**
@@ -227,8 +211,7 @@ trait Model
      *
      * @return boolean
      */
-    public function hasColumn(string $column): bool
-    {
+    public function hasColumn(string $column): bool {
         return array_key_exists($column, $this->getTableColumns());
     }
 
@@ -238,8 +221,7 @@ trait Model
      * @param iterable$options
      * @return void
      */
-    public static function getFilterOptions($options = [])
-    {
+    public static function getFilterOptions($options = []) {
         return static::getFormOptions($options);
     }
 
@@ -249,11 +231,10 @@ trait Model
      * @param iterable$options
      * @return array
      */
-    public static function getFormOptions($options = [])
-    {
-        $data = [];
+    public static function getFormOptions($options = []) {
+        $data       = [];
         $modelClass = static::class;
-        $options = Arr::get($options, 'all', ['form', 'filter', 'status', 'day_of_week']);
+        $options    = Arr::get($options, 'all', ['form', 'filter', 'status', 'day_of_week']);
         if (in_array('status', $options) && method_exists($modelClass, 'getStatusOptions')) {
             $data['status'] = $modelClass::getStatusOptions();
         }
@@ -274,8 +255,7 @@ trait Model
      *
      * @return array The nested options
      */
-    public function getDropdownOptions($getter, $valueKey = 'title', $labelKey = 'id')
-    {
+    public function getDropdownOptions($getter, $valueKey = 'title', $labelKey = 'id') {
         return $this->$getter(true)->lists($valueKey, $labelKey);
     }
 
@@ -286,8 +266,7 @@ trait Model
      * @param mixed  $value
      * @return mixed
      */
-    public function setAttributeDirectly($key, $value)
-    {
+    public function setAttributeDirectly($key, $value) {
         $this->attributes[$key] = $value;
     }
 
@@ -297,8 +276,7 @@ trait Model
      * @param [type] $value
      * @return void
      */
-    public function setIsActiveAttribute($value = null)
-    {
+    public function setIsActiveAttribute($value = null) {
         $this->attributes['is_active'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
@@ -308,8 +286,7 @@ trait Model
      * @param [type] $value
      * @return void
      */
-    public function setIsPublicAttribute($value = null)
-    {
+    public function setIsPublicAttribute($value = null) {
         $this->attributes['is_public'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
@@ -319,8 +296,7 @@ trait Model
      * @param [type] $value
      * @return void
      */
-    public function setIsPrivateAttribute($value = null)
-    {
+    public function setIsPrivateAttribute($value = null) {
         $this->attributes['is_private'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
@@ -330,8 +306,7 @@ trait Model
      * @param [type] $value
      * @return void
      */
-    public function setIsRecurringAttribute($value = null)
-    {
+    public function setIsRecurringAttribute($value = null) {
         $this->attributes['is_recurring'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
@@ -341,8 +316,7 @@ trait Model
      * @param [type] $value
      * @return void
      */
-    public function setIsRequiredAttribute($value = null)
-    {
+    public function setIsRequiredAttribute($value = null) {
         $this->attributes['is_required'] = \Nitm\Helpers\ModelHelper::boolval($value);
     }
 
@@ -353,8 +327,7 @@ trait Model
      * @param string $format
      * @return Carbon|null
      */
-    protected function parseDate($date, $format = 'Y-m-d H:i:s')
-    {
+    protected function parseDate($date, $format = 'Y-m-d H:i:s') {
         try {
             $date = Carbon::parse($date) ? $date : null;
             return $date ? (new Carbon($date))->format($format) : null;
@@ -375,8 +348,7 @@ trait Model
      * @param [type] $query
      * @return void
      */
-    public function scopeIsActive($query)
-    {
+    public function scopeIsActive($query) {
         $query->where(['is_active' => true]);
     }
 
@@ -388,8 +360,7 @@ trait Model
      * @param string $method
      * @return void
      */
-    public function saveRelation($relation, $value, $method = 'save')
-    {
+    public function saveRelation($relation, $value, $method = 'save') {
         $relation = Str::camel($relation);
         if ($this->exists) {
             $model = $this->$relation()->$method($value);
@@ -410,8 +381,7 @@ trait Model
      * @param mixed $name
      * @return bool
      */
-    public function hasRelation(string $name): bool
-    {
+    public function hasRelation(string $name): bool {
         return method_exists($this, $name) && $this->$name() instanceof Relation;
     }
 
@@ -421,8 +391,7 @@ trait Model
      * @param mixed $trait
      * @return bool
      */
-    public function hasTrait(string $trait): bool
-    {
+    public function hasTrait(string $trait): bool {
         $uses = is_callable('class_uses_recursive') ? class_uses_recursive($this) : class_uses($this);
         return in_array(ltrim($trait, '\\'), $uses);
     }
@@ -433,14 +402,13 @@ trait Model
      *
      * @return Model
      */
-    public function replicateUsing($relations = [], $attributes = []): EloquentModel
-    {
-        $model = $this->replicate();
-        $model->id = $this->id;
+    public function replicateUsing($relations = [], $attributes = []): EloquentModel {
+        $model         = $this->replicate();
+        $model->id     = $this->id;
         $model->exists = true;
-        if (is_array($relations) && !empty($this->relations)) {
+        if (is_array($relations) && ! empty($this->relations)) {
             $model->setRelations([]);
-            $model->setRelations(!empty($relations) ? Arr::only($this->relations, $relations) : $this->relations);
+            $model->setRelations(! empty($relations) ? Arr::only($this->relations, $relations) : $this->relations);
         }
 
         return $model;
@@ -451,8 +419,7 @@ trait Model
      *
      * @return string
      */
-    public function title(): string
-    {
+    public function title(): string {
         if (property_exists($this, 'title') || $this->getAttribute('title')) {
             return "{$this->title}";
         }
@@ -470,11 +437,10 @@ trait Model
      *
      * @return array
      */
-    public function toArray()
-    {
+    public function toArray() {
         $result = parent::toArray();
         if (property_exists($this, 'visibleToApi')) {
-            return !empty($only = $this->visibleToApi) ? Arr::only($result, (array) $only) : $result;
+            return ! empty($only = $this->visibleToApi) ? Arr::only($result, (array) $only) : $result;
         }
         return $result;
     }

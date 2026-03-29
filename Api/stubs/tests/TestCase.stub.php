@@ -1,21 +1,16 @@
 <?php
-
 namespace Tests;
 
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Schema\SQLiteBuilder;
+use Illuminate\Database\SQLiteConnection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\SQLiteConnection;
-use Illuminate\Database\Schema\SQLiteBuilder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
-abstract class TestCase extends BaseTestCase
-{
-    use ArraySubsetAsserts;
-
+abstract class TestCase extends BaseTestCase {
     public static $databaseSeeded = false;
 
     protected $apiBase = '/api/teams';
@@ -34,10 +29,10 @@ abstract class TestCase extends BaseTestCase
      * @param iterable$data
      * @param string $dataName
      */
-    public function __construct(?string $name = null, array $data = [], string $dataName = '')
-    {
-        if (class_exists('Laravel\Cashier\Cashier')) {
-            \Laravel\Cashier\Cashier::ignoreMigrations();
+    public function __construct(?string $name = null, array $data = [], string $dataName = '') {
+        $cashierClass = 'Laravel\\Cashier\\Cashier';
+        if (class_exists($cashierClass)) {
+            $cashierClass::ignoreMigrations();
         }
         parent::__construct($name, $data, $dataName);
         // $this->hotfixSqlite();
@@ -48,8 +43,7 @@ abstract class TestCase extends BaseTestCase
      * @param mixed $team
      * @return void
      */
-    protected function setupTeam($team)
-    {
+    protected function setupTeam($team) {
         $this->team = $team;
     }
 
@@ -57,23 +51,19 @@ abstract class TestCase extends BaseTestCase
      * Summary of hotfixSqlite
      * @return void
      */
-    public function hotfixSqlite()
-    {
+    public function hotfixSqlite() {
         \Illuminate\Database\Connection::resolverFor(
             'sqlite',
             function ($connection, $database, $prefix, $config) {
                 return new class($connection, $database, $prefix, $config) extends SQLiteConnection {
-                    public function getSchemaBuilder()
-                    {
+                    public function getSchemaBuilder() {
                         if ($this->schemaGrammar === null) {
                             $this->useDefaultSchemaGrammar();
                         }
                         return new class($this) extends SQLiteBuilder {
-                            protected function createBlueprint($table, \Closure $callback = null)
-                            {
+                            protected function createBlueprint($table,  ? \Closure $callback = null) {
                                 return new class($table, $callback) extends Blueprint {
-                                    public function dropForeign($index)
-                                    {
+                                    public function dropForeign($index) {
                                         return new Fluent();
                                     }
                                 };
@@ -86,21 +76,28 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
-     * Generate models from a factory with some common options
+     * Apply legacy factory options to a modern Eloquent factory instance.
      *
-     * @param string  $class
-     * @param mixed   $options [states => states]
-     * @param integer $count
-     * @return Factory
+     * @param mixed $factory
+     * @param mixed $options
+     * @return mixed
      */
-    protected function generateModels(string $class, $options = null, int $count = 3)
-    {
-        $factory = factory($class, $count);
-        if (is_array($options)) {
-            if ($states = Arr::get($options, 'states')) {
-                call_user_func_array([$factory, 'states'], (array) $states);
+    protected function applyFactoryOptions($factory, $options = null) {
+        if (! is_array($options)) {
+            return $factory;
+        }
+
+        foreach ((array) Arr::get($options, 'states', []) as $state) {
+            if (is_string($state) && method_exists($factory, $state)) {
+                $factory = $factory->{$state}();
+                continue;
+            }
+
+            if (is_array($state) || is_callable($state)) {
+                $factory = $factory->state($state);
             }
         }
+
         return $factory;
     }
 
@@ -110,17 +107,22 @@ abstract class TestCase extends BaseTestCase
      * @param string  $class
      * @param mixed   $options [states => states]
      * @param integer $count
-     * @return Factory
+     * @return mixed
      */
-    protected function generateModel(string $class, $options = null)
-    {
-        $factory = factory($class, $count);
-        if (is_array($options)) {
-            if ($states = Arr::get($options, 'states')) {
-                call_user_func_array([$factory, 'states'], (array) $states);
-            }
-        }
-        return $factory;
+    protected function generateModels(string $class, $options = null, int $count = 3) {
+        return $this->applyFactoryOptions($class::factory()->count($count), $options);
+    }
+
+    /**
+     * Generate models from a factory with some common options
+     *
+     * @param string  $class
+     * @param mixed   $options [states => states]
+     * @param integer $count
+     * @return mixed
+     */
+    protected function generateModel(string $class, $options = null) {
+        return $this->applyFactoryOptions($class::factory(), $options);
     }
 
     /**
@@ -129,17 +131,14 @@ abstract class TestCase extends BaseTestCase
      * @param string|array $from
      * @return string
      */
-    protected function getFactoryRelation($from)
-    {
+    protected function getFactoryRelation($from) {
         return is_array($from) ? Arr::get($from, 'relation') : $from;
     }
 
-
-    protected function getFactoryAndRelation($class, $options, $count = null)
-    {
+    protected function getFactoryAndRelation($class, $options, $count = null) {
         return [
             is_null($count) ? $this->generateModel($class, $options) : $this->generateModels($class, $options, $count),
-            $this->getFactoryRelation($options)
+            $this->getFactoryRelation($options),
         ];
     }
 }

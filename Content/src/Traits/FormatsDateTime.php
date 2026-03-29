@@ -1,21 +1,18 @@
 <?php
-
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;
-use Nitm\Helpers\DateTimeHelper;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Nitm\Content\Models\Calendar;
 use Nitm\Content\Models\CalendarEntry;
+use Nitm\Helpers\DateTimeHelper;
 use Recurr\Rule;
 use Recurr\Transformer\ArrayTransformer;
 
-trait FormatsDateTime
-{
-    public static function dayOfWeekOptions()
-    {
+trait FormatsDateTime {
+    public static function dayOfWeekOptions() {
         return [
             'Sun' => 'Sun',
             'Mon' => 'Mon',
@@ -23,22 +20,20 @@ trait FormatsDateTime
             'Wed' => 'Wed',
             'Thu' => 'Thu',
             'Fri' => 'Fri',
-            'Sat' => 'Sat'
+            'Sat' => 'Sat',
         ];
     }
 
-    public static function repeatFrequencyOptions()
-    {
+    public static function repeatFrequencyOptions() {
         return [
-            CalendarEntry::FREQUENCY_DAILY => Str::title(CalendarEntry::INTERVAL_DAILY),
-            CalendarEntry::FREQUENCY_WEEKLY => Str::title(CalendarEntry::INTERVAL_WEEKLY),
+            CalendarEntry::FREQUENCY_DAILY   => Str::title(CalendarEntry::INTERVAL_DAILY),
+            CalendarEntry::FREQUENCY_WEEKLY  => Str::title(CalendarEntry::INTERVAL_WEEKLY),
             CalendarEntry::FREQUENCY_MONTHLY => Str::title(CalendarEntry::INTERVAL_MONTHLY),
-            CalendarEntry::FREQUENCY_YEARLY => Str::title(CalendarEntry::INTERVAL_YEARLY),
+            CalendarEntry::FREQUENCY_YEARLY  => Str::title(CalendarEntry::INTERVAL_YEARLY),
         ];
     }
 
-    public static function recurEndsOptions()
-    {
+    public static function recurEndsOptions() {
         return ['never' => 'never', 'on' => 'on', 'after' => 'after'];
     }
 
@@ -47,66 +42,58 @@ trait FormatsDateTime
      *
      * @return string
      */
-    public static function frequencyToInterval($frequency): string
-    {
-        $frequency = strtolower($frequency);
+    public static function frequencyToInterval($frequency): string {
+        $frequency   = strtolower($frequency);
         $frequencies = [
-            CalendarEntry::FREQUENCY_DAILY => CalendarEntry::INTERVAL_DAILY,
-            CalendarEntry::FREQUENCY_WEEKLY => CalendarEntry::INTERVAL_WEEKLY,
+            CalendarEntry::FREQUENCY_DAILY   => CalendarEntry::INTERVAL_DAILY,
+            CalendarEntry::FREQUENCY_WEEKLY  => CalendarEntry::INTERVAL_WEEKLY,
             CalendarEntry::FREQUENCY_MONTHLY => CalendarEntry::INTERVAL_MONTHLY,
-            CalendarEntry::FREQUENCY_YEARLY => CalendarEntry::INTERVAL_YEARLY,
+            CalendarEntry::FREQUENCY_YEARLY  => CalendarEntry::INTERVAL_YEARLY,
         ];
         return Arr::get($frequencies, $frequency, CalendarEntry::INTERVAL_DAILY);
     }
 
-    public function setRecurFrequencyAttribute($frequency)
-    {
+    public function setRecurFrequencyAttribute($frequency) {
         $this->attributes['recur_frequency'] = $this->ensureFrequencyOption($frequency);
     }
 
-    public function setRecurEndsAttribute($value)
-    {
+    public function setRecurEndsAttribute($value) {
         $this->attributes['recur_ends'] = Arr::get(static::recurEndsOptions(), strtolower($value), 'never');
     }
 
-    public function setRecurEndsCountAttribute($value)
-    {
-        $value = intval($value);
+    public function setRecurEndsCountAttribute($value) {
+        $value                                = intval($value);
         $this->attributes['recur_ends_count'] = $value;
         if ($value > 0) {
             $this->attributes['recur_ends'] = 'after';
         }
     }
 
-    public function setRecurEndsOnAttribute($value)
-    {
+    public function setRecurEndsOnAttribute($value) {
         $this->attributes['recur_ends_on'] = DateTimeHelper::isValidDate($value) ? DateTimeHelper::convertToDateObject($value) : null;
         if ($this->attributes['recur_ends_on']) {
             $this->attributes['recur_ends'] = 'on';
         }
     }
 
-    public function setRecurIntervalAttribute($count)
-    {
+    public function setRecurIntervalAttribute($count) {
         $this->attributes['recur_interval'] = $count ?? 1;
         if (intval($count) > 0) {
-            $frequency = Arr::get($this->attributes, 'recur_frequency', -1);
+            $frequency                           = Arr::get($this->attributes, 'recur_frequency', -1);
             $this->attributes['recur_frequency'] = in_array($frequency, [
                 CalendarEntry::FREQUENCY_WEEKLY,
                 CalendarEntry::FREQUENCY_MONTHLY,
-                CalendarEntry::FREQUENCY_YEARLY
+                CalendarEntry::FREQUENCY_YEARLY,
             ]) ? $frequency : CalendarEntry::FREQUENCY_WEEKLY;
         }
     }
 
-    public function setEndTimeAttribute($value)
-    {
+    public function setEndTimeAttribute($value) {
         $this->prependDateToTime('end', $value);
         $this->appendTimeToDate('end');
     }
 
-    public function setStartTimeAttribute($value)
-    {
+    public function setStartTimeAttribute($value) {
         $this->prependDateToTime('start', $value);
         $this->appendTimeToDate('start');
     }
@@ -119,10 +106,9 @@ trait FormatsDateTime
      *
      * @return void
      */
-    public function prependDateToTime($qualifier, $value = null)
-    {
+    public function prependDateToTime($qualifier, $value = null) {
         $value = $value ?? Arr::get($this->attributes, $qualifier . '_time');
-        $date = Arr::get($this->attributes, $qualifier . '_date');
+        $date  = Arr::get($this->attributes, $qualifier . '_date');
         if ($value) {
             $time = $this->convertToDateObject($value);
             if ($date) {
@@ -140,10 +126,9 @@ trait FormatsDateTime
      *
      * @return void
      */
-    public function appendTimeToDate($qualifier, $value = null)
-    {
+    public function appendTimeToDate($qualifier, $value = null) {
         $value = $value ?? Arr::get($this->attributes, $qualifier . '_date');
-        $time = Arr::get($this->attributes, $qualifier . '_time');
+        $time  = Arr::get($this->attributes, $qualifier . '_time');
         if ($value) {
             $date = $this->convertToDateObject($value);
             if ($time) {
@@ -153,8 +138,7 @@ trait FormatsDateTime
         }
     }
 
-    public function setStartDateAttribute($value)
-    {
+    public function setStartDateAttribute($value) {
         if ($value) {
             $this->appendTimeToDate('start', $value);
         } else {
@@ -162,8 +146,7 @@ trait FormatsDateTime
         }
     }
 
-    public function setEndDateAttribute($value)
-    {
+    public function setEndDateAttribute($value) {
         if ($value) {
             $this->appendTimeToDate('end', $value);
         } else {
@@ -202,23 +185,32 @@ trait FormatsDateTime
      *
      * @return string
      */
-    protected function ensureFrequencyOption($frequency): string
-    {
-        $options = static::repeatFrequencyOptions();
-        $frequency = strtolower($frequency);
-        return Arr::get($frequency, $options, 'weekly');
+    protected function ensureFrequencyOption($frequency): string {
+        $options   = static::repeatFrequencyOptions();
+        $frequency = strtolower((string) $frequency);
+
+        if (array_key_exists($frequency, $options)) {
+            return $frequency;
+        }
+
+        foreach ($options as $key => $label) {
+            if ($frequency === strtolower((string) $label)) {
+                return $key;
+            }
+        }
+
+        return CalendarEntry::FREQUENCY_WEEKLY;
     }
 
     /**
      * Determine the real start date for a model
      *
-     * @param CarbonValue $startDate
+     * @param Carbon $startDate
      * @param iterable$days
-     * @return CarbonValue
+     * @return Carbon
      */
-    public static function getRealStartDate($startDate, array $days)
-    {
-        $days = array_values($days);
+    public static function getRealStartDate($startDate, array $days) {
+        $days          = array_values($days);
         $realStartDate = in_array($startDate->shortEnglishDayOfWeek, $days) ? $startDate->clone() : $startDate->parse(strtotime("next " . current($days), $startDate->timestamp))->clone();
         foreach ($days as $day) {
             $date = $startDate->parse(strtotime("next $day", $startDate->timestamp));
@@ -239,8 +231,7 @@ trait FormatsDateTime
      * @param boolean $excludeStart
      * @return void
      */
-    public function getDaysBetween(Carbon $startDate, Carbon $endDate, $excludeStart = false)
-    {
+    public function getDaysBetween(Carbon $startDate, Carbon $endDate, $excludeStart = false) {
         $diff = $endDate->diffInDays($startDate);
         if ($diff > 7) {
             $endDate = $startDate->clone();
@@ -270,8 +261,7 @@ trait FormatsDateTime
      *
      * @return \Recurr\Rule
      */
-    protected function getRRule(bool $excludeStartDate = false, array $requestData, array $daysOfWeek = []): Rule
-    {
+    protected function getRRule(bool $excludeStartDate = false, array $requestData = [], array $daysOfWeek = []): Rule {
         $rule = new Rule();
 
         $startDate = $excludeStartDate ? $this->start_date->add(1, 'day') : $this->start_date;
@@ -281,7 +271,7 @@ trait FormatsDateTime
 
         if ($this->is_recurring) {
             $daysOfWeek = empty($daysOfWeek) ? static::dayOfWeekOptions() : $daysOfWeek;
-            $days = array_values($daysOfWeek);
+            $days       = array_values($daysOfWeek);
 
             $rule->setByDay(
                 collect($days)->transform(
@@ -291,7 +281,7 @@ trait FormatsDateTime
                 )->all()
             );
 
-            $interval = intval(Arr::get($requestData, 'recur_interval'), $this->recur_interval ?? 1);
+            $interval = intval(Arr::get($requestData, 'recur_interval', $this->recur_interval ?? 1));
 
             $frequency = $this->ensureFrequencyOption(Arr::get($requestData, 'recur_frequency', CalendarEntry::FREQUENCY_WEEKLY));
 
@@ -301,19 +291,19 @@ trait FormatsDateTime
             }
 
             switch ($this->recur_ends) {
-                case 'on':
-                    if ($this->recur_ends_on) {
-                        $rule->setUntil($this->recur_ends_on)->setEndDate($this->recur_ends_on);
-                    }
-                    break;
+            case 'on':
+                if ($this->recur_ends_on) {
+                    $rule->setUntil($this->recur_ends_on)->setEndDate($this->recur_ends_on);
+                }
+                break;
 
-                case 'after':
-                    $rule->setCount($this->recur_ends_count);
-                    break;
+            case 'after':
+                $rule->setCount($this->recur_ends_count);
+                break;
 
-                default:
-                    $rule->setUntil(now()->addYears(10))->setEndDate(now()->addYears(10));
-                    break;
+            default:
+                $rule->setUntil(now()->addYears(10))->setEndDate(now()->addYears(10));
+                break;
             }
         } elseif ($this->end_date) {
             $rule->setUntil($this->end_date)
@@ -343,10 +333,9 @@ trait FormatsDateTime
      * @param iterable$daysOfWeek
      * @return array
      */
-    public function prepareEntries(bool $excludeStart = false, int $sequenceId = null, array $requestData = [], $daysOfWeek = [])
-    {
+    public function prepareEntries(bool $excludeStart = false, ?int $sequenceId = null, array $requestData = [], $daysOfWeek = []) {
         $array = collect([]);
-        if (!$this->is_recurring) {
+        if (! $this->is_recurring) {
             return $array;
         }
 
@@ -360,20 +349,19 @@ trait FormatsDateTime
             // $count = $count < 1 ? 1 : $count;
         }
 
-        if (!$this->recur_ends) {
+        if (! $this->recur_ends) {
             if ($this->recur_ends_on) {
                 $this->recur_ends = 'on';
             } elseif ($count > 0) {
-                $this->recur_ends = 'after';
+                $this->recur_ends       = 'after';
                 $this->recur_ends_count = $count;
             } else {
                 $this->recur_ends = 'never';
             }
         }
 
-        $frequency = $this->ensureFrequencyOption(Arr::get($requestData, 'recur_frequency', 'weekly'));
+        $frequency             = $this->ensureFrequencyOption(Arr::get($requestData, 'recur_frequency', 'weekly'));
         $this->recur_frequency = $frequency;
-
 
         $rule = $this->getRRule($excludeStart, $requestData, $daysOfWeek ?? static::dayOfWeekOptions());
         // echo "RRule is ".$rule->getString()."\n";
@@ -381,15 +369,15 @@ trait FormatsDateTime
         // echo "Creating ".count($entries)." entries\n";
 
         if ($entries->count()) {
-            $startDate = $this->start_date->equalTo(Carbon::parse($entries->get(0)->getStart())) ? Carbon::parse($entries->remove(0)->getStart()) : $this->start_date;
+            $startDate        = $this->start_date->equalTo(Carbon::parse($entries->get(0)->getStart())) ? Carbon::parse($entries->remove(0)->getStart()) : $this->start_date;
             $this->start_date = $startDate;
             foreach ($entries as $entry) {
                 /**
                  * Now create each entry based on the day
                  */
                 $startTime = $this->start_time ?? Calendar::DEFAULT_START_TIME;
-                $endTime = $this->end_time ?? Calendar::DEFAULT_END_TIME;
-                $array[] = new CalendarEntry(
+                $endTime   = $this->end_time ?? Calendar::DEFAULT_END_TIME;
+                $array[]   = new CalendarEntry(
                     array_merge(
                         Arr::only(
                             $this->attributes,
@@ -404,22 +392,22 @@ trait FormatsDateTime
                                 'rsvp_is_open',
                                 'rsvp_is_limited_to_single',
                                 'rsvp_limit',
-                                'is_all_day'
+                                'is_all_day',
                             ]
                         ),
                         [
-                            'day_of_week' => $entry->getStart()->format('D'),
-                            'days_of_week' => $daysOfWeek,
-                            'date' => $entry->getStart()->format('Y-m-d H:i:s'),
-                            'start_date' => $entry->getStart()->format('Y-m-d H:i:s'),
-                            'end_date' => $entry->getEnd()->format('Y-m-d H:i:s'),
-                            'start_time' => $startTime,
-                            'end_time' => $endTime,
-                            'status' => Calendar::STATUS_ON,
-                            'sequence_owner_id' => $sequenceId ?? null,
-                            'recur_interval' => 0,
-                            'is_all_day' => Arr::get($requestData, 'is_all_day', false),
-                            'year_month_week_day' => $entry->getStart()->format("Y-M-W-D")
+                            'day_of_week'         => $entry->getStart()->format('D'),
+                            'days_of_week'        => $daysOfWeek,
+                            'date'                => $entry->getStart()->format('Y-m-d H:i:s'),
+                            'start_date'          => $entry->getStart()->format('Y-m-d H:i:s'),
+                            'end_date'            => $entry->getEnd()->format('Y-m-d H:i:s'),
+                            'start_time'          => $startTime,
+                            'end_time'            => $endTime,
+                            'status'              => Calendar::STATUS_ON,
+                            'sequence_owner_id'   => $sequenceId ?? null,
+                            'recur_interval'      => 0,
+                            'is_all_day'          => Arr::get($requestData, 'is_all_day', false),
+                            'year_month_week_day' => $entry->getStart()->format("Y-M-W-D"),
                         ]
                     )
                 );
@@ -440,8 +428,7 @@ trait FormatsDateTime
      *
      * @return int
      */
-    public function getExpectedEntryCount(): int
-    {
+    public function getExpectedEntryCount(): int {
         // print_R($this->attributes);
         $rule = $this->getRRule(true, $this->attributes, $this->days_of_week ?: static::dayOfWeekOptions());
         // echo "Expected RRule is {$rule->getString()}\n";

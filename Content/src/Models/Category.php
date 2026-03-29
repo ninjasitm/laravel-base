@@ -4,6 +4,7 @@ namespace Nitm\Content\Models;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Traits\NestedTree;
 use Nitm\Content\Models\BaseModel as Model;
@@ -215,7 +216,7 @@ class Category extends Model
      */
     public function getBelongsToOtherAttribute()
     {
-        return !is_null(array_get($this->attributes, 'parent_id'));
+        return !is_null(Arr::get($this->attributes, 'parent_id'));
     }
 
     /**
@@ -313,7 +314,7 @@ class Category extends Model
      **/
     public function projects()
     {
-        return $this->hasMany(\Nitm\Content\Models\Project::class, 'type_id');
+        return $this->hasMany('Nitm\\Content\\Models\\Project', 'type_id');
     }
 
     /**
@@ -321,7 +322,7 @@ class Category extends Model
      **/
     public function people()
     {
-        return $this->hasMany(\Nitm\Content\Models\Person::class, 'position_id');
+        return $this->hasMany('Nitm\\Content\\Models\\Person', 'position_id');
     }
 
     /**
@@ -384,7 +385,7 @@ class Category extends Model
         if (get_called_class() !== 'Nitm\Content\Models\Category') {
             if (!$this->id) {
                 $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
-                $model = \DB::table($this->getTable())->select(['id', 'nest_left', 'nest_right', 'nest_depth'])->where(
+                $model = DB::table($this->getTable())->select(['id', 'nest_left', 'nest_right', 'nest_depth'])->where(
                     [
                         'slug' => $slug,
                     ]

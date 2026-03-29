@@ -1,13 +1,15 @@
 <?php
-
 namespace Nitm\Content\Repositories;
 
-use Storage;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Http\UploadedFile;
-use Nitm\Content\Models\File;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Nitm\Content\Models\File;
 use Nitm\Content\Repositories\BaseRepository;
 
 /**
@@ -16,8 +18,7 @@ use Nitm\Content\Repositories\BaseRepository;
  * @version October 24, 2019, 10:52 pm UTC
  */
 
-class FileRepository extends BaseRepository
-{
+class FileRepository extends BaseRepository {
     /**
      * @var array
      */
@@ -38,16 +39,14 @@ class FileRepository extends BaseRepository
      *
      * @return array
      */
-    public function getFieldsSearchable(): array
-    {
+    public function getFieldsSearchable(): array {
         return $this->fieldSearchable;
     }
 
     /**
      * Configure the Model
      **/
-    public function model(): string
-    {
+    public function model(): string {
         return File::class;
     }
 
@@ -58,10 +57,9 @@ class FileRepository extends BaseRepository
      *
      * @return Model Return an up to date fresh model
      */
-    public function create($input): ?Model
-    {
+    public function create($input): ?Model {
         $attributes = static::store($input, Arr::get($input, 'entity_relation', 'file'))->first();
-        return !empty($attributes) ? File::firstOrCreate($attributes) : null;
+        return ! empty($attributes) ? File::firstOrCreate($attributes) : null;
     }
 
     /**
@@ -71,8 +69,7 @@ class FileRepository extends BaseRepository
      *
      * @return Model Return an up to date collection of files
      */
-    public function createMany($input, $folder = 'files'): \Illuminate\Support\Collection
-    {
+    public function createMany($input, $folder = 'files'): \Illuminate\Support\Collection {
         return static::store($input, $folder)->map(function ($file) {
             return File::firstOrCreate($file);
         });
@@ -89,14 +86,13 @@ class FileRepository extends BaseRepository
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function store($files, string $folder = 'files', $entityRelation = 'file', $public = true, Model $model = null): \Illuminate\Support\Collection
-    {
-        $files = is_array($files) && !Arr::isAssoc($files) ? $files : [$files];
+    public static function store($files, string $folder = 'files', $entityRelation = 'file', $public = true, ?Model $model = null): \Illuminate\Support\Collection {
+        $files      = is_array($files) && ! Arr::isAssoc($files) ? $files : [$files];
         $modelClass = $model ? get_class($model) : null;
-        $modelId = $model ? $model->id : null;
+        $modelId    = $model ? $model->id : null;
 
         $array = array_filter(array_map(function ($file) use ($public, $folder, $entityRelation, $modelClass, $modelId) {
-            if (!($file instanceof UploadedFile) && (is_array($file) && !Arr::get($file, 'url'))) {
+            if (! ($file instanceof UploadedFile) && (is_array($file) && ! Arr::get($file, 'url'))) {
                 return null;
             }
 
@@ -106,18 +102,19 @@ class FileRepository extends BaseRepository
 
             try {
                 if ($file instanceof UploadedFile) {
-                    $disk = static::getStorageDriver();
+                    $disk        = static::getStorageDriver();
+                    $storageDisk = static::getStorageDisk();
 
                     if ($disk == 'local') {
-                        static::getStorageDisk()->makeDirectory('public/' . $folder);
-                        $filePath = static::getStorageDisk()->put(('public/') . $folder, $file);
+                        $storageDisk->makeDirectory('public/' . $folder);
+                        $filePath = $storageDisk->put(('public/') . $folder, $file);
                     } else {
-                        $filePath = static::getStorageDisk()
+                        $filePath = $storageDisk
                             ->put(
                                 $folder,
                                 $file,
                                 [
-                                    'visibility' => $public ? 'public' : null,
+                                    'visibility'          => $public ? 'public' : null,
                                     'Content-Disposition' => 'attachment; filename=' . $file->getClientOriginalName(),
                                 ]
                             );
@@ -126,38 +123,38 @@ class FileRepository extends BaseRepository
                     $url = static::getStorageUrl($filePath, $file->getClientOriginalName(), $file->getMimeType());
 
                     return [
-                        'url' => $url,
-                        'name' => $file->getClientOriginalName(),
-                        'type' => $file->getMimeType(),
-                        'size' => $file->getSize(),
-                        'fingerprint' => md5_file($file->getRealPath()),
-                        'readable_size' => static::humanReadableSize($file->getSize()),
-                        'entity_type' => $modelClass ?? request()->input('entity_type') ?? Arr::get($file, 'entity_type') ?? 'Nitm\Content\Model',
-                        'entity_id' => $modelId ?? request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
+                        'url'             => $url,
+                        'name'            => $file->getClientOriginalName(),
+                        'type'            => $file->getMimeType(),
+                        'size'            => $file->getSize(),
+                        'fingerprint'     => md5_file($file->getRealPath()),
+                        'readable_size'   => static::humanReadableSize($file->getSize()),
+                        'entity_type'     => $modelClass ?? request()->input('entity_type') ?? Arr::get($file, 'entity_type') ?? 'Nitm\Content\Model',
+                        'entity_id'       => $modelId ?? request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
                         'entity_relation' => Str::camel($entityRelation),
                     ];
                 } else {
                     // Most likely an attached file from a third party service such as google
                     return [
-                        'id' => Arr::get($file, 'id'),
-                        'url' => Arr::get($file, 'url'),
-                        'name' => Arr::get($file, 'name'),
-                        'type' => Arr::get($file, 'type'),
-                        'size' => Arr::get($file, 'size'),
-                        'fingerprint' => Arr::get($file, 'fingerprint'),
-                        'readable_size' => static::humanReadableSize(Arr::get($file, 'size')),
-                        'entity_type' => $modelClass ?? request()->input('entity_type') ?? Arr::get($file, 'entity_type') ??
-                            'Nitm\Content\Model',
-                        'entity_id' => $modelId ?? request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
+                        'id'              => Arr::get($file, 'id'),
+                        'url'             => Arr::get($file, 'url'),
+                        'name'            => Arr::get($file, 'name'),
+                        'type'            => Arr::get($file, 'type'),
+                        'size'            => Arr::get($file, 'size'),
+                        'fingerprint'     => Arr::get($file, 'fingerprint'),
+                        'readable_size'   => static::humanReadableSize(Arr::get($file, 'size')),
+                        'entity_type'     => $modelClass ?? request()->input('entity_type') ?? Arr::get($file, 'entity_type') ??
+                        'Nitm\Content\Model',
+                        'entity_id'       => $modelId ?? request()->input('entity_id') ?? Arr::get($file, 'entity_id') ?? -1,
                         'entity_relation' => Str::camel($entityRelation),
 
                     ];
                 }
             } catch (\Exception $e) {
-                if (\App::environment(['dev', 'testing'])) {
+                if (App::environment(['dev', 'testing'])) {
                     throw $e;
                 }
-                \Log::error($e->getMessage());
+                Log::error($e->getMessage());
                 return null;
             }
         }, $files));
@@ -173,10 +170,10 @@ class FileRepository extends BaseRepository
      *
      * @return bool
      */
-    public function delete($model): ?bool
-    {
-        $model = $model instanceof File ? $model : File::find($model);
-        static::getStorageDisk()->delete($model->url);
+    public function delete($model): ?bool {
+        $model       = $model instanceof File ? $model : File::find($model);
+        $storageDisk = static::getStorageDisk();
+        $storageDisk->delete($model->url);
         return parent::delete($model->id);
     }
 
@@ -188,9 +185,13 @@ class FileRepository extends BaseRepository
      *
      * @return boolean
      */
-    public static function deleteMany($paths, $disk = null)
-    {
-        return !empty($files) ? static::getStorageDisk()->delete(...$paths) : false;
+    public static function deleteMany($paths, $disk = null) {
+        $storage         = $disk ? Storage::disk($disk) : static::getStorageDisk();
+        $normalizedPaths = $paths instanceof \Illuminate\Support\Collection
+            ? $paths->filter()->values()->all()
+            : array_values(array_filter(is_array($paths) ? $paths : [$paths]));
+
+        return ! empty($normalizedPaths) ? $storage->delete($normalizedPaths) : false;
     }
 
     /**
@@ -200,8 +201,7 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    public static function humanReadableSize($bytes): string
-    {
+    public static function humanReadableSize($bytes): string {
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
         for ($i = 0; $bytes > 1024; $i++) {
@@ -220,23 +220,24 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    public static function getUrl(File $model, $url, bool $forDownload = false): string
-    {
+    public static function getUrl(File $model, $url, bool $forDownload = false): string {
         $regex = static::getUrlMatchRegex();
         preg_match("/" . $regex . "/", $url, $matches);
         if (count($matches)) {
-            if (!static::getIsLocalUrl($url)) {
+            if (! static::getIsLocalUrl($url)) {
                 // echo "URL isn't local: $url\n";
                 // echo "Path should be: " . static::getStoragePath($url) . "\n";
-                if (!Str::startsWith($url, 'http') && !Str::startsWith($url, '//')) {
+                if (! Str::startsWith($url, 'http') && ! Str::startsWith($url, '//')) {
                     $url = static::getStorageConfig('bucket', 'cloud') . $url;
                 }
-                return static::getCloudStorageDisk()
+                $cloudStorageDisk = static::getCloudStorageDisk();
+
+                return $cloudStorageDisk
                     ->temporaryUrl(
                         static::getStoragePath($url),
                         now()->addMinutes(env('AWS_S3_LINK_EXPIRE_MINUTES', 30)),
                         $forDownload ? [
-                            'ResponseContentType' => $model->type,
+                            'ResponseContentType'        => $model->type,
                             'ResponseContentDisposition' => 'attachment; filename=' . $model->name,
                         ] : []
                     );
@@ -259,9 +260,8 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    public static function getMetadataUrl($id, array $value, string $url, bool $forDownload = false): string
-    {
-        if (!($name = Arr::get($value, 'name')) || !($type = Arr::get($value, 'type'))) {
+    public static function getMetadataUrl($id, array $value, string $url, bool $forDownload = false): string {
+        if (! ($name = Arr::get($value, 'name')) || ! ($type = Arr::get($value, 'type'))) {
             return $url;
         }
 
@@ -269,18 +269,20 @@ class FileRepository extends BaseRepository
         preg_match("/" . $regex . "/", $url, $matches);
         if (count($matches)) {
 
-            if (!static::getIsLocalUrl($url)) {
+            if (! static::getIsLocalUrl($url)) {
                 // echo "Metadata URL isn't local: $url\n";
                 // echo "Metadata Path should be: " . static::getStoragePath($url) . "\n";
-                if (!Str::startsWith($url, 'http') && !Str::startsWith($url, '//')) {
+                if (! Str::startsWith($url, 'http') && ! Str::startsWith($url, '//')) {
                     $url = static::getStorageConfig('bucket', 'cloud') . $url;
                 }
-                return static::getCloudStorageDisk()
+                $cloudStorageDisk = static::getCloudStorageDisk();
+
+                return $cloudStorageDisk
                     ->temporaryUrl(
                         static::getStoragePath($url),
                         now()->addMinutes(env('AWS_S3_LINK_EXPIRE_MINUTES', 30)),
                         $forDownload ? [
-                            'ResponseContentType' => Arr::get($value, 'type'),
+                            'ResponseContentType'        => Arr::get($value, 'type'),
                             'ResponseContentDisposition' => 'attachment; filename=' . Arr::get($value, 'name'),
                         ] : []
                     );
@@ -298,14 +300,13 @@ class FileRepository extends BaseRepository
      *
      * @return array
      */
-    protected static function getStorageDomains(): array
-    {
+    protected static function getStorageDomains(): array {
         return [
             'amazonaws.com/' . static::getStorageConfig('bucket', 'cloud'),
             static::getStorageConfig('bucket', 'cloud') . '.s3',
             'localhost',
             'dev.local',
-            request()->getHost()
+            request()->getHost(),
         ];
     }
 
@@ -314,8 +315,7 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    protected static function getUrlMatchRegex(): string
-    {
+    protected static function getUrlMatchRegex(): string {
         return str_replace('\|', '|', preg_quote(implode('|', static::getStorageDomains()), '/'));
     }
 
@@ -329,20 +329,23 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    public static function getStorageUrl($path, string $fileName, string $type, bool $forDownload = false)
-    {
-        if (!static::getIsLocalUrl($path)) {
-            return static::getCloudStorageDisk()
+    public static function getStorageUrl($path, string $fileName, string $type, bool $forDownload = false) {
+        if (! static::getIsLocalUrl($path)) {
+            $cloudStorageDisk = static::getCloudStorageDisk();
+
+            return $cloudStorageDisk
                 ->url(
                     static::getStoragePath($path),
                     $forDownload ? [
-                        'ResponseContentType' => $type,
+                        'ResponseContentType'        => $type,
                         'ResponseContentDisposition' => 'attachment; filename=' . $fileName,
                     ] : []
                 );
         }
 
-        return Str::startsWith($path, 'http') ? $path : url(static::getStorageDisk()->url($path));
+        $storageDisk = static::getStorageDisk();
+
+        return Str::startsWith($path, 'http') ? $path : url($storageDisk->url($path));
     }
 
     /**
@@ -350,13 +353,12 @@ class FileRepository extends BaseRepository
      * @param string $path
      * @return string
      */
-    public static function getStoragePath($path)
-    {
+    public static function getStoragePath($path) {
         $key = stripos($path, 'api/files') > -1 ? 'api/files/' : 'storage/';
         // Switching to supporting temporary urls. Need to verify whether this is a cloud URL
-        if (!static::getIsLocalUrl($path)) {
+        if (! static::getIsLocalUrl($path)) {
             $path = str_replace(['api/files/'], ['/'], $path);
-            $key = static::getStorageConfig('bucket', 'cloud') . '/';
+            $key  = static::getStorageConfig('bucket', 'cloud') . '/';
             if (strpos($path, $key) === false && ($host = parse_url($path, PHP_URL_HOST)) !== null) {
                 preg_match('/([a-zA-Z0-9\-\_]+.\w+)$/', $host, $matches);
                 if (count($matches)) {
@@ -386,8 +388,7 @@ class FileRepository extends BaseRepository
      * @param string $url
      * @return string
      */
-    public static function getPublicStoragePath($url)
-    {
+    public static function getPublicStoragePath($url) {
         $path = static::getStoragePath($url);
         return static::getIsLocalUrl($url) ? 'public/' . str_replace('public/', '', ltrim($path, '/')) : $path;
     }
@@ -397,8 +398,7 @@ class FileRepository extends BaseRepository
      *
      * @return mixed
      */
-    public static function getStorageConfig($key = null, $disk = null)
-    {
+    public static function getStorageConfig($key = null, $disk = null) {
         return config('filesystems.disks.' . config('filesystems.' . ($disk ?? 'default')) . ($key !== null ? ".{$key}" : ''));
     }
 
@@ -407,8 +407,7 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    public static function isStorageLocal(): string
-    {
+    public static function isStorageLocal(): string {
         return config('filesystems.default') === 'local';
     }
 
@@ -417,8 +416,7 @@ class FileRepository extends BaseRepository
      *
      * @return bool
      */
-    public static function getIsLocalUrl($url): bool
-    {
+    public static function getIsLocalUrl($url): bool {
         if (static::isStorageLocal() && static::getIsPath($url)) {
             return true;
         }
@@ -432,9 +430,8 @@ class FileRepository extends BaseRepository
      *
      * @return bool
      */
-    public static function getIsPath($path): bool
-    {
-        return !Str::startsWith($path, 'http') && !Str::startsWith($path, '//');
+    public static function getIsPath($path): bool {
+        return ! Str::startsWith($path, 'http') && ! Str::startsWith($path, '//');
     }
 
     /**
@@ -442,8 +439,7 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    public static function getStorageDriver(): string
-    {
+    public static function getStorageDriver(): string {
         return config('filesystems.default');
     }
 
@@ -452,38 +448,34 @@ class FileRepository extends BaseRepository
      *
      * @return string
      */
-    public static function getCloudStorageDriver(): string
-    {
+    public static function getCloudStorageDriver(): string {
         return config('filesystems.cloud');
     }
 
     /**
      * Get configured storage disk
      *
-     * @return string
+     * @return FilesystemAdapter
      */
-    public static function getStorageDisk()
-    {
+    public static function getStorageDisk(): FilesystemAdapter {
         return Storage::disk(static::getStorageDriver());
     }
 
     /**
      * Get local storage disk
      *
-     * @return string
+     * @return FilesystemAdapter
      */
-    public static function getLocalStorageDisk()
-    {
+    public static function getLocalStorageDisk(): FilesystemAdapter {
         return Storage::disk('local');
     }
 
     /**
      * Get cloud storage disk
      *
-     * @return string
+     * @return FilesystemAdapter
      */
-    public static function getCloudStorageDisk()
-    {
+    public static function getCloudStorageDisk(): FilesystemAdapter {
 
         return Storage::disk(static::getCloudStorageDriver());
     }

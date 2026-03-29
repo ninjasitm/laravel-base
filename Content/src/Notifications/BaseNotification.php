@@ -1,16 +1,13 @@
 <?php
-
 namespace Nitm\Content\Notifications;
 
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
-class BaseNotification extends Notification implements ShouldQueue
-{
+class BaseNotification extends Notification implements ShouldQueue {
     use Queueable;
 
     /**
@@ -46,12 +43,11 @@ class BaseNotification extends Notification implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(string $action = null, string $message = null, string $url = null)
-    {
+    public function __construct(?string $action = null, ?string $message = null, ?string $url = null) {
         //
-        $this->action = $action;
+        $this->action  = $action;
         $this->message = $message;
-        $this->url = $url ?? config('app.webUrl');
+        $this->url     = $url ?? config('app.webUrl');
     }
 
     /**
@@ -60,8 +56,7 @@ class BaseNotification extends Notification implements ShouldQueue
      * @param mixed $notifiable
      * @return array
      */
-    public function via($notifiable)
-    {
+    public function via($notifiable) {
         return [FcmFunctionChannel::class];
     }
 
@@ -70,8 +65,7 @@ class BaseNotification extends Notification implements ShouldQueue
      */
     protected $event;
 
-    public function setData(array $data)
-    {
+    public function setData(array $data) {
         foreach (['message', 'url', 'action', 'user', 'event', 'data'] as $property) {
             $value = Arr::get($data, $property);
             if (property_exists($this, $property) && $value) {
@@ -81,16 +75,14 @@ class BaseNotification extends Notification implements ShouldQueue
         return $this;
     }
 
-    public function setEvent($event)
-    {
+    public function setEvent($event) {
         $this->event = $event;
     }
 
     /**
      * @return string
      */
-    public function getMessage()
-    {
+    public function getMessage() {
         if ($this->message) {
             return $this->message;
         }
@@ -103,8 +95,7 @@ class BaseNotification extends Notification implements ShouldQueue
     /**
      * @return string
      */
-    public function getAction()
-    {
+    public function getAction() {
         if ($this->action) {
             return $this->action;
         }
@@ -117,8 +108,7 @@ class BaseNotification extends Notification implements ShouldQueue
     /**
      * @return string
      */
-    public function getUrl()
-    {
+    public function getUrl() {
         $url = '';
         if ($this->url) {
             $url = $this->url;
@@ -136,8 +126,7 @@ class BaseNotification extends Notification implements ShouldQueue
      * @param mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail($notifiable)
-    {
+    public function toMail($notifiable) {
         return new \Illuminate\Notifications\Messages\MailMessage();
     }
 
@@ -147,13 +136,12 @@ class BaseNotification extends Notification implements ShouldQueue
      * @param mixed $notifiable
      * @return array
      */
-    public function toArray($notifiable = null)
-    {
+    public function toArray($notifiable = null) {
         return [
-            'action' => $this->action,
+            'action'  => $this->action,
             'message' => $this->message,
-            'url' => $this->getUrl(),
-            'data' => $this->data
+            'url'     => $this->getUrl(),
+            'data'    => $this->data,
         ];
     }
 }

@@ -2,10 +2,11 @@
 
 namespace  Nitm\Content\Console\Commands;
 
-use DB;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Nitm\Content\NitmContent;
 use Nitm\Helpers\ClassHelper;
 use Nitm\Content\Traits\Search;
 
@@ -24,11 +25,13 @@ class AddUserRoles extends Command
      */
     public function handle()
     {
+        $setPermissionsTeamId = 'setPermissionsTeamId';
+
         $this->info("Finding teams...");
         $team = $this->getTeam();
         if ($this->confirm("Use team {$team->name}?", true)) {
-            if (function_exists('setPermissionsteamId')) {
-                setPermissionsteamId($team->id);
+            if (function_exists($setPermissionsTeamId)) {
+                $setPermissionsTeamId($team->id);
             }
             $roles = $this->getRoles();
             if (!$roles->count()) {
@@ -71,8 +74,8 @@ class AddUserRoles extends Command
     public function getRoles(): Collection
     {
         $roles = [];
-        $class = config('permission.models.role', \App\Models\Role::class);
-        $lowerName = \DB::raw('lower(name)');
+        $class = config('permission.models.role', \Nitm\Content\Models\Role::class);
+        $lowerName = DB::raw('lower(name)');
         foreach ($this->option('role') as $role) {
             $roles[] = ClassHelper::hasTrait($class, Search::class) ? $class::search($role)->first() : $class::where($lowerName, 'LIKE', "%$role%")->first();
         }
@@ -82,13 +85,13 @@ class AddUserRoles extends Command
     /**
      * Get the team
      *
-     * @return Team
+        * @return Model
      */
     protected function getTeam(): Model
     {
-        $class = config('nitm-content.team_model', \App\Models\Team::class);
+        $class = config('nitm-content.team_model', NitmContent::teamModel());
         $s = $this->argument('team');
-        $lowerName = \DB::raw('lower(name)');
+        $lowerName = DB::raw('lower(name)');
         $team = ClassHelper::hasTrait($class, Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where($lowerName, 'LIKE', "%$s%")->get();
         if (!$team->count()) {
             $this->error("Team not found");
@@ -116,7 +119,7 @@ class AddUserRoles extends Command
     protected function getUsers(): Collection
     {
         $users = [];
-        $class = config('nitm-content.user_model', \App\Models\User::class);
+        $class = config('nitm-content.user_model', NitmContent::userModel());
         foreach ($this->option('email') as $email) {
             $user = $class::where('email', $email)->first();
             $users[] = [$email, $user instanceof Model, $user];

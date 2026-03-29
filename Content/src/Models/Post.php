@@ -3,7 +3,9 @@
 namespace Nitm\Content\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Nitm\Helpers\ImageHelper;
 use Nitm\Content\Traits\Sluggable;
@@ -98,7 +100,8 @@ class Post extends Model
                     $model->published_at = \Carbon\Carbon::now();
                 }
                 if (!Arr::get($model->getAttributes(), 'slug', false)) {
-                    $model->slug = \Auth::getUser()->username . '-' . Str::slug($model->getAttribute("title"));
+                    $username    = Auth::user()->username ?? 'post';
+                    $model->slug = $username . '-' . Str::slug($model->getAttribute("title"));
                 }
                 if (!Arr::get($model->attributes, 'excerpt', false)) {
                     $model->excerpt = substr(strip_tags($model->getAttribute("content")), 0, 140);
@@ -227,10 +230,13 @@ class Post extends Model
     public function getHasSummaryAttribute()
     {
         $more = '<!-- more -->';
+        $html = $this->content_html ?? '';
+        $htmlHelper = class_exists('Html') ? 'Html' : null;
+        $strippedHtml = $htmlHelper ? $htmlHelper::strip($html) : strip_tags($html);
 
         return (!!strlen(trim($this->excerpt)) ||
-            strpos($this->content_html, $more) !== false ||
-            strlen(Html::strip($this->content_html)) > 600);
+            strpos($html, $more) !== false ||
+            strlen($strippedHtml) > 600);
     }
 
     /**
@@ -251,10 +257,13 @@ class Post extends Model
         if (strpos($this->content_html, $more) !== false) {
             $parts = explode($more, $this->content_html);
 
-            return array_get($parts, 0);
+            return Arr::get($parts, 0);
         }
 
-        return Html::limit($this->content_html, 600);
+        $html = $this->content_html ?? '';
+        $htmlHelper = class_exists('Html') ? 'Html' : null;
+
+        return $htmlHelper ? $htmlHelper::limit($html, 600) : Str::limit(strip_tags($html), 600);
     }
 
     //

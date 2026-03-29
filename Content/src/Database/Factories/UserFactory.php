@@ -2,7 +2,6 @@
 
 namespace Nitm\Content\Database\Factories;
 
-use CloudCreativity\LaravelStripe\Facades\Stripe;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Nitm\Content\Models\User;
@@ -40,11 +39,17 @@ class UserFactory extends Factory
     public function withStripeUserId()
     {
         return $this->state(function (array $attributes) {
-            Stripe::fake(
-                $stripeUser = new \Stripe\User,
-            );
+            $stripeFacadeClass = 'CloudCreativity\\LaravelStripe\\Facades\\Stripe';
+            $stripeUserClass   = 'Stripe\\User';
+            $stripeUser        = null;
+
+            if (class_exists($stripeFacadeClass) && class_exists($stripeUserClass)) {
+                $stripeUser = new $stripeUserClass;
+                $stripeFacadeClass::fake($stripeUser);
+            }
+
             return [
-                'stripe_user_id' => $stripeUser->id,
+                'stripe_user_id' => $stripeUser->id ?? null,
             ];
         });
     }

@@ -11,16 +11,29 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UserSeeder::class);
-        $this->call(ExpertiseSeeder::class);
-        $this->call(CategoriesSeeder::class);
-        $this->call(ClientsSeeder::class);
-        $this->call(MentionsSeeder::class);
-        $this->call(PostCategoriesSeeder::class);
-        $this->call(PostsCategoriesSeeder::class);
-        $this->call(PostsSeeder::class);
-        $this->call(ProjectsSeeder::class);
-        $this->call(ProjectTypesSeeder::class);
-        $this->call(PeopleSeeder::class);
+        $seeders = [
+            'UserSeederTable',
+            'ExpertiseSeeder',
+            'CategoriesSeeder',
+            'ClientsSeeder',
+            'MentionsSeeder',
+            'PostCategoriesSeeder',
+            'PostsCategoriesSeeder',
+            'PostsSeeder',
+            'ProjectsSeeder',
+            'ProjectTypesSeeder',
+            'PeopleSeeder',
+        ];
+
+        foreach ($seeders as $seeder) {
+            $path = __DIR__ . '/' . $seeder . '.php';
+            if (file_exists($path)) {
+                require_once $path;
+            }
+
+            if (class_exists($seeder)) {
+                $this->call($seeder);
+            }
+        }
     }
 }

@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
+use Nitm\Content\Models\Role;
 use Nitm\Content\Models\User;
-use Nitm\Content\Role;
 use \Illuminate\Support\Facades\Hash;
 
 class UserSeederTable extends Seeder

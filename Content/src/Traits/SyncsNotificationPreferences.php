@@ -2,11 +2,9 @@
 
 namespace Nitm\Content\Traits;
 
-use App\Team;
-use App\Models\User;
 use Illuminate\Support\Arr;
-use App\Models\NotificationType;
 use Illuminate\Support\Collection;
+use Nitm\Content\NitmContent;
 
 trait SyncsNotificationPreferences
 {
@@ -19,16 +17,18 @@ trait SyncsNotificationPreferences
     public function syncNotificationPreferences($data)
     {
         if (!empty($data) && (is_array($data) || $data instanceof Collection)) {
+            $userModel = NitmContent::userModel();
+            $teamModel = NitmContent::teamModel();
             $this->initNotificationPreferences();
             $data = Arr::get($data, 'notification_preferences') ?: $data;
             $sanitizedData = collect([]);
             $teamId = null;
             $userId = null;
 
-            if (!$this instanceof User) {
+            if (!$this instanceof $userModel) {
                 $userId = $this->id;
             }
-            if (!$this instanceof Team) {
+            if (!$this instanceof $teamModel) {
                 $teamId = $this->id;
             }
             foreach ($data as $k => $v) {
@@ -49,18 +49,22 @@ trait SyncsNotificationPreferences
      */
     public function initNotificationPreferences()
     {
+        $notificationTypeModel = 'Nitm\\Content\\Models\\NotificationType';
+        $userModel             = NitmContent::userModel();
+        $teamModel             = NitmContent::teamModel();
+
         $this->load('notificationPreferences');
         $existing = $this->notificationPreferences;
-        $types = NotificationType::get();
+        $types = class_exists($notificationTypeModel) ? $notificationTypeModel::get() : collect([]);
         if ($types->count() > 0 && $types->count() > $existing->count()) {
             $toAdd = $types->whereNotIn('id', $existing->pluck('type_id'));
             $teamId = null;
             $userId = null;
 
-            if ($this instanceof User) {
+            if ($this instanceof $userModel) {
                 $userId = $this->id;
             }
-            if ($this instanceof Team) {
+            if ($this instanceof $teamModel) {
                 $teamId = $this->id;
             }
 
@@ -69,7 +73,7 @@ trait SyncsNotificationPreferences
                 $this->notificationPreferences()
                     ->createMany($toAdd->map(function ($type) use ($userId, $teamId) {
                         return [
-                            'entity_type' => $userId ? User::class : Team::class,
+                            'entity_type' => $userId ? NitmContent::userModel() : NitmContent::teamModel(),
                             'entity_id' => $userId ?? $teamId,
                             'type_id' => $type->id,
                             'user_id' => $userId,

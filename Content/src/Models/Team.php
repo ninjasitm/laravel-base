@@ -2,6 +2,7 @@
 
 namespace Nitm\Content\Models;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Nitm\Content\NitmContent;
 use Nitm\Content\Models\Invitation;
@@ -192,7 +193,7 @@ class Team extends Model implements TeamContract
      */
     public function resolveRole(string $role): string
     {
-        $roles = \Cache::rememberForever(
+        $roles = Cache::rememberForever(
             'user-roles',
             function () {
                 return Role::where("name", "!=", "Super Admin")->get();

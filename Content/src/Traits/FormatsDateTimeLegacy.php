@@ -1,19 +1,14 @@
 <?php
-
 namespace Nitm\Content\Traits;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use NitmContent;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Arr;
 use Nitm\Content\Models\Calendar;
 use Nitm\Content\Models\CalendarEntry;
 
-trait FormatsDateTimeLegacy
-{
-    public static function dayOfWeekOptions()
-    {
+trait FormatsDateTimeLegacy {
+    public static function dayOfWeekOptions() {
         return [
             'Sun' => 'Sun',
             'Mon' => 'Mon',
@@ -21,20 +16,19 @@ trait FormatsDateTimeLegacy
             'Wed' => 'Wed',
             'Thu' => 'Thu',
             'Fri' => 'Fri',
-            'Sat' => 'Sat'
+            'Sat' => 'Sat',
         ];
     }
 
     /**
      * Determine the real start date for a model
      *
-     * @param CarbonValue $startDate
+     * @param Carbon $startDate
      * @param iterable      $days
-     * @return CarbonValue
+     * @return Carbon
      */
-    public static function getRealStartDate($startDate, array $days)
-    {
-        $days = array_values($days);
+    public static function getRealStartDate($startDate, array $days) {
+        $days          = array_values($days);
         $realStartDate = in_array($startDate->shortEnglishDayOfWeek, $days) ? $startDate : $startDate->parse(strtotime("next " . current($days), $startDate->timestamp));
         foreach ($days as $day) {
             $date = $startDate->parse(strtotime("next $day", $startDate->timestamp));
@@ -45,13 +39,11 @@ trait FormatsDateTimeLegacy
         return $realStartDate;
     }
 
-    public function getStartTimeAttribute()
-    {
+    public function getStartTimeAttribute() {
         return Arr::get($this->attributes, 'end_time', null) ? Carbon::parse($this->attributes['start_time'])->format('H:i') : Calendar::DEFAULT_START_TIME;
     }
 
-    public function getEndTimeAttribute()
-    {
+    public function getEndTimeAttribute() {
         return Arr::get($this->attributes, 'end_time', null) ? Carbon::parse($this->attributes['end_time'])->format('H:i') : Calendar::DEFAULT_END_TIME;
     }
 
@@ -63,11 +55,10 @@ trait FormatsDateTimeLegacy
      * @param Carbon $end_date
      * @return void
      */
-    public function generateDateRange(Carbon $startDate, Carbon $endDate)
-    {
+    public function generateDateRange(Carbon $startDate, Carbon $endDate) {
         $dates = [];
 
-        for ($date = $startDate; $date->lte($enDate); $date->addDay()) {
+        for ($date = $startDate; $date->lte($endDate); $date->addDay()) {
             $dates[] = $date->format('Y-m-d');
         }
 
@@ -82,8 +73,7 @@ trait FormatsDateTimeLegacy
      * @param boolean $excludeStart
      * @return void
      */
-    public function getDaysBetween(Carbon $startDate, Carbon $endDate, $excludeStart = false)
-    {
+    public function getDaysBetween(Carbon $startDate, Carbon $endDate, $excludeStart = false) {
         $diff = $endDate->diffInDays($startDate);
         if ($diff > 7) {
             $endDate = $startDate->clone();
@@ -105,8 +95,7 @@ trait FormatsDateTimeLegacy
         return array_combine($days, $days);
     }
 
-    protected function getDateParameters(array $requestData = [], bool $excludeStart = false, array $daysOfWeek = [])
-    {
+    protected function getDateParameters(array $requestData = [], bool $excludeStart = false, array $daysOfWeek = []) {
         // $entryDates = $this->entries()->selectRaw([
         //     'MAX(end_date) max_end_date',
         //     'MAX(start_date) as max_start_date',
@@ -118,13 +107,13 @@ trait FormatsDateTimeLegacy
 
         $orderedDays = array_values(static::dayOfWeekOptions());
 
-        $days = array_values(is_array($daysOfWeek) && !empty($daysOfWeek) ? $daysOfWeek : $this->getDaysBetween($this->start_date, $this->end_date, $excludeStart));
+        $days = array_values(is_array($daysOfWeek) && ! empty($daysOfWeek) ? $daysOfWeek : $this->getDaysBetween($this->start_date, $this->end_date, $excludeStart));
         if (empty($days)) {
             return;
         }
 
         $weeks = $this->end_date->diffInWeeks($this->start_date);
-        $weeks = !$weeks && count($days) ? 1 : $weeks;
+        $weeks = ! $weeks && count($days) ? 1 : $weeks;
 
         // The original event was already added
         $entryStartDate = $this->start_date;
@@ -133,7 +122,7 @@ trait FormatsDateTimeLegacy
          * Get the next day intelligently.
          */
         $currentStartDayIndex = array_search($entryStartDate->shortEnglishDayOfWeek, $days);
-        $currentStartDay = $days[$currentStartDayIndex];
+        $currentStartDay      = $days[$currentStartDayIndex];
 
         $nextDay = Arr::get($days, $currentStartDayIndex + 1, $currentStartDay);
 
@@ -143,7 +132,7 @@ trait FormatsDateTimeLegacy
         if ($excludeStart) {
             $entryStartDate = Carbon::parse(strtotime("next $nextDay", $this->start_date->timestamp));
             unset($days[$currentStartDayIndex]);
-            $days[] = $currentStartDay;
+            $days[]               = $currentStartDay;
             $currentStartDayIndex = array_search($nextDay, $days);
         }
 
@@ -169,7 +158,7 @@ trait FormatsDateTimeLegacy
         $days = array_merge(array_splice($dayValues, $startDayOfWeek), $dayValues);
 
         $startTime = $this->start_time ?? Calendar::DEFAULT_START_TIME;
-        $endTime = $this->end_time ?? Calendar::DEFAULT_END_TIME;
+        $endTime   = $this->end_time ?? Calendar::DEFAULT_END_TIME;
 
         // We need to compensate for dates for a full week
         if (count($days) == 7) {
@@ -186,12 +175,11 @@ trait FormatsDateTimeLegacy
      * @param int  $sequenceId   Should the entries be assigned to an entry sequence?
      * @return array
      */
-    public function prepareEntries(bool $excludeStart = false, int $sequenceId = null, array $requestData = [], $daysOfWeek = [])
-    {
+    public function prepareEntries(bool $excludeStart = false, ?int $sequenceId = null, array $requestData = [], $daysOfWeek = []) {
         $array = collect([]);
 
         $entryParameters = $this->getDateParameters($requestData, $excludeStart, $daysOfWeek ?: []);
-        if (is_array($entryParameters) && !empty($entryParameters)) {
+        if (is_array($entryParameters) && ! empty($entryParameters)) {
             extract($entryParameters);
 
             if (isset($weeks) && count($days)) {
@@ -205,18 +193,20 @@ trait FormatsDateTimeLegacy
                         /**
                          * Now create each entry based on the day
                          */
+                        $status = defined(static::class . '::STATUS_ON') ? constant(static::class . '::STATUS_ON') : Calendar::STATUS_ON;
+
                         $array[] = new CalendarEntry(
                             [
-                                'date' => $entryStartDate,
-                                'day_of_week' => $day,
-                                'start_date' => $this->start_date,
-                                'end_date' => $this->end_date,
-                                'start_time' => $startTime,
-                                'end_time' => $endTime,
-                                'status' => static::STATUS_ON,
-                                'entity_type' => $this->entity_type ?: 'calendar',
-                                'entity_id' => $this->entity_id ?: $this->id,
-                                'sequence_owner_id' => $sequenceId ?? null
+                                'date'              => $entryStartDate,
+                                'day_of_week'       => $day,
+                                'start_date'        => $this->start_date,
+                                'end_date'          => $this->end_date,
+                                'start_time'        => $startTime,
+                                'end_time'          => $endTime,
+                                'status'            => $status,
+                                'entity_type'       => $this->entity_type ?: 'calendar',
+                                'entity_id'         => $this->entity_id ?: $this->id,
+                                'sequence_owner_id' => $sequenceId ?? null,
                             ]
                         );
                         $entryStartDate = $entryStartDate->parse(strtotime("next $day", $currentWeek->timestamp));

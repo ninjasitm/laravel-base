@@ -1,29 +1,25 @@
 <?php
-
 namespace Nitm\Content\Traits;
 
-use Schema;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
-use Nitm\Content\Models\Metadata\Metadata;
-use Nitm\Models\BaseModel;
-use Nitm\Helpers\CollectionHelper;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use Nitm\Content\Models\Metadata;
+use Nitm\Helpers\CollectionHelper;
 
-trait RepositorySyncsRelations
-{
-    protected function getSyncableRelations()
-    {
+trait RepositorySyncsRelations {
+    protected function getSyncableRelations() {
         return [];
     }
 
-    public function syncRelationData(Model $subject, string $relation, array|Collection $data)
-    {
+    public function syncRelationData(Model $subject, string $relation, array | Collection $data) {
         $realData = $data;
         if (is_array($realData)) {
             $syncMethod = Str::camel('sync-' . $relation);
@@ -54,11 +50,10 @@ trait RepositorySyncsRelations
      * @param mixed $data
      * @return void
      */
-    public function syncRelationDataWithParams(Model $subject, string $relation, $data, $orderBy = 'updated_at')
-    {
-        $pivotFields = [];
-        $realData = $data;
-        $realData = CollectionHelper::isCollection($realData) ? $realData : collect((array) $realData);
+    public function syncRelationDataWithParams(Model $subject, string $relation, $data, $orderBy = 'updated_at') {
+        $pivotFields   = [];
+        $realData      = $data;
+        $realData      = CollectionHelper::isCollection($realData) ? $realData : collect((array) $realData);
         $relationQuery = $subject->$relation();
         if ($realData->count()) {
             $syncMethod = Str::camel('sync-' . $relation);
@@ -68,11 +63,11 @@ trait RepositorySyncsRelations
                 $filteredData = [];
                 foreach ($realData as $key => $params) {
                     $id = null;
-                    if (is_array($params) && !empty($id = Arr::pull($params, 'id'))) {
+                    if (is_array($params) && ! empty($id = Arr::pull($params, 'id'))) {
                         $filteredData[$id] = [];
                     }
                     if ($key !== 'id') {
-                        $id = $id ?: (is_numeric($params) ? $params : $key);
+                        $id                = $id ?: (is_numeric($params) ? $params : $key);
                         $filteredData[$id] = is_array($params) ? $params : [];
                     }
                 }
@@ -94,7 +89,7 @@ trait RepositorySyncsRelations
             $relationQuery = $subject->$relation()->orderByRaw("$orderBy asc" . (app()->environment('testing') ? '' : ' NULLS LAST'));
         } else {
             $relationQuery = empty($pivotFields) ? $subject->$relation() : $subject->$relation()->withPivot($pivotFields);
-            if (!empty($pivotFields) && in_array($orderBy, $pivotFields)) {
+            if (! empty($pivotFields) && in_array($orderBy, $pivotFields)) {
                 $relationQuery->orderByRaw("pivot_{$orderBy}" . (app()->environment('testing') ? '' : ' NULLS LAST'));
             }
         }
@@ -109,13 +104,12 @@ trait RepositorySyncsRelations
      * @param mixed $data
      * @return void
      */
-    protected function extractRealDataFrom($keys, $data)
-    {
+    protected function extractRealDataFrom($keys, $data) {
         $realData = null;
-        $keys = (array) $keys;
+        $keys     = (array) $keys;
         foreach ($keys as $key) {
             $realData = Arr::get($data, $key, null);
-            if (!empty($realData)) {
+            if (! empty($realData)) {
                 break;
             }
         }
@@ -130,22 +124,20 @@ trait RepositorySyncsRelations
      * @param string $relation
      * @return void
      */
-    public function syncManyToManyRelation(Model $subject, array|Collection $data, string $relation)
-    {
+    public function syncManyToManyRelation(Model $subject, array | Collection $data, string $relation) {
         $subject->$relation()->detach();
         $subject->$relation()->attach($data);
     }
 
-    public function syncDeliverables(Model $subject, $data, string $relation = 'deliverables', string $typeKey = 'deliverable_type')
-    {
+    public function syncDeliverables(Model $subject, $data, string $relation = 'deliverables', string $typeKey = 'deliverable_type') {
         $data = array_filter((array) $data);
 
         $sync = [];
         foreach ($data as $id) {
             $sync[$id] = [
-                $typeKey => Str::singular($relation),
+                $typeKey                   => Str::singular($relation),
                 "deliverable_relations_id" => $subject->id,
-                'deliverable_id' => $id
+                'deliverable_id'           => $id,
             ];
         }
         /**
@@ -153,13 +145,13 @@ trait RepositorySyncsRelations
          * when using the sync or detach methods
          * it doesn't take into effect deliverable_relations_type
          * */
-        \DB::table('deliverable_relations')
+        DB::table('deliverable_relations')
             ->where([
-                'deliverable_type' => Str::singular($relation),
+                'deliverable_type'         => Str::singular($relation),
                 "deliverable_relations_id" => $subject->id,
             ])
             ->delete();
-        if (!empty($sync)) {
+        if (! empty($sync)) {
             $subject->$relation()->attach($sync);
         }
     }
@@ -173,8 +165,7 @@ trait RepositorySyncsRelations
      * @param string $key
      * @return Model
      */
-    public function syncSingleMetadata(Model $subject, array|Collection $data, string $key)
-    {
+    public function syncSingleMetadata(Model $subject, array | Collection $data, string $key) {
         // print_r($data);
 
         if (empty($data)) {
@@ -183,13 +174,13 @@ trait RepositorySyncsRelations
 
         $relation = Str::camel($key);
 
-        if (is_object($data) && $data->id) {
+        if ($data instanceof Model && $data->id) {
             $model = $data;
-            $model->entity_relation = $model->entity_relation ?? $relation;
+            $model->setAttribute('entity_relation', $model->getAttribute('entity_relation') ?? $relation);
         } else {
-            $data = is_object($data) ? $data->getAttributes() : $data;
+            $data                    = is_object($data) ? $data->getAttributes() : $data;
             $data['entity_relation'] = $relation;
-            $id = Arr::get($data, 'id');
+            $id                      = Arr::get($data, 'id');
             if ($subject->relationLoaded($relation)) {
                 $model = $subject->$relation ?? new Metadata();
             } else {
@@ -200,11 +191,11 @@ trait RepositorySyncsRelations
                 $model = $model->firstWhere('id', '=', $id) ?? new Metadata();
             }
         }
-        if (Schema::hasColumn($model->getTable(), 'priority') && !$model->priority) {
+        if (Schema::hasColumn($model->getTable(), 'priority') && ! $model->priority) {
             $model->priority = $subject->$relation()->count();
         }
         $model->fill($data);
-        if (!$model->exists) {
+        if (! $model->exists) {
             $subject->saveRelation($key, $model);
         } else {
             $model->save();
@@ -222,9 +213,8 @@ trait RepositorySyncsRelations
      * @param string $key
      * @return Model
      */
-    public function syncMetadataModel(BaseModel|Model $subject, $data, string $key)
-    {
-        return $this->syncSingleMetadata($model, $data, $key);
+    public function syncMetadataModel(Model $subject, $data, string $key) {
+        return $this->syncSingleMetadata($subject, $data, $key);
     }
 
     /**
@@ -237,10 +227,9 @@ trait RepositorySyncsRelations
      * @param boolean $dataIsValue
      * @return Illuminate\Support\Collection
      */
-    public function syncMetadata(Model $subject, array|Collection $data, string $key = 'metadata', array $linkedBy = ['id'])
-    {
+    public function syncMetadata(Model $subject, array | Collection $data, string $key = 'metadata', array $linkedBy = ['id']) {
         $data = array_filter((array) $data);
-        if (!is_array($data) || empty($data)) {
+        if (! is_array($data) || empty($data)) {
             return;
         }
         $snakeKey = Str::snake($key);
@@ -253,10 +242,10 @@ trait RepositorySyncsRelations
         }
 
         $syncedModels = collect([]);
-        $toSync = collect([]);
-        $toDelete = collect([]);
+        $toSync       = collect([]);
+        $toDelete     = collect([]);
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             if ($data instanceof Collection || $data instanceof EloquentCollection) {
                 $data = $data->filter()->all();
             }
@@ -277,11 +266,11 @@ trait RepositorySyncsRelations
             }
             if ($toSync->count()) {
                 foreach ($toSync->filter()->values() as $index => $metadata) {
-                    $metadata['priority'] = $index;
+                    $metadata['priority']        = $index;
                     $metadata['entity_relation'] = $relation;
-                    $metadata['created_at'] = $metadata['updated_at'] = Carbon::now();
-                    $where = $this->_getLinkCondition($metadata, $linkedBy);
-                    $model = $this->_findRelationModel($subject, $relation, $where, $metadata);
+                    $metadata['created_at']      = $metadata['updated_at']      = Carbon::now();
+                    $where                       = $this->_getLinkCondition($metadata, $linkedBy);
+                    $model                       = $this->_findRelationModel($subject, $relation, $where, $metadata);
                     $model->fill($metadata);
                     $model->save();
 
@@ -303,7 +292,6 @@ trait RepositorySyncsRelations
         return $subject->$relation;
     }
 
-
     /**
      * Sync a relation
      *
@@ -315,22 +303,21 @@ trait RepositorySyncsRelations
      * @return Illuminate\Support\Collection
      */
 
-    public function syncRelation(Model $subject, array|Collection $data, string $relation, callable $callable = null, $linkedBy = ['id'])
-    {
+    public function syncRelation(Model $subject, array | Collection $data, string $relation,  ? callable $callable = null, $linkedBy = ['id']) {
         $data = is_array($data) ? array_filter($data) : $data;
 
         if (
             (is_array($data) && empty($data)) &&
-            (($data instanceof Collection || $data instanceof EloquentCollection) && !$data->count())
+            (($data instanceof Collection || $data instanceof EloquentCollection) && ! $data->count())
         ) {
             return;
         }
 
         $syncedModels = collect([]);
-        $toSync = collect([]);
-        $toDelete = collect([]);
+        $toSync       = collect([]);
+        $toDelete     = collect([]);
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             if ($data instanceof Collection || $data instanceof EloquentCollection) {
                 $data = $data->filter()->all();
             } else {
@@ -356,9 +343,9 @@ trait RepositorySyncsRelations
                     if (is_callable($callable)) {
                         $newData = $callable($newData, $index, $this);
                     }
-                    $where = $this->_getLinkCondition($newData, $linkedBy);
-                    $method = is_object($newData) ? 'save' : 'create';
-                    $model = $this->_findRelationModel($subject, $relation, $where, $newData, $method);
+                    $where    = $this->_getLinkCondition($newData, $linkedBy);
+                    $method   = is_object($newData) ? 'save' : 'create';
+                    $model    = $this->_findRelationModel($subject, $relation, $where, $newData, $method);
                     $fillData = is_object($newData) ? $newData->getAttributes() : $newData;
                     $model->fill($fillData);
                     $model->save();
@@ -392,25 +379,24 @@ trait RepositorySyncsRelations
      * @return Illuminate\Support\Collection
      */
 
-    public function syncSingleRelation(Model $subject, array $data, string $relation, callable $callable = null, array $linkedBy = null)
-    {
+    public function syncSingleRelation(Model $subject, array $data, string $relation,  ? callable $callable = null, ?array $linkedBy = null) {
         if (
-            (!is_array($data) && is_object($data) && !method_exists($data, 'getAttributes')) || (is_array($data) && empty($data))
+            (! is_array($data) && is_object($data) && ! method_exists($data, 'getAttributes')) || (is_array($data) && empty($data))
         ) {
             return;
         }
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             if (empty($subject->$relation)) {
                 $subject->load($relation);
             }
 
             if (is_callable($callable)) {
-                $data = $callable($data, $index, $this);
+                $data = $callable($data, 0, $this);
             }
 
             $method = is_object($data) ? 'save' : 'create';
-            if (!empty($linkedBy)) {
+            if (! empty($linkedBy)) {
                 $where = $this->_getLinkCondition($data, $linkedBy);
                 $model = $this->_findRelationModel($subject, $relation, $where, $data, $method);
             } else {
@@ -438,13 +424,12 @@ trait RepositorySyncsRelations
      * @param iterable$linkedBy Can be an associataive array or an indexed array
      * @return array
      */
-    protected function _getLinkCondition($data, array $linkedBy): array
-    {
+    protected function _getLinkCondition($data, array $linkedBy) : array {
         $data = $data instanceof Model ? $data->getAttributes() : $data;
-        $id = Arr::get($data, 'id');
+        $id   = Arr::get($data, 'id');
 
         if (empty($id) && is_array($data)) {
-            $keys = Arr::isAssoc($linkedBy) ? array_keys($linkedBy) : $linkedBy;
+            $keys  = Arr::isAssoc($linkedBy) ? array_keys($linkedBy) : $linkedBy;
             $where = array_filter(Arr::only($data, $keys));
             if (Arr::isAssoc($linkedBy)) {
                 $where = array_filter(array_merge($where, array_filter($linkedBy)));
@@ -466,11 +451,10 @@ trait RepositorySyncsRelations
      * @param string $method
      * @return Model
      */
-    protected function _findRelationModel(Model $subject, string $relation, array $where, $data = null, $method = 'create')
-    {
+    protected function _findRelationModel(Model $subject, string $relation, array $where, $data = null, $method = 'create') {
         $existing = null;
-        $query = $subject->$relation();
-        if (!empty($where)) {
+        $query    = $subject->$relation();
+        if (! empty($where)) {
             foreach ($where as $key => $value) {
                 $query->where($key, $value);
             }
