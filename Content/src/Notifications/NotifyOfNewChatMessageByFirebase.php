@@ -1,21 +1,18 @@
 <?php
-
 namespace Nitm\Content\Notifications;
 
-use Nitm\Content\Models\ChatMessage;
 use Illuminate\Bus\Queueable;
+use Nitm\Content\Models\ChatMessage;
+use Nitm\Content\Notifications\BaseNotification as Notification;
 use Nitm\Content\Notifications\FcmFunctionChannel;
 use NotificationChannels\Fcm\FcmMessage;
-use NotificationChannels\Fcm\Resources\ApnsConfig;
 use NotificationChannels\Fcm\Resources\AndroidConfig;
-use NotificationChannels\Fcm\Resources\AndroidMessagePriority;
-use NotificationChannels\Fcm\Resources\ApnsFcmOptions;
-use Nitm\Content\Notifications\BaseNotification as Notification;
 use NotificationChannels\Fcm\Resources\AndroidFcmOptions;
-use NotificationChannels\Fcm\Resources\Notification as FcmNotification;
+use NotificationChannels\Fcm\Resources\AndroidMessagePriority;
+use NotificationChannels\Fcm\Resources\ApnsConfig;
+use NotificationChannels\Fcm\Resources\ApnsFcmOptions;
 
-class NotifyOfNewChatMessageByFirebase extends Notification
-{
+class NotifyOfNewChatMessageByFirebase extends Notification {
     use Queueable;
 
     /**
@@ -44,12 +41,11 @@ class NotifyOfNewChatMessageByFirebase extends Notification
      *
      * @return void
      */
-    public function __construct(string $title, ChatMessage $message, string $url = null)
-    {
+    public function __construct(string $title, ChatMessage $message, ?string $url = null) {
         //
-        $this->title = $title;
+        $this->title   = $title;
         $this->message = $message;
-        $this->url = $url ?? config('app.webUrl') . '/app/chat';
+        $this->url     = $url ?? config('app.webUrl') . '/app/chat';
     }
 
     /**
@@ -58,8 +54,7 @@ class NotifyOfNewChatMessageByFirebase extends Notification
      * @param mixed  $notifiable
      * @return array
      */
-    public function via($notifiable)
-    {
+    public function via($notifiable) {
         return [FcmFunctionChannel::class];
     }
 
@@ -69,16 +64,15 @@ class NotifyOfNewChatMessageByFirebase extends Notification
      * @param mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toFcm($notifiable)
-    {
+    public function toFcm($notifiable) {
         return FcmMessage::create()
             ->setData($this->toArray())
-            // ->setNotification(
-            //     FcmNotification::create()
-            //         ->setTitle('New message was received in ' . $this->title)
-            //         ->setBody($this->message->message)
-            //         ->setImage($this->message->user->photo_url)
-            // )
+        // ->setNotification(
+        //     FcmNotification::create()
+        //         ->setTitle('New message was received in ' . $this->title)
+        //         ->setBody($this->message->message)
+        //         ->setImage($this->message->user->photo_url)
+        // )
             ->setAndroid(
                 AndroidConfig::create()
                     ->setPriority(AndroidMessagePriority::NORMAL())
@@ -88,11 +82,11 @@ class NotifyOfNewChatMessageByFirebase extends Notification
             ->setApns(
                 ApnsConfig::create()
                     ->setHeaders([
-                        'apns-push-type' => 'alert',
-                        'apns-priority' => '10',
+                        'apns-push-type'   => 'alert',
+                        'apns-priority'    => '10',
                         // 'apns-expiration' => now('UTC')->addMinutes(30)->timestamp,
                         'apns-collapse-id' => 'com.wethrivetech.wethrive',
-                        'apns-topic' => 'com.wethrivetech.wethrive'
+                        'apns-topic'       => 'com.wethrivetech.wethrive',
                     ])
                     ->setFcmOptions(ApnsFcmOptions::create()->setAnalyticsLabel('analytics_ios'))
             );
@@ -104,18 +98,17 @@ class NotifyOfNewChatMessageByFirebase extends Notification
      * @param mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable = null)
-    {
+    public function toArray($notifiable = null) {
         return [
-            'id' => $this->message->id . "",
-            'action' => 'new-message',
-            'type' => 'message',
-            'date' => $this->message->date,
-            'title' => $this->message->thread->title ?? $this->message->to->name ?? " New message",
+            'id'        => $this->message->id . "",
+            'action'    => 'new-message',
+            'type'      => 'message',
+            'date'      => $this->message->date,
+            'title'     => $this->message->thread->title ?? $this->message->to->name ?? " New message",
             'thread_id' => $this->message->thread_id,
-            'user_id' => $this->message->user_id . "",
-            'to_id' => $this->message->to_id . "",
-            'body' => $this->message->message
+            'user_id'   => $this->message->user_id . "",
+            'to_id'     => $this->message->to_id . "",
+            'body'      => $this->message->message,
         ];
     }
 }

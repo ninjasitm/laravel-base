@@ -1,20 +1,16 @@
 <?php
-
 namespace Nitm\Content\Repositories;
 
-use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Arr;
-use Nitm\Content\Models\Notification;
-use Nitm\Content\Events\NotificationCreated;
 use Nitm\Content\Contracts\Repositories\NotificationRepository as NotificationRepositoryContract;
+use Nitm\Content\Models\Notification;
+use Ramsey\Uuid\Uuid;
 
-class NotificationRepository implements NotificationRepositoryContract
-{
+class NotificationRepository implements NotificationRepositoryContract {
     /**
      * {@inheritdoc}
      */
-    public function recent($user)
-    {
+    public function recent($user) {
         // Retrieve all unread notifications for the user...
         $unreadNotifications = Notification::with('creator')
             ->where('user_id', $user->id)
@@ -35,9 +31,9 @@ class NotificationRepository implements NotificationRepositoryContract
 
         if (count($notifications) > 0) {
             Notification::whereNotIn('id', $notifications->pluck('id'))
-                        ->where('user_id', $user->id)
-                        ->where('created_at', '<', $notifications->first()->created_at)
-                        ->delete();
+                ->where('user_id', $user->id)
+                ->where('created_at', '<', $notifications->first()->created_at)
+                ->delete();
         }
 
         return $notifications->values();
@@ -46,23 +42,25 @@ class NotificationRepository implements NotificationRepositoryContract
     /**
      * {@inheritdoc}
      */
-    public function create($user, array $data)
-    {
+    public function create($user, array $data) {
         $creator = Arr::get($data, 'from');
 
         $notification = Notification::create(
             [
-            'id' => Uuid::uuid4(),
-            'user_id' => $user->id,
-            'created_by' => $creator ? $creator->id : null,
-            'icon' => $data['icon'],
-            'body' => $data['body'],
-            'action_text' => Arr::get($data, 'action_text'),
-            'action_url' => Arr::get($data, 'action_url'),
+                'id'          => Uuid::uuid4(),
+                'user_id'     => $user->id,
+                'created_by'  => $creator ? $creator->id : null,
+                'icon'        => $data['icon'],
+                'body'        => $data['body'],
+                'action_text' => Arr::get($data, 'action_text'),
+                'action_url'  => Arr::get($data, 'action_url'),
             ]
         );
 
-        event(new NotificationCreated($notification));
+        $eventClass = 'Nitm\\Content\\Events\\NotificationCreated';
+        if (class_exists($eventClass)) {
+            event(new $eventClass($notification));
+        }
 
         return $notification;
     }
@@ -70,8 +68,7 @@ class NotificationRepository implements NotificationRepositoryContract
     /**
      * {@inheritdoc}
      */
-    public function personal($user, $from, array $data)
-    {
+    public function personal($user, $from, array $data) {
         return $this->create($user, array_merge($data, ['from' => $from]));
     }
 }

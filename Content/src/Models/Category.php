@@ -1,16 +1,16 @@
 <?php
-
 namespace Nitm\Content\Models;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Nitm\Content\Traits\Sluggable;
-use Nitm\Content\Traits\NestedTree;
-use Nitm\Content\Models\BaseModel as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Nitm\Content\Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Nitm\Content\Database\Factories\CategoryFactory;
 use Nitm\Content\Database\Scopes\CategoryDefaultOrderScope;
+use Nitm\Content\Models\BaseModel as Model;
+use Nitm\Content\Traits\NestedTree;
+use Nitm\Content\Traits\Sluggable;
 
 /**
  * Class Category
@@ -129,8 +129,7 @@ use Nitm\Content\Database\Scopes\CategoryDefaultOrderScope;
  *      )
  * )
  */
-class Category extends Model
-{
+class Category extends Model {
     use SoftDeletes, Sluggable, NestedTree;
 
     public $table = 'categories';
@@ -162,18 +161,18 @@ class Category extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'title' => 'string',
-        'slug' => 'string',
+        'id'          => 'integer',
+        'title'       => 'string',
+        'slug'        => 'string',
         'description' => 'string',
-        'photo_url' => 'string',
-        'author_id' => 'integer',
-        'editor_id' => 'integer',
-        'deleter_id' => 'integer',
-        'parent_id' => 'integer',
-        'nest_left' => 'integer',
-        'nest_right' => 'integer',
-        'nest_depth' => 'integer',
+        'photo_url'   => 'string',
+        'author_id'   => 'integer',
+        'editor_id'   => 'integer',
+        'deleter_id'  => 'integer',
+        'parent_id'   => 'integer',
+        'nest_left'   => 'integer',
+        'nest_right'  => 'integer',
+        'nest_depth'  => 'integer',
     ];
 
     /**
@@ -182,9 +181,9 @@ class Category extends Model
      * @var array
      */
     public static $rules = [
-        'title' => 'required',
+        'title'       => 'required',
         'description' => 'sometimes',
-        'author_id' => 'sometimes',
+        'author_id'   => 'sometimes',
     ];
 
     protected $slugs = [
@@ -194,15 +193,14 @@ class Category extends Model
     /**
      * The "booting" method of the model.
      */
-    public static function boot()
-    {
+    public static function boot() {
         parent::boot();
 
         static::addGlobalScope(new CategoryDefaultOrderScope());
 
         static::saving(
             function ($model) {
-                if (!$model->slug) {
+                if (! $model->slug) {
                     $model->slugAttributes();
                 }
                 $model->parent_id = $model->parent_id ?: optional(static::self()->first())->id;
@@ -213,9 +211,8 @@ class Category extends Model
     /**
      * @return [type]
      */
-    public function getBelongsToOtherAttribute()
-    {
-        return !is_null(array_get($this->attributes, 'parent_id'));
+    public function getBelongsToOtherAttribute() {
+        return ! is_null(Arr::get($this->attributes, 'parent_id'));
     }
 
     /**
@@ -223,9 +220,8 @@ class Category extends Model
      *
      * @return [type]
      */
-    public function setBelongsToOtherAttribute($value)
-    {
-        if (!$value) {
+    public function setBelongsToOtherAttribute($value) {
+        if (! $value) {
             $this->attributes['parent_id'] = null;
         }
     }
@@ -235,8 +231,7 @@ class Category extends Model
      *
      * @return [type]
      */
-    public function setParentAttribute($value)
-    {
+    public function setParentAttribute($value) {
         $this->attributes['parent_id'] = $value instanceof EloquentModel ? $value->id : $value;
     }
 
@@ -245,9 +240,8 @@ class Category extends Model
      *
      * @return [type]
      */
-    public function setEditorIdAttribute($value)
-    {
-        if (!$value) {
+    public function setEditorIdAttribute($value) {
+        if (! $value) {
             $this->attributes['editor_id'] = null;
         }
     }
@@ -255,9 +249,8 @@ class Category extends Model
     /**
      * @return [type]
      */
-    public function getParentSlugTitleAttribute()
-    {
-        $parent = !is_object($this->parent) ? $this->parent()->first() : $this->parent;
+    public function getParentSlugTitleAttribute() {
+        $parent = ! is_object($this->parent) ? $this->parent()->first() : $this->parent;
         if (is_object($parent) && $parent->id == $this->id) {
             $parent = $this->parent()->first();
         }
@@ -268,8 +261,7 @@ class Category extends Model
         return '';
     }
 
-    public function getParentAttribute()
-    {
+    public function getParentAttribute() {
         if ($this->relationLoaded('parent')) {
             return $this->getRelation('parent');
         }
@@ -279,49 +271,43 @@ class Category extends Model
      * Get the is value for this model
      * @return string
      */
-    public function getIs(): string
-    {
+    public function getIs(): string {
         return isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function author()
-    {
+    public function author() {
         return $this->belongsTo(\Nitm\Content\Models\User::class, 'author_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function editor()
-    {
+    public function editor() {
         return $this->belongsTo(\Nitm\Content\Models\User::class, 'editor_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      **/
-    public function deleter()
-    {
+    public function deleter() {
         return $this->belongsTo(\Nitm\Content\Models\User::class, 'deleter_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function projects()
-    {
-        return $this->hasMany(\Nitm\Content\Models\Project::class, 'type_id');
+    public function projects() {
+        return $this->hasMany('Nitm\\Content\\Models\\Project', 'type_id');
     }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      **/
-    public function people()
-    {
-        return $this->hasMany(\Nitm\Content\Models\Person::class, 'position_id');
+    public function people() {
+        return $this->hasMany('Nitm\\Content\\Models\\Person', 'position_id');
     }
 
     /**
@@ -333,11 +319,10 @@ class Category extends Model
      *
      * @return [type]
      */
-    public function scopeSelf($query)
-    {
+    public function scopeSelf($query) {
         $slug = $this->getIs();
         if ($slug != 'category') {
-            $model = new static;
+            $model             = new static;
             $model->bindToType = false;
             return $model->where(
                 [
@@ -354,12 +339,11 @@ class Category extends Model
      *
      * @return [type]
      */
-    public function scopeBindToType($query, $type = null)
-    {
+    public function scopeBindToType($query, $type = null) {
         $baseName = class_basename(get_called_class());
         if ($baseName !== 'Category') {
             $type = $type ?: $this->getIs();
-            $sql = "SELECT id FROM categories WHERE slug='" . $type . "' order by id asc limit 1";
+            $sql  = "SELECT id FROM categories WHERE slug='" . $type . "' order by id asc limit 1";
             $query->whereRaw('(parent_id=(' . $sql . '))');
         }
     }
@@ -369,8 +353,7 @@ class Category extends Model
      *
      * @param query The query builder instance
      */
-    public function scopeUnbindToType($query)
-    {
+    public function scopeUnbindToType($query) {
         $this->bindToType = false;
     }
 
@@ -379,12 +362,11 @@ class Category extends Model
      *
      * @return [type]
      */
-    public function scopeBindToTypeLegacy($query)
-    {
+    public function scopeBindToTypeLegacy($query) {
         if (get_called_class() !== 'Nitm\Content\Models\Category') {
-            if (!$this->id) {
-                $slug = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
-                $model = \DB::table($this->getTable())->select(['id', 'nest_left', 'nest_right', 'nest_depth'])->where(
+            if (! $this->id) {
+                $slug  = isset($this->_is) ? $this->_is : str_replace('_', '-', Str::snake(class_basename(get_called_class())));
+                $model = DB::table($this->getTable())->select(['id', 'nest_left', 'nest_right', 'nest_depth'])->where(
                     [
                         'slug' => $slug,
                     ]
@@ -402,15 +384,13 @@ class Category extends Model
      *
      * @param query The query builder instance.
      */
-    public function scopeClearOrderBy($query)
-    {
+    public function scopeClearOrderBy($query) {
         $query->withoutGlobalScope(CategoryDefaultOrderScope::class);
     }
 
-    public function newQuery()
-    {
+    public function newQuery() {
         $query = parent::newQuery();
-        if ($this->bindToType && !$this->id) {
+        if ($this->bindToType && ! $this->id) {
             $query->bindToType();
         }
         return $query;
@@ -421,8 +401,7 @@ class Category extends Model
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public static function newFactory()
-    {
-        return CategoryFactory::new();
+    public static function newFactory() {
+        return CategoryFactory::new ();
     }
 }

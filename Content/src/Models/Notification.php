@@ -1,13 +1,11 @@
 <?php
-
 namespace Nitm\Content\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Parsedown;
+use Nitm\Content\NitmContent;
 
-class Notification extends Model
-{
+class Notification extends Model {
     use HasFactory;
     /**
      * The database table used by the model.
@@ -63,16 +61,14 @@ class Notification extends Model
     /**
      * Get the user the notification belongs to.
      */
-    public function user()
-    {
+    public function user() {
         return $this->belongsTo(NitmContent::userModel(), 'user_id');
     }
 
     /**
      * Get the user that created the notification (if any).
      */
-    public function creator()
-    {
+    public function creator() {
         return $this->belongsTo(NitmContent::userModel(), 'created_by');
     }
 
@@ -81,8 +77,10 @@ class Notification extends Model
      *
      * @return string
      */
-    public function getParsedBodyAttribute()
-    {
-        return (new Parsedown)->text(htmlspecialchars($this->attributes['body']));
+    public function getParsedBodyAttribute() {
+        $parsedownClass = 'Parsedown';
+        $body           = htmlspecialchars($this->attributes['body']);
+
+        return class_exists($parsedownClass) ? (new $parsedownClass)->text($body) : $body;
     }
 }

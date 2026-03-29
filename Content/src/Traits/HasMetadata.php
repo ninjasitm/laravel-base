@@ -1,24 +1,21 @@
 <?php
-
 namespace Nitm\Content\Traits;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Nitm\Content\Models\Metadata;
 use Nitm\Helpers\CollectionHelper;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
-trait HasMetadata
-{
+trait HasMetadata {
     /**
      * Laravel uses this method to allow you to initialize traits
      *
      * @return void
      */
-    public function initializeHasMetadata()
-    {
+    public function initializeHasMetadata() {
         $this->addCustomWith(
             'metadata'
         );
@@ -29,8 +26,7 @@ trait HasMetadata
      *
      * @return integer
      */
-    public function deleteMetadata()
-    {
+    public function deleteMetadata() {
         return $this->metadata()->get()->reduce(
             function ($result, $metadata) {
                 return $metadata->delete() ? $result + 1 : $result;
@@ -39,11 +35,10 @@ trait HasMetadata
         );
     }
 
-    public function metadata(): \Illuminate\Database\Eloquent\Relations\MorphMany
-    {
-        $class = '\\Nitm\Content\\Models\\Metadata\\Metadata';
+    public function metadata(): \Illuminate\Database\Eloquent\Relations\MorphMany {
+        $class     = '\\Nitm\Content\\Models\\Metadata\\Metadata';
         $baseClass = class_basename(get_class($this));
-        if (!class_exists('\\Nitm\Content\\Models\\Metadata\\' . $baseClass . 'Metadata')) {
+        if (! class_exists('\\Nitm\Content\\Models\\Metadata\\' . $baseClass . 'Metadata')) {
             $class = Metadata::class;
         }
         return $this->morphMany($class, 'entity')
@@ -51,17 +46,13 @@ trait HasMetadata
             ->byPriority();
     }
 
-    public function requiredMetadata(): \Illuminate\Database\Eloquent\Relations\MorphMany
-    {
+    public function requiredMetadata(): \Illuminate\Database\Eloquent\Relations\MorphMany {
         return $this->metadata()->whereIsRequired(true);
     }
 
-    public function missingMetadata(): \Illuminate\Database\Eloquent\Relations\MorphMany
-    {
+    public function missingMetadata(): \Illuminate\Database\Eloquent\Relations\MorphMany {
         return $this->requiredMetadata()->isMissingValue();
     }
-
-
 
     /**
      * Sync single metadata
@@ -71,8 +62,7 @@ trait HasMetadata
      * @param string $key
      * @return Model
      */
-    public function syncSingleMetadata($data, string $key)
-    {
+    public function syncSingleMetadata($data, string $key) {
         // print_r($data);
 
         if (empty($data)) {
@@ -82,12 +72,12 @@ trait HasMetadata
         $relation = Str::camel($key);
 
         if (is_object($data) && $data->id) {
-            $model = $data;
+            $model                  = $data;
             $model->entity_relation = $model->entity_relation ?? $relation;
         } else {
-            $data = is_object($data) ? $data->getAttributes() : $data;
+            $data                    = is_object($data) ? $data->getAttributes() : $data;
             $data['entity_relation'] = $relation;
-            $id = Arr::get($data, 'id');
+            $id                      = Arr::get($data, 'id');
             if ($this->relationLoaded($relation)) {
                 $model = $this->$relation ?? new Metadata;
             } else {
@@ -98,11 +88,11 @@ trait HasMetadata
                 $model = $model->firstWhere('id', '=', $id) ?? new Metadata;
             }
         }
-        if (Schema::hasColumn($model->getTable(), 'priority') && !$model->priority) {
+        if (Schema::hasColumn($model->getTable(), 'priority') && ! $model->priority) {
             $model->priority = $this->$relation()->count();
         }
         $model->fill($data);
-        if (!$model->exists) {
+        if (! $model->exists) {
             $this->saveRelation($key, $model);
         } else {
             $model->save();
@@ -120,8 +110,7 @@ trait HasMetadata
      * @param string $key
      * @return Model
      */
-    public function syncMetadataModel($data, string $key)
-    {
+    public function syncMetadataModel($data, string $key) {
         return $this->syncSingleMetadata($data, $key);
     }
 
@@ -135,10 +124,9 @@ trait HasMetadata
      * @param boolean $dataIsValue
      * @return Illuminate\Support\Collection
      */
-    public function syncMetadata($data, string $key = 'metadata', callable $callable = null, array $linkedBy = ['id'])
-    {
+    public function syncMetadata($data, string $key = 'metadata',  ? callable $callable = null, array $linkedBy = ['id']) {
         $data = array_filter((array) $data);
-        if (!is_array($data) || empty($data)) {
+        if (! is_array($data) || empty($data)) {
             return;
         }
         $snakeKey = Str::snake($key);
@@ -151,10 +139,10 @@ trait HasMetadata
         }
 
         $syncedModels = collect([]);
-        $toSync = collect([]);
-        $toDelete = collect([]);
+        $toSync       = collect([]);
+        $toDelete     = collect([]);
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             if (CollectionHelper::isCollection($data)) {
                 $data = $data->filter()->all();
             }
@@ -182,7 +170,7 @@ trait HasMetadata
                 //Now merge it with the toSync data to ensure it's not duplicated
                 $toSync->transform(function ($entry) use ($existingLinkedMetadata, $relation) {
                     $linkedMetadataId = Arr::get($entry, 'linked_metadata_id');
-                    if (!empty($linkedMetadataId)) {
+                    if (! empty($linkedMetadataId)) {
                         // Do this on the loaded relation instead of hitting the DB again
                         $existingLinkedMetadata = $this->$relation->firstWhere('linked_metadata_id', $linkedMetadataId);
                         if ($existingLinkedMetadata instanceof Metadata) {
@@ -195,11 +183,11 @@ trait HasMetadata
 
             if ($toSync->count()) {
                 foreach ($toSync->filter()->values() as $index => $metadata) {
-                    $metadata['priority'] = $index;
+                    $metadata['priority']        = $index;
                     $metadata['entity_relation'] = $relation;
-                    $metadata['created_at'] = $metadata['updated_at'] = Carbon::now();
-                    $where = $this->_getLinkCondition($metadata, $linkedBy);
-                    $model = $this->_findRelationModel($relation, $where, $metadata);
+                    $metadata['created_at']      = $metadata['updated_at']      = Carbon::now();
+                    $where                       = $this->_getLinkCondition($metadata, $linkedBy);
+                    $model                       = $this->_findRelationModel($relation, $where, $metadata);
                     $model->fill($metadata);
                     $model->save();
 

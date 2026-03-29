@@ -1,13 +1,11 @@
 <?php
-
 namespace Nitm\Content\Traits;
 
 use Carbon\Carbon;
-use App\Helpers\CollectionHelper;
-use App\Models\NotificationPreference;
+use Illuminate\Support\Facades\Auth;
+use Nitm\Helpers\CollectionHelper;
 
-trait SupportsNotificationPreferences
-{
+trait SupportsNotificationPreferences {
     /**
      * Laravel uses this method to allow you to initialize traits
      *
@@ -17,9 +15,8 @@ trait SupportsNotificationPreferences
     // {
     // }
 
-    public function notificationPreferencesForUser()
-    {
-        $id = auth()->check() ? auth()->user()->id : -1;
+    public function notificationPreferencesForUser() {
+        $id = Auth::check() ? Auth::user()->id : -1;
         return $this->notificationPreferences()->whereUserId($id);
     }
 
@@ -28,26 +25,25 @@ trait SupportsNotificationPreferences
      *
      * @return bool
      */
-    public function notificationsAreActive(): bool
-    {
-        $now = Carbon::now($this->timezone);
+    public function notificationsAreActive(): bool {
+        $now        = Carbon::now($this->timezone);
         $hasSilence = false;
-        $start = null;
-        $end = null;
-        $endTime = null;
-        $startTime = null;
+        $start      = null;
+        $end        = null;
+        $endTime    = null;
+        $startTime  = null;
         if ($this->notifications_silent_from && $this->notifications_silent_to) {
             $startTime = $this->notifications_silent_from ? explode(':', $this->notifications_silent_from) : null;
-            $start = !empty($startTime) ? $now->clone()->setTime($startTime[0], $startTime[1]) : null;
-            $endTime = $this->notifications_silent_to ? explode(':', $this->notifications_silent_to) : null;
-            $end = !empty($endTime) ? $now->clone()->setTime($endTime[0], $endTime[1]) : null;
+            $start     = ! empty($startTime) ? $now->clone()->setTime($startTime[0], $startTime[1]) : null;
+            $endTime   = $this->notifications_silent_to ? explode(':', $this->notifications_silent_to) : null;
+            $end       = ! empty($endTime) ? $now->clone()->setTime($endTime[0], $endTime[1]) : null;
             // If the end is before the start then most likely this is an overnight silence, so add 1 day
             if ($start && $end && $end->isBefore($start)) {
                 $end->addDay();
             }
-            $hasSilence = !empty($startTime) && !empty($endTime) && !empty($start) && !empty($end);
+            $hasSilence = ! empty($startTime) && ! empty($endTime) && ! empty($start) && ! empty($end);
         }
-        return !$hasSilence || ($hasSilence && !$now->between($start, $end));
+        return ! $hasSilence || ($hasSilence && ! $now->between($start, $end));
     }
 
     /**
@@ -57,9 +53,8 @@ trait SupportsNotificationPreferences
      * @param string $via
      * @return bool
      */
-    public function hasEnabledNotificationPreferenceVia(string $class, string $via = 'web'): bool
-    {
-        return !$this->notificationPreferences->count() || ($this->notificationPreferences->count() && $this->notificationPreferences()->whereHas('type', function ($query) use ($class) {
+    public function hasEnabledNotificationPreferenceVia(string $class, string $via = 'web'): bool {
+        return ! $this->notificationPreferences->count() || ($this->notificationPreferences->count() && $this->notificationPreferences()->whereHas('type', function ($query) use ($class) {
             $query->where('notification_class', $class);
         })->where("via_{$via}", true)->exists());
     }
@@ -70,8 +65,7 @@ trait SupportsNotificationPreferences
      * @param mixed $query
      * @return void
      */
-    public function scopeEnabled($query)
-    {
+    public function scopeEnabled($query) {
         $query->whereIsEnabled(true);
     }
 
@@ -82,8 +76,7 @@ trait SupportsNotificationPreferences
      * @param mixed $classes
      * @return void
      */
-    public function scopePreferencesFor($query, $classes)
-    {
+    public function scopePreferencesFor($query, $classes) {
         $classes = CollectionHelper::isCollection($classes) ? $classes : collect((array) $classes);
         $query->whereHas('type', function ($query) use ($classes) {
             $query->whereIn('notification_class', $classes);
@@ -97,8 +90,7 @@ trait SupportsNotificationPreferences
      * @param mixed $class
      * @return void
      */
-    public function scopeEnabledFor($query, $class)
-    {
+    public function scopeEnabledFor($query, $class) {
         $query->preferencesFor($class)->enabled();
     }
 
@@ -109,8 +101,7 @@ trait SupportsNotificationPreferences
      * @param mixed $via
      * @return void
      */
-    public function scopeVia($query, $via)
-    {
+    public function scopeVia($query, $via) {
         $via = CollectionHelper::isCollection($via) ? $via : collect((array) $via);
         $via->transform(function ($v) {
             return "via_" . ltrim(strtolower($v), 'via_');

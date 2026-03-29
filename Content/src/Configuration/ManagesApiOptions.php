@@ -1,11 +1,7 @@
 <?php
-
 namespace Nitm\Content\Configuration;
 
-use Laravel\Passport\Passport;
-
-trait ManagesApiOptions
-{
+trait ManagesApiOptions {
     /**
      * Indicates if the application will expose an API.
      *
@@ -39,8 +35,7 @@ trait ManagesApiOptions
      *
      * @return bool
      */
-    public static function usesApi()
-    {
+    public static function usesApi() {
         return static::$usesApi;
     }
 
@@ -49,8 +44,7 @@ trait ManagesApiOptions
      *
      * @return void
      */
-    public static function useApi()
-    {
+    public static function useApi() {
         static::$usesApi = true;
     }
 
@@ -60,15 +54,15 @@ trait ManagesApiOptions
      * @param iterable$abilities
      * @return array|void
      */
-    public static function tokensCan(array $abilities = null)
-    {
+    public static function tokensCan(?array $abilities = null) {
         if (is_null($abilities)) {
             return static::$tokensCan;
         } else {
             static::$tokensCan = $abilities;
 
-            if (class_exists('Laravel\Passport\Passport')) {
-                Passport::tokensCan($abilities);
+            $passportClass = 'Laravel\\Passport\\Passport';
+            if (class_exists($passportClass)) {
+                $passportClass::tokensCan($abilities);
             }
         }
     }
@@ -78,8 +72,7 @@ trait ManagesApiOptions
      *
      * @return array
      */
-    public static function tokenDefaults()
-    {
+    public static function tokenDefaults() {
         return static::$tokenDefaults;
     }
 
@@ -89,8 +82,7 @@ trait ManagesApiOptions
      * @param iterable$defaults
      * @return void
      */
-    public static function byDefaultTokensCan(array $defaults)
-    {
+    public static function byDefaultTokensCan(array $defaults) {
         static::$tokenDefaults = $defaults;
     }
 
@@ -99,8 +91,7 @@ trait ManagesApiOptions
      *
      * @return void
      */
-    public static function withCookieSerialization()
-    {
+    public static function withCookieSerialization() {
         static::$unserializesCookies = true;
     }
 }

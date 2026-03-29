@@ -1,11 +1,9 @@
 <?php
-
 namespace Nitm\Content\Configuration;
 
-use Nitm\Content\CanJoinTeams;
+use Nitm\Content\Traits\CanJoinTeams;
 
-trait ManagesModelOptions
-{
+trait ManagesModelOptions {
     /**
      * The user model class name.
      *
@@ -33,8 +31,7 @@ trait ManagesModelOptions
      * @param string $userModel
      * @return void
      */
-    public static function useUserModel($userModel)
-    {
+    public static function useUserModel($userModel) {
         static::$userModel = $userModel;
         config(['nitm-content.user_model' => $userModel]);
     }
@@ -44,8 +41,7 @@ trait ManagesModelOptions
      *
      * @return string
      */
-    public static function userModel()
-    {
+    public static function userModel() {
         return config('nitm-content.user_model') ?? static::$userModel;
     }
 
@@ -54,8 +50,7 @@ trait ManagesModelOptions
      *
      * @return \Illuminate\Contracts\Auth\Authenticatable
      */
-    public static function user()
-    {
+    public static function user() {
         return new static::$userModel;
     }
 
@@ -65,8 +60,7 @@ trait ManagesModelOptions
      * @param string $teamModel
      * @return void
      */
-    public static function useTeamModel($teamModel)
-    {
+    public static function useTeamModel($teamModel) {
         static::$teamModel = $teamModel;
         config(['nitm-content.team_model' => $teamModel]);
     }
@@ -76,8 +70,7 @@ trait ManagesModelOptions
      *
      * @return bool
      */
-    public static function usesTeams()
-    {
+    public static function usesTeams() {
         return in_array(CanJoinTeams::class, class_uses_recursive(static::userModel()));
     }
 
@@ -86,8 +79,7 @@ trait ManagesModelOptions
      *
      * @return string
      */
-    public static function teamModel()
-    {
+    public static function teamModel() {
         return config('nitm-content.team_model') ?? static::$teamModel;
     }
 
@@ -96,8 +88,7 @@ trait ManagesModelOptions
      *
      * @return \Nitm\Content\Models\Team
      */
-    public static function team()
-    {
+    public static function team() {
         return new static::$teamModel;
     }
 
@@ -107,8 +98,7 @@ trait ManagesModelOptions
      * @param string $categoryModel
      * @return void
      */
-    public static function useCategoryModel($categoryModel)
-    {
+    public static function useCategoryModel($categoryModel) {
         static::$categoryModel = $categoryModel;
         config(['nitm-content.category_model' => $categoryModel]);
     }
@@ -118,8 +108,7 @@ trait ManagesModelOptions
      *
      * @return string
      */
-    public static function categoryModel()
-    {
+    public static function categoryModel() {
         return config('nitm-content.category_model') ?? static::$categoryModel;
     }
 }

@@ -1,16 +1,17 @@
 <?php
-
 namespace Nitm\Content\Models;
 
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Nitm\Helpers\ImageHelper;
-use Nitm\Content\Traits\Sluggable;
-use Nitm\Content\Models\BaseModel as Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Nitm\Content\Database\Factories\PostFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Nitm\Content\Database\Factories\PostFactory;
+use Nitm\Content\Models\BaseModel as Model;
+use Nitm\Content\Traits\Sluggable;
+use Nitm\Helpers\ImageHelper;
 
 /**
  * Class Post
@@ -28,8 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property string|\Carbon\Carbon $published_at
  * @property boolean $published
  */
-class Post extends Model
-{
+class Post extends Model {
     use SoftDeletes, Sluggable;
 
     public $table = 'posts';
@@ -56,15 +56,15 @@ class Post extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'user_id' => 'integer',
-        'title' => 'string',
-        'slug' => 'string',
-        'excerpt' => 'string',
-        'content' => 'string',
+        'id'           => 'integer',
+        'user_id'      => 'integer',
+        'title'        => 'string',
+        'slug'         => 'string',
+        'excerpt'      => 'string',
+        'content'      => 'string',
         'content_html' => 'string',
         'published_at' => 'datetime',
-        'published' => 'boolean',
+        'published'    => 'boolean',
     ];
 
     /**
@@ -87,8 +87,7 @@ class Post extends Model
     /**
      * @inheritDoc
      */
-    public static function boot()
-    {
+    public static function boot() {
         parent::boot();
 
         static::saving(
@@ -97,10 +96,11 @@ class Post extends Model
                 if ($model->getAttribute("published")) {
                     $model->published_at = \Carbon\Carbon::now();
                 }
-                if (!Arr::get($model->getAttributes(), 'slug', false)) {
-                    $model->slug = \Auth::getUser()->username . '-' . Str::slug($model->getAttribute("title"));
+                if (! Arr::get($model->getAttributes(), 'slug', false)) {
+                    $username    = Auth::user()->username ?? 'post';
+                    $model->slug = $username . '-' . Str::slug($model->getAttribute("title"));
                 }
-                if (!Arr::get($model->attributes, 'excerpt', false)) {
+                if (! Arr::get($model->attributes, 'excerpt', false)) {
                     $model->excerpt = substr(strip_tags($model->getAttribute("content")), 0, 140);
                 }
             }
@@ -112,12 +112,11 @@ class Post extends Model
      *
      * @return array
      */
-    public function toArray($fullContent = false): array
-    {
-        $attributes = parent::toArray();
-        $genericAvatar = ImageHelper::getPlaceHolderAvatar();
+    public function toArray($fullContent = false): array {
+        $attributes           = parent::toArray();
+        $genericAvatar        = ImageHelper::getPlaceHolderAvatar();
         $attributes['author'] = [
-            'name' => $this->user ? $this->user->name : 'NITM',
+            'name'  => $this->user ? $this->user->name : 'NITM',
             'image' => $this->user ? ($this->user->avatar ? $this->user->avatar->getPath() : $genericAvatar) : $genericAvatar,
         ];
         // $attributes['image'] = $this->images->count() ? $this->images->first()->getPath() : ImageHelper::getPlaceHolderBackground();
@@ -132,8 +131,7 @@ class Post extends Model
     /**
      * @return BelongsToMany
      */
-    public function categories(): BelongsToMany
-    {
+    public function categories(): BelongsToMany {
         return $this->belongsToMany(PostCategory::class, 'posts_categories', 'post_id', 'category_id');
     }
 
@@ -145,12 +143,10 @@ class Post extends Model
     //     return Arr::get($this->images, 0, []);
     // }
 
-    public function getDateAttribute()
-    {
+    public function getDateAttribute() {
         return $this->published_at ? $this->published_at->toFormattedDateString() : 'Just Now';
     }
-    public function getUpdatedAttribute()
-    {
+    public function getUpdatedAttribute() {
         return $this->updated_at ? $this->updated_at->toFormattedDateString() : '';
     }
 
@@ -158,8 +154,7 @@ class Post extends Model
     // Scopes
     //
 
-    public function scopeIsPublished($query)
-    {
+    public function scopeIsPublished($query) {
         return $query
             ->whereNotNull('published')
             ->where('published', true)
@@ -174,8 +169,7 @@ class Post extends Model
      * @param Builder $query   The query being filtered
      * @param iterable  $options The items that make upthe filter
      */
-    public function scopeFilterByCategory($query, $categories)
-    {
+    public function scopeFilterByCategory($query, $categories) {
         $categories = (array) $categories;
         $query->where(
             function ($query) use ($categories) {
@@ -205,8 +199,7 @@ class Post extends Model
      * @param iterable                   $categories List of category ids
      * @return Illuminate\Query\Builder              QueryBuilder
      */
-    public function scopeFilterCategories($query, $categories)
-    {
+    public function scopeFilterCategories($query, $categories) {
         return $query->whereHas(
             'categories',
             function ($q) use ($categories) {
@@ -224,13 +217,15 @@ class Post extends Model
      *
      * @return boolean
      */
-    public function getHasSummaryAttribute()
-    {
-        $more = '<!-- more -->';
+    public function getHasSummaryAttribute() {
+        $more         = '<!-- more -->';
+        $html         = $this->content_html ?? '';
+        $htmlHelper   = class_exists('Html') ? 'Html' : null;
+        $strippedHtml = $htmlHelper ? $htmlHelper::strip($html) : strip_tags($html);
 
-        return (!!strlen(trim($this->excerpt)) ||
-            strpos($this->content_html, $more) !== false ||
-            strlen(Html::strip($this->content_html)) > 600);
+        return (! ! strlen(trim($this->excerpt)) ||
+            strpos($html, $more) !== false ||
+            strlen($strippedHtml) > 600);
     }
 
     /**
@@ -240,8 +235,7 @@ class Post extends Model
      *
      * @return string
      */
-    public function getSummaryAttribute()
-    {
+    public function getSummaryAttribute() {
         $excerpt = $this->excerpt;
         if (strlen(trim($excerpt))) {
             return $excerpt;
@@ -251,10 +245,13 @@ class Post extends Model
         if (strpos($this->content_html, $more) !== false) {
             $parts = explode($more, $this->content_html);
 
-            return array_get($parts, 0);
+            return Arr::get($parts, 0);
         }
 
-        return Html::limit($this->content_html, 600);
+        $html       = $this->content_html ?? '';
+        $htmlHelper = class_exists('Html') ? 'Html' : null;
+
+        return $htmlHelper ? $htmlHelper::limit($html, 600) : Str::limit(strip_tags($html), 600);
     }
 
     //
@@ -277,9 +274,8 @@ class Post extends Model
      * @param iterable$options
      * @return
      */
-    public function scopeApplySibling($query, $options = [])
-    {
-        if (!is_array($options)) {
+    public function scopeApplySibling($query, $options = []) {
+        if (! is_array($options)) {
             $options = ['direction' => $options];
         }
 
@@ -293,13 +289,13 @@ class Post extends Model
             )
         );
 
-        $isPrevious = in_array($direction, ['previous', -1]);
-        $directionOrder = $isPrevious ? 'asc' : 'desc';
+        $isPrevious        = in_array($direction, ['previous', -1]);
+        $directionOrder    = $isPrevious ? 'asc' : 'desc';
         $directionOperator = $isPrevious ? '>' : '<';
 
         $query->where('id', '<>', $this->id);
 
-        if (!is_null($this->$attribute)) {
+        if (! is_null($this->$attribute)) {
             $query->where($attribute, $directionOperator, $this->$attribute);
         }
 
@@ -311,8 +307,7 @@ class Post extends Model
      *
      * @return self
      */
-    public function nextPost()
-    {
+    public function nextPost() {
         return self::isPublished()->applySibling()->first();
     }
 
@@ -321,8 +316,7 @@ class Post extends Model
      *
      * @return self
      */
-    public function previousPost()
-    {
+    public function previousPost() {
         return self::isPublished()->applySibling(-1)->first();
     }
 
@@ -331,8 +325,7 @@ class Post extends Model
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public static function newFactory()
-    {
-        return PostFactory::new();
+    public static function newFactory() {
+        return PostFactory::new ();
     }
 }

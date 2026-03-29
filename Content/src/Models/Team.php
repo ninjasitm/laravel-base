@@ -1,19 +1,18 @@
 <?php
-
 namespace Nitm\Content\Models;
 
-use Illuminate\Support\Str;
-use Nitm\Content\NitmContent;
-use Nitm\Content\Models\Invitation;
-use Nitm\Content\Contracts\TeamContract;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
-use Nitm\Content\Models\TeamSubscription;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
+use Nitm\Content\Contracts\TeamContract;
 use Nitm\Content\Database\Factories\TeamFactory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Nitm\Content\Models\Invitation;
+use Nitm\Content\Models\TeamSubscription;
+use Nitm\Content\NitmContent;
 
-class Team extends Model implements TeamContract
-{
+class Team extends Model implements TeamContract {
     use HasFactory;
     use Notifiable;
 
@@ -55,7 +54,7 @@ class Team extends Model implements TeamContract
      * @var array
      */
     protected $casts = [
-        'owner_id' => 'int',
+        'owner_id'      => 'int',
         'trial_ends_at' => 'datetime',
     ];
 
@@ -64,24 +63,21 @@ class Team extends Model implements TeamContract
      *
      * @return string
      */
-    public function getEmailAttribute()
-    {
+    public function getEmailAttribute() {
         return $this->owner->email;
     }
 
     /**
      * Get the owner of the team.
      */
-    public function owner()
-    {
+    public function owner() {
         return $this->belongsTo(NitmContent::userModel(), 'owner_id');
     }
 
     /**
      * Get all of the users that belong to the team.
      */
-    public function users()
-    {
+    public function users() {
         return $this->belongsToMany(
             NitmContent::userModel(),
             'team_users',
@@ -95,16 +91,14 @@ class Team extends Model implements TeamContract
      *
      * @return int
      */
-    public function totalPotentialUsers()
-    {
+    public function totalPotentialUsers() {
         return $this->users()->count() + $this->invitations()->count();
     }
 
     /**
      * Get all of the team's invitations.
      */
-    public function invitations()
-    {
+    public function invitations() {
         return $this->hasMany(Invitation::class);
     }
 
@@ -113,8 +107,7 @@ class Team extends Model implements TeamContract
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function subscriptions()
-    {
+    public function subscriptions() {
         return $this->hasMany(TeamSubscription::class, 'team_id')->orderBy('created_at', 'desc');
     }
 
@@ -123,8 +116,7 @@ class Team extends Model implements TeamContract
      *
      * @return \Illuminate\Support\Collection
      */
-    public function availablePlans()
-    {
+    public function availablePlans() {
         return NitmContent::teamPlans();
     }
 
@@ -134,8 +126,7 @@ class Team extends Model implements TeamContract
      * @param string|null $value
      * @return string|null
      */
-    public function getPhotoUrlAttribute($value)
-    {
+    public function getPhotoUrlAttribute($value) {
         return empty($value)
             ? 'https://www.gravatar.com/avatar/' . md5($this->name . '@spark.laravel.com') . '.jpg?s=200&d=identicon'
             : url($value);
@@ -146,8 +137,7 @@ class Team extends Model implements TeamContract
      *
      * @return void
      */
-    public function shouldHaveOwnerVisibility()
-    {
+    public function shouldHaveOwnerVisibility() {
         $this->makeVisible(
             [
                 'card_brand',
@@ -169,8 +159,7 @@ class Team extends Model implements TeamContract
      *
      * @return void
      */
-    public function detachUsersAndDestroy()
-    {
+    public function detachUsersAndDestroy() {
         if ($this->subscribed()) {
             $this->subscription()->cancelNow();
         }
@@ -190,9 +179,8 @@ class Team extends Model implements TeamContract
      * @param mixed $role
      * @return string
      */
-    public function resolveRole(string $role): string
-    {
-        $roles = \Cache::rememberForever(
+    public function resolveRole(string $role): string {
+        $roles = Cache::rememberForever(
             'user-roles',
             function () {
                 return Role::where("name", "!=", "Super Admin")->get();
@@ -208,14 +196,13 @@ class Team extends Model implements TeamContract
      * @param mixed $value
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function resolveRouteBinding($value, $field = null)
-    {
+    public function resolveRouteBinding($value, $field = null) {
         if ($value instanceof Team) {
             return $value;
         }
 
         $value = is_array($value) ? $value['id'] : $value;
-        $key = is_numeric($value) ? 'id' : 'slug';
+        $key   = is_numeric($value) ? 'id' : 'slug';
         return $this->where($key, $value)->setEagerLoads([])->first() ?? abort(404);
     }
 
@@ -224,8 +211,7 @@ class Team extends Model implements TeamContract
      *
      * @return array
      */
-    public function toArray()
-    {
+    public function toArray() {
         $array = parent::toArray();
 
         return $array;
@@ -236,8 +222,7 @@ class Team extends Model implements TeamContract
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public static function newFactory()
-    {
-        return TeamFactory::new();
+    public static function newFactory() {
+        return TeamFactory::new ();
     }
 }

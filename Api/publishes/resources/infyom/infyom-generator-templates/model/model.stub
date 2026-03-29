@@ -2,11 +2,14 @@
 
 namespace $NAMESPACE_MODEL$;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use $NAMESPACE_MODEL_EXTEND$ as Model;
 $SOFT_DELETE_IMPORT$
 $DOCS$
 class $MODEL_NAME$ extends Model
 {
+    use HasFactory;
+
 $SOFT_DELETE$
     public $table = '$TABLE_NAME$';
     $TIMESTAMPS$

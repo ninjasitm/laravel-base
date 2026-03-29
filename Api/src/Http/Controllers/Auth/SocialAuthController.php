@@ -1,42 +1,45 @@
 <?php
 namespace Nitm\Api\Http\Controllers\Auth;
 
-use Exception;
 use Carbon\Carbon;
+use Exception;
 use Google_Client;
-use Illuminate\Support\Arr;
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
-use Laravel\Socialite\Two\AbstractProvider;
-use MadWeb\SocialAuth\Models\SocialProvider;
-use MadWeb\SocialAuth\Events\SocialUserDetached;
-use Laravel\Socialite\Contracts\User as SocialUser;
 use Laravel\Socialite\Contracts\Factory as Socialite;
-use MadWeb\SocialAuth\Exceptions\SocialUserAttachException;
-use MadWeb\SocialAuth\Exceptions\SocialGetUserInfoException;
+use Laravel\Socialite\Contracts\User as SocialUser;
+use Laravel\Socialite\Two\AbstractProvider;
+use MadWeb\SocialAuth\Contracts\SocialAuthenticatable;
 use MadWeb\SocialAuth\Controllers\SocialAuthController as BaseController;
+use MadWeb\SocialAuth\Events\SocialUserDetached;
+use MadWeb\SocialAuth\Exceptions\SocialGetUserInfoException;
+use MadWeb\SocialAuth\Exceptions\SocialUserAttachException;
+use MadWeb\SocialAuth\Models\SocialProvider;
 
 /**
  * Class SocialAuthController.
  */
-class SocialAuthController extends BaseController
-{
+class SocialAuthController extends BaseController {
     use \Nitm\Content\Http\Controllers\Traits\CustomControllerTrait;
 
-    public function __construct(Guard $auth, Socialite $socialite)
-    {
-        $this->auth = $auth;
-        $this->socialite = $socialite;
+    public function __construct(Guard $auth, Socialite $socialite) {
+        $this->auth       = $auth;
+        $this->socialite  = $socialite;
         $this->redirectTo = config('social-auth.redirect');
 
-        $className = config('social-auth.models.user');
+        $className       = config('social-auth.models.user');
         $this->userModel = new $className;
 
         if (request()->route('social')) {
             $this->middleware(
                 function ($request, $next) {
-                    $class = config('nitm-api.social_auth_provider', '\\Nitm\\Api\\Auth\\SocialProviderManager');
+                    $class         = config('nitm-api.social_auth_provider', '\\Nitm\\Api\\Auth\\SocialProviderManager');
                     $this->manager = new $class($request->route('social'));
 
                     return $next($request);
@@ -46,12 +49,11 @@ class SocialAuthController extends BaseController
         $this->middleware(config('nitm-api.social_auth_middleware'));
     }
 
-    public function refreshToken(SocialProvdier $social)
-    {
+    public function refreshToken(SocialProvider $social) {
         $provider = $this->socialite->driver($social->slug);
-        $account = auth()->user()->socials()->whereSocialProviderId($social->id)->first();
+        $account  = $this->socialAuthUser()->socials()->whereSocialProviderId($social->id)->first();
 
-        if (!$account) {
+        if (! $account) {
             abort(404);
         }
 
@@ -67,9 +69,8 @@ class SocialAuthController extends BaseController
      * @param SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
-    public function getAccounts()
-    {
-        $accounts = auth()->user()->socials()->get()->map(
+    public function getAccounts() {
+        $accounts = $this->socialAuthUser()->socials()->get()->map(
             function ($account) {
                 $provider = $this->socialite->driver($account->slug);
                 $this->checkToken($provider, $account);
@@ -89,11 +90,10 @@ class SocialAuthController extends BaseController
      * @param SocialProvider $social bound by "Route model binding" feature
      * @return JsonResponse
      */
-    public function getAccountCustom(SocialProvider $social)
-    {
+    public function getAccountCustom(SocialProvider $social) {
         $provider = $this->socialite->driver($social->slug);
 
-        if (!empty($social->scopes)) {
+        if (! empty($social->scopes)) {
             $social->override_scopes ? $provider->setScopes($social->scopes) : $provider->scopes($social->scopes);
         }
 
@@ -105,9 +105,8 @@ class SocialAuthController extends BaseController
         return $this->printSuccess($account);
     }
 
-    public function getAccount(SocialProvider $social)
-    {
-        $account = auth()->user()->socials()->whereSocialProviderId($social->id)->first();
+    public function getAccount(SocialProvider $social) {
+        $account  = $this->socialAuthUser()->socials()->whereSocialProviderId($social->id)->first();
         $provider = $this->socialite->driver($social->slug);
 
         $this->checkToken($provider, $account);
@@ -123,8 +122,7 @@ class SocialAuthController extends BaseController
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
      */
-    public function callbackCustom(Request $request, SocialProvider $social)
-    {
+    public function callbackCustom(Request $request, SocialProvider $social) {
         $provider = $this->socialite->driver($social->slug);
 
         $socialUser = null;
@@ -137,7 +135,7 @@ class SocialAuthController extends BaseController
         }
 
         // if we have no social info for some reason
-        if (!$socialUser) {
+        if (! $socialUser) {
             throw new SocialGetUserInfoException(
                 $social,
                 trans('social-auth::messages.no_user_data', ['social' => $social->label])
@@ -145,12 +143,12 @@ class SocialAuthController extends BaseController
         }
 
         // if user is guest
-        if (!$this->auth->check()) {
+        if (! $this->auth->check()) {
             return $this->processData($request, $social, $socialUser);
         }
 
         $redirect_path = $this->redirectPath();
-        $user = $request->user();
+        $user          = $request->user();
 
         // if user already attached
         if ($user->isAttached($social->slug)) {
@@ -182,38 +180,37 @@ class SocialAuthController extends BaseController
      * @throws SocialGetUserInfoException
      * @throws SocialUserAttachException
      */
-    public function callforward(Request $request, SocialProvider $social)
-    {
-        $type = $request->input('type');
-        $provider = $this->socialite->driver($type);
+    public function callforward(Request $request, SocialProvider $social) {
+        $type              = $request->input('type');
+        $provider          = $this->socialite->driver($type);
         $social->stateless = true;
 
         $socialUser = null;
-        $token = $this->getOfflineToken($provider, $social, $request->input('code'));
+        $token      = $this->getOfflineToken($provider, $social, $request->input('code'));
         // try to get user info from social network
         try {
             $socialUser = $provider->userFromToken(Arr::get($token, 'access_token'));
         } catch (Exception $e) {
             $error = new SocialGetUserInfoException($social, $e->getMessage());
-            \Log::error($e);
-            \Log::error($error);
+            Log::error($e);
+            Log::error($error);
             throw $error;
         }
 
         // if we have no social info for some reason
-        if (!$socialUser) {
-            \Log::error("There's no social account information for the user");
+        if (! $socialUser) {
+            Log::error("There's no social account information for the user");
             $error = new SocialGetUserInfoException(
                 $social,
                 trans('social-auth::messages.no_user_data', ['social' => $social->label])
             );
-            \Log::error($error);
+            Log::error($error);
             throw $error;
         }
 
         // if user is guest
-        if (!auth()->check()) {
-            \Log::info("User attempting to connect is not logged in");
+        if (! Auth::check()) {
+            Log::info("User attempting to connect is not logged in");
             return $this->processDataCustom($request, $social, $socialUser);
         }
 
@@ -221,18 +218,18 @@ class SocialAuthController extends BaseController
 
         // if user already attached
         if ($user->isAttached($type)) {
-            \Log::info("User is already attached for this social network");
+            Log::info("User is already attached for this social network");
             return $this->printSuccess($this->getAccount($social));
         }
 
         //If someone already attached current socialProvider account
         if ($this->manager->socialUserQuery($socialUser->getId())->exists()) {
-            \Log::error("This account is already connected to WeThrive!");
+            Log::error("This account is already connected to WeThrive!");
             $error = new SocialUserAttachException(
                 Response::make($social),
                 $social
             );
-            \Log::error($error);
+            Log::error($error);
             throw $error;
         }
         $this->manager->attachUser(
@@ -256,14 +253,13 @@ class SocialAuthController extends BaseController
      * @return array
      * @throws SocialUserAttachException
      */
-    public function detachAccountCustom(Request $request, SocialProvider $social)
-    {
+    public function detachAccountCustom(Request $request, SocialProvider $social) {
         /**
          * @var \MadWeb\SocialAuth\Contracts\SocialAuthenticatable $user
          */
         $user = $request->user();
         // $userSocials = $user->socials();
-        $socials = auth()->user()->socials();
+        $socials = $this->socialAuthUser()->socials();
 
         // if ($userSocials->count() === 1 and empty($user->{$user->getEmailField()})) {
         //     throw new SocialUserAttachException(
@@ -292,8 +288,7 @@ class SocialAuthController extends BaseController
      * @param SocialUser     $socialUser
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    protected function processDataCustom(Request $request, SocialProvider $social, SocialUser $socialUser)
-    {
+    protected function processDataCustom(Request $request, SocialProvider $social, SocialUser $socialUser) {
         //Checks by socialProvider identifier if user exists
         $existingUser = $this->manager->getUserByKey($socialUser->getId());
 
@@ -327,24 +322,23 @@ class SocialAuthController extends BaseController
      * @param [type] $account [description]
      * @return [type]         [description]
      */
-    protected function refreshGoogleToken(SocialProvider $account)
-    {
-        $config = \Config::get('services.google');
+    protected function refreshGoogleToken(SocialProvider $account) {
+        $config = Config::get('services.google');
 
         // Config
-        $client_id = $config['client_id'];
+        $client_id     = $config['client_id'];
         $client_secret = $config['client_secret'];
 
         // User
         // $token = $account->token->token;
         $refreshToken = $account->token->offline_token;
-        $expiresIn = $account->token->expires_in;
+        $expiresIn    = $account->token->expires_in;
 
         // If current date exceeds expired date request new access token
-        if (!$expiresIn || $expiresIn && Carbon::now()->greaterThan(Carbon::parse($expiresIn)) && !empty($refreshToken)) {
+        if (! $expiresIn || $expiresIn && Carbon::now()->greaterThan(Carbon::parse($expiresIn)) && ! empty($refreshToken)) {
             // Set Client
             $client = new Google_Client;
-            if (!$account->token->offline_token) {
+            if (! $account->token->offline_token) {
                 $client->revokeToken($account->token->token);
                 return false;
             }
@@ -372,12 +366,11 @@ class SocialAuthController extends BaseController
      * @param [type] $account [description]
      * @return [type]         [description]
      */
-    protected function getGoogleOfflineToken(SocialProvider $account, $code)
-    {
-        $config = \Config::get('services.google');
+    protected function getGoogleOfflineToken(SocialProvider $account, $code) {
+        $config = Config::get('services.google');
 
         // Config
-        $client_id = $config['client_id'];
+        $client_id     = $config['client_id'];
         $client_secret = $config['client_secret'];
 
         // Set Client
@@ -402,13 +395,12 @@ class SocialAuthController extends BaseController
      * @param SocialProvider   $account
      * @return void
      */
-    protected function getOfflineToken(AbstractProvider $provider, SocialProvider $account, $code)
-    {
+    protected function getOfflineToken(AbstractProvider $provider, SocialProvider $account, $code) {
         $token = [];
         switch ($account->slug) {
-            case 'google':
-                $token = $this->getGoogleOfflineToken($account, $code);
-                break;
+        case 'google':
+            $token = $this->getGoogleOfflineToken($account, $code);
+            break;
         }
         return $token;
     }
@@ -420,29 +412,28 @@ class SocialAuthController extends BaseController
      * @param SocialProvider   $account
      * @return void
      */
-    protected function checkToken(AbstractProvider $provider, SocialProvider $account = null)
-    {
+    protected function checkToken(AbstractProvider $provider, ?SocialProvider $account = null) {
         if (
-            $account && $account->token && (!$account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in))))
+            $account && $account->token && (! $account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in))))
         ) {
             $token = null;
             switch ($account->slug) {
-                case 'google':
-                    $token = $this->refreshGoogleToken($account);
-                    break;
+            case 'google':
+                $token = $this->refreshGoogleToken($account);
+                break;
             }
             if ($token) {
-                $where = array_filter(Arr::only($account->token->getAttributes(), ['team_id', 'user_id', 'social_provider_id']));
-                $newExpiry = Carbon::now()->addSeconds(Arr::get($token, 'expires_in'));
+                $where       = array_filter(Arr::only($account->token->getAttributes(), ['team_id', 'user_id', 'social_provider_id']));
+                $newExpiry   = Carbon::now()->addSeconds(Arr::get($token, 'expires_in'));
                 $accessToken = Arr::get($token, 'access_token') ?: Arr::get($token, 'token');
                 if ($accessToken) {
                     $account->token->where($where)->update(
                         [
-                            'token' => $accessToken,
-                            'expires_in' => $newExpiry
+                            'token'      => $accessToken,
+                            'expires_in' => $newExpiry,
                         ]
                     );
-                    $account->token->token = Arr::get($token, 'access_token', $account->token->token);
+                    $account->token->token      = Arr::get($token, 'access_token', $account->token->token);
                     $account->token->expires_in = $newExpiry;
                 }
             }
@@ -455,12 +446,11 @@ class SocialAuthController extends BaseController
      * @param SocialProvider $account
      * @return void
      */
-    protected function deleteToken(SocialProvider $social)
-    {
+    protected function deleteToken(SocialProvider $social) {
         switch ($social->slug) {
-            case 'google':
-                return $this->deleteGoogleToken($social);
-                break;
+        case 'google':
+            return $this->deleteGoogleToken($social);
+            break;
         }
     }
 
@@ -471,14 +461,13 @@ class SocialAuthController extends BaseController
      * @param
      * @return bool
      */
-    protected function deleteGoogleToken(SocialProvider $social)
-    {
-        $account = auth()->user()->socials()->whereSocialProviderId($social->id)->first();
+    protected function deleteGoogleToken(SocialProvider $social) {
+        $account = $this->socialAuthUser()->socials()->whereSocialProviderId($social->id)->first();
         if ($account) {
-            $config = \Config::get('services.google');
+            $config = Config::get('services.google');
 
             // Config
-            $client_id = $config['client_id'];
+            $client_id     = $config['client_id'];
             $client_secret = $config['client_secret'];
 
             // Set Client
@@ -487,11 +476,21 @@ class SocialAuthController extends BaseController
             $client->setClientSecret($client_secret);
             $token = $account->token->token;
             if (
-                !$account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in)))
+                ! $account->token->expires_in || ($account->token->expires_in && Carbon::now()->greaterThan(Carbon::parse($account->token->expires_in)))
             ) {
                 $token = Arr::get($this->refreshGoogleToken($account), 'access_token');
             }
             return $token ? $client->revokeToken($token) : false;
         }
+    }
+
+    /**
+     * @return SocialAuthenticatable
+     */
+    protected function socialAuthUser() {
+        /** @var SocialAuthenticatable $user */
+        $user = Auth::user();
+
+        return $user;
     }
 }

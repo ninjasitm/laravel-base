@@ -1,30 +1,24 @@
 <?php
-
 namespace Nitm\Content\Events;
 
-use Nitm\Content\Models\User;
-use Cog\Contracts\Love\Reaction\Models\Reaction;
-use Illuminate\Broadcasting\Channel;
-use Nitm\Content\Models\NotificationPreference;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Cog\Contracts\Love\Reaction\Models\Reaction as ReactionInterface;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+use Nitm\Content\Models\NotificationPreference;
+use Nitm\Content\Models\User;
 
-class NewReaction extends BaseAutomationEvent
-{
+class NewReaction extends BaseAutomationEvent {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      *
+     * @param Model $reaction
      * @return void
      */
-    public function __construct(Reaction $reaction)
-    {
+    public function __construct(Model $reaction) {
         $this->model = $reaction;
     }
 
@@ -33,28 +27,36 @@ class NewReaction extends BaseAutomationEvent
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
-    {
-        $channels = [];
-        $ids = [];
+    public function broadcastOn() {
         $reactable = $this->model->reactant->reactable;
+        $ids       = collect([
+            $reactable->user_id ?? null,
+        ])->merge(
+            method_exists($reactable, 'comments') ? $reactable->comments()->pluck('user_id')->all() : []
+        )
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
 
-        User::select('users.id')->whereIn('users.id', $ids)
+        if (empty($ids)) {
+            return [];
+        }
+
+        return User::select('users.id')->whereIn('users.id', $ids)
             ->whereNotIn('users.id', [$this->model->user_id])
             ->whereHas('notificationPreferences', function ($query) {
-                $query->enabledFor(ListenersNewReaction::class)->via(NotificationPreference::VIA_WEB);
+                $query->enabledFor(static::class)->via(NotificationPreference::VIA_WEB);
             })
             ->get()
-            ->unique('users.id')
-            ->reduce(function ($carry, $user) use ($channels) {
-                array_push($channels, new PrivateChannel('users.' . $user->id));
-            });
-
-        return $channels;
+            ->unique('id')
+            ->map(function ($user) {
+                return new PrivateChannel('users.' . $user->id);
+            })
+            ->all();
     }
 
-    public function getReaction(): ReactionInterface
-    {
+    public function getReaction(): Model {
         return $this->model;
     }
 }

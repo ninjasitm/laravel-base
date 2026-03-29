@@ -1,29 +1,24 @@
 <?php
-
 namespace Nitm\Content\Events;
 
-use Nitm\Content\Models\User;
-use Nitm\Content\Models\Comment;
-use Illuminate\Broadcasting\Channel;
-use Nitm\Content\Models\NotificationPreference;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+use Nitm\Content\Models\NotificationPreference;
+use Nitm\Content\Models\User;
 
-class NewComment extends BaseAutomationEvent
-{
+class NewComment extends BaseAutomationEvent {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      *
+     * @param Model $comment
      * @return void
      */
-    public function __construct(Comment $comment)
-    {
+    public function __construct(Model $comment) {
         $this->model = $comment;
     }
 
@@ -32,9 +27,7 @@ class NewComment extends BaseAutomationEvent
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
-    {
-        $channels = [];
+    public function broadcastOn() {
         $ids = array_unique(
             array_merge(
                 [],
@@ -42,17 +35,16 @@ class NewComment extends BaseAutomationEvent
             )
         );
 
-        User::select('users.id')->whereIn('users.id', $ids)
+        return User::select('users.id')->whereIn('users.id', $ids)
             ->whereNotIn('users.id', [$this->model->user_id])
             ->whereHas('notificationPreferences', function ($query) {
-                $query->enabledFor(ListenersNewComment::class)->via(NotificationPreference::VIA_WEB);
+                $query->enabledFor(static::class)->via(NotificationPreference::VIA_WEB);
             })
             ->get()
             ->unique('id')
-            ->reduce(function ($carry, $user) use ($channels) {
-                array_push($channels, new PrivateChannel('users.' . $user->id));
-            });
-
-        return $channels;
+            ->map(function ($user) {
+                return new PrivateChannel('users.' . $user->id);
+            })
+            ->all();
     }
 }

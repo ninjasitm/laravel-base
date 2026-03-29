@@ -140,7 +140,7 @@ abstract class TestCase extends BaseTestCase {
                             $this->useDefaultSchemaGrammar();
                         }
                         return new class($this) extends SQLiteBuilder {
-                            protected function createBlueprint($table, \Closure $callback = null) {
+                            protected function createBlueprint($table,  ? \Closure $callback = null) {
                                 return new class($table, $callback) extends Blueprint {
                                     public function dropForeign($index) {
                                         return new Fluent();
@@ -195,7 +195,7 @@ abstract class TestCase extends BaseTestCase {
         ];
     }
 
-    public function setUpTraits(): void {
+    public function setUpTraits() : void {
         parent::setUpTraits();
 
         unset($this->app['middleware.disable']);
