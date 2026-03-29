@@ -22,10 +22,10 @@ trait SyncsNotificationPreferences {
             $teamId        = null;
             $userId        = null;
 
-            if (! $this instanceof $userModel) {
+            if ($this instanceof $userModel) {
                 $userId = $this->id;
             }
-            if (! $this instanceof $teamModel) {
+            if ($this instanceof $teamModel) {
                 $teamId = $this->id;
             }
             foreach ($data as $k => $v) {

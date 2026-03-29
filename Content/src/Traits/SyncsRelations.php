@@ -216,7 +216,7 @@ trait SyncsRelations {
 
         if (
             (is_array($data) && empty($data))
-            && ($data instanceof Collection && ! $data->count())
+            || (CollectionHelper::isCollection($data) && ! $data->count())
         ) {
             return;
         }
@@ -340,7 +340,7 @@ trait SyncsRelations {
             }
 
             if (! $detachBeforeSyncing) {
-                $this->$relation()->syncWithoutDetatching()->sync($data);
+                $this->$relation()->syncWithoutDetaching($data);
             } else {
                 $this->$relation()->sync($data);
             }

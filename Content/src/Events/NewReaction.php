@@ -28,22 +28,32 @@ class NewReaction extends BaseAutomationEvent {
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn() {
-        $channels  = [];
-        $ids       = [];
         $reactable = $this->model->reactant->reactable;
+        $ids       = collect([
+            $reactable->user_id ?? null,
+        ])->merge(
+            method_exists($reactable, 'comments') ? $reactable->comments()->pluck('user_id')->all() : []
+        )
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
 
-        User::select('users.id')->whereIn('users.id', $ids)
+        if (empty($ids)) {
+            return [];
+        }
+
+        return User::select('users.id')->whereIn('users.id', $ids)
             ->whereNotIn('users.id', [$this->model->user_id])
             ->whereHas('notificationPreferences', function ($query) {
                 $query->enabledFor(static::class)->via(NotificationPreference::VIA_WEB);
             })
             ->get()
-            ->unique('users.id')
-            ->reduce(function ($carry, $user) use ($channels) {
-                array_push($channels, new PrivateChannel('users.' . $user->id));
-            });
-
-        return $channels;
+            ->unique('id')
+            ->map(function ($user) {
+                return new PrivateChannel('users.' . $user->id);
+            })
+            ->all();
     }
 
     public function getReaction(): Model {
