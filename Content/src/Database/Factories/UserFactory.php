@@ -1,13 +1,11 @@
 <?php
-
 namespace Nitm\Content\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Nitm\Content\Models\User;
 
-class UserFactory extends Factory
-{
+class UserFactory extends Factory {
     /**
      * The name of the factory's corresponding model.
      *
@@ -20,8 +18,7 @@ class UserFactory extends Factory
      *
      * @return array
      */
-    public function definition()
-    {
+    public function definition() {
         return [
             'name'              => $this->faker->name,
             'email'             => $this->faker->unique()->safeEmail,
@@ -36,8 +33,7 @@ class UserFactory extends Factory
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function withStripeUserId()
-    {
+    public function withStripeUserId() {
         return $this->state(function (array $attributes) {
             $stripeFacadeClass = 'CloudCreativity\\LaravelStripe\\Facades\\Stripe';
             $stripeUserClass   = 'Stripe\\User';

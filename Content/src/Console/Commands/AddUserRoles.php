@@ -1,17 +1,15 @@
 <?php
-
-namespace  Nitm\Content\Console\Commands;
+namespace Nitm\Content\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Nitm\Content\NitmContent;
-use Nitm\Helpers\ClassHelper;
 use Nitm\Content\Traits\Search;
+use Nitm\Helpers\ClassHelper;
 
-class AddUserRoles extends Command
-{
+class AddUserRoles extends Command {
     protected $signature = 'nitm:add-user-roles
         {--email=* : Search for these emails}
         {--role=* : Add these roles}
@@ -23,8 +21,7 @@ class AddUserRoles extends Command
      *
      * @return mixed
      */
-    public function handle()
-    {
+    public function handle() {
         $setPermissionsTeamId = 'setPermissionsTeamId';
 
         $this->info("Finding teams...");
@@ -34,7 +31,7 @@ class AddUserRoles extends Command
                 $setPermissionsTeamId($team->id);
             }
             $roles = $this->getRoles();
-            if (!$roles->count()) {
+            if (! $roles->count()) {
                 $this->error("No roles found");
                 return;
             } else {
@@ -50,7 +47,7 @@ class AddUserRoles extends Command
                         })->map(function ($user) use ($roles) {
                             $user = $user[2];
                             foreach ($roles as $role) {
-                                if (!$user->hasRole($role->name)) {
+                                if (! $user->hasRole($role->name)) {
                                     $user->assignRole($role->name);
                                     $this->info("\tAssigning role {$role->name} to {$user->email}");
                                 } else {
@@ -71,10 +68,9 @@ class AddUserRoles extends Command
      *
      * @return Collection
      */
-    public function getRoles(): Collection
-    {
-        $roles = [];
-        $class = config('permission.models.role', \Nitm\Content\Models\Role::class);
+    public function getRoles(): Collection {
+        $roles     = [];
+        $class     = config('permission.models.role', \Nitm\Content\Models\Role::class);
         $lowerName = DB::raw('lower(name)');
         foreach ($this->option('role') as $role) {
             $roles[] = ClassHelper::hasTrait($class, Search::class) ? $class::search($role)->first() : $class::where($lowerName, 'LIKE', "%$role%")->first();
@@ -85,15 +81,14 @@ class AddUserRoles extends Command
     /**
      * Get the team
      *
-        * @return Model
+     * @return Model
      */
-    protected function getTeam(): Model
-    {
-        $class = config('nitm-content.team_model', NitmContent::teamModel());
-        $s = $this->argument('team');
+    protected function getTeam(): Model {
+        $class     = config('nitm-content.team_model', NitmContent::teamModel());
+        $s         = $this->argument('team');
         $lowerName = DB::raw('lower(name)');
-        $team = ClassHelper::hasTrait($class, Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where($lowerName, 'LIKE', "%$s%")->get();
-        if (!$team->count()) {
+        $team      = ClassHelper::hasTrait($class, Search::class) ? $class::search($s)->orderBy('name', 'asc')->get() : $class::where($lowerName, 'LIKE', "%$s%")->get();
+        if (! $team->count()) {
             $this->error("Team not found");
             exit;
         }
@@ -104,7 +99,7 @@ class AddUserRoles extends Command
             //     return [$team->id, $team->name];
             // }));
             $selection = $this->choice("Please enter the team you'd like to use", $team->pluck('name')->toArray());
-            $team = $team->firstWhere('name', $selection);
+            $team      = $team->firstWhere('name', $selection);
         } else {
             $team = $team->first();
         }
@@ -116,12 +111,11 @@ class AddUserRoles extends Command
      *
      * @return collection
      */
-    protected function getUsers(): Collection
-    {
+    protected function getUsers(): Collection {
         $users = [];
         $class = config('nitm-content.user_model', NitmContent::userModel());
         foreach ($this->option('email') as $email) {
-            $user = $class::where('email', $email)->first();
+            $user    = $class::where('email', $email)->first();
             $users[] = [$email, $user instanceof Model, $user];
         }
         return collect($users);

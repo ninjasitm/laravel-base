@@ -1,17 +1,15 @@
 <?php
-
 namespace Nitm\Content\Events;
 
-use Illuminate\Database\Eloquent\Model;
-use Nitm\Content\Models\User;
-use Nitm\Content\Models\NotificationPreference;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
+use Nitm\Content\Models\NotificationPreference;
+use Nitm\Content\Models\User;
 
-class NewComment extends BaseAutomationEvent
-{
+class NewComment extends BaseAutomationEvent {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
@@ -20,8 +18,7 @@ class NewComment extends BaseAutomationEvent
      * @param Model $comment
      * @return void
      */
-    public function __construct(Model $comment)
-    {
+    public function __construct(Model $comment) {
         $this->model = $comment;
     }
 
@@ -30,10 +27,9 @@ class NewComment extends BaseAutomationEvent
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn()
-    {
+    public function broadcastOn() {
         $channels = [];
-        $ids = array_unique(
+        $ids      = array_unique(
             array_merge(
                 [],
                 $this->model->commentable->comments()->pluck('user_id')->all()

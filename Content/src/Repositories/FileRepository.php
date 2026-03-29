@@ -186,7 +186,7 @@ class FileRepository extends BaseRepository {
      * @return boolean
      */
     public static function deleteMany($paths, $disk = null) {
-        $storage         = $disk ? Storage::disk($disk) : static::getStorageDisk();
+        $storage         = $disk ? Storage::disk($disk): static::getStorageDisk();
         $normalizedPaths = $paths instanceof \Illuminate\Support\Collection
             ? $paths->filter()->values()->all()
             : array_values(array_filter(is_array($paths) ? $paths : [$paths]));

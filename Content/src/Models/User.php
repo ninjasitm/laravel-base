@@ -1,16 +1,15 @@
 <?php
-
 namespace Nitm\Content\Models;
 
-use Nitm\Content\Traits\Model;
-use Nitm\Content\Traits\Search;
-use Nitm\Content\Traits\Feature;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\Notifications\Notifiable;
-use Nitm\Content\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Nitm\Content\Database\Factories\UserFactory;
+use Nitm\Content\Traits\Feature;
+use Nitm\Content\Traits\Model;
+use Nitm\Content\Traits\Search;
 
 /**
  * Class User
@@ -22,16 +21,15 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @property string $username
  * @property string $name
  */
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     use Notifiable, Search, Model, Feature, HasFactory;
     use \Nitm\Content\Traits\User {
         \Nitm\Content\Traits\User::apiFind insteadof \Nitm\Content\Traits\Model;
         \Nitm\Content\Traits\User::apiQuery insteadof \Nitm\Content\Traits\Model;
     }
 
-    const ROLE_USER = 'user';
-    const ROLE_ADMIN = 'admin';
+    const ROLE_USER   = 'user';
+    const ROLE_ADMIN  = 'admin';
     const ROLE_VIEWER = 'viewer';
 
     public $table = 'users';
@@ -106,12 +104,11 @@ class User extends Authenticatable
     /**
      * @inheritDoc
      */
-    public static function boot()
-    {
+    public static function boot() {
         parent::boot();
         static::saving(function ($user) {
             $firstName = Arr::get($user->attributes, 'first_name');
-            $lastName = Arr::get($user->attributes, 'last_name');
+            $lastName  = Arr::get($user->attributes, 'last_name');
             if ($firstName && $lastName) {
                 $user->name = "{$firstName} {$lastName}";
             } else {
@@ -123,7 +120,7 @@ class User extends Authenticatable
         });
         static::creating(function ($user) {
             $user->password = $user->password ?: Str::random(12);
-            $user->name = $user->name ?: "{$user->first_name} {$user->last_name}";
+            $user->name     = $user->name ?: "{$user->first_name} {$user->last_name}";
             // $user->username = $user->username ?: $user->email;
         });
     }
@@ -133,8 +130,7 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public static function newFactory()
-    {
-        return UserFactory::new();
+    public static function newFactory() {
+        return UserFactory::new ();
     }
 }
