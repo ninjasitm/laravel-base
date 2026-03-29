@@ -1,7 +1,32 @@
-#!/bin/sh
+#!/bin/bash
 
 #get highest tag number
 VERSION=`git describe --abbrev=0 --tags`
+MASTER_COMMIT_MESSAGE=`git log --format=%B -n 1 master`
+RELEASE_NOTES="$MASTER_COMMIT_MESSAGE"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --message)
+            shift
+            RELEASE_NOTES="${1:-$MASTER_COMMIT_MESSAGE}"
+            ;;
+        --message-file)
+            shift
+            if [[ -z "${1:-}" || ! -r "$1" ]]; then
+                echo "--message-file requires a readable file path" >&2
+                exit 1
+            fi
+            RELEASE_NOTES="$(cat "$1")"
+            ;;
+        *)
+            echo "Unknown argument: $1" >&2
+            exit 1
+            ;;
+    esac
+    shift
+done
+
 V=""
 if [[ $VERSION =~ "v" ]]; then
     V="v"
@@ -12,9 +37,9 @@ VNUM2=$(echo "$VERSION" | cut -d"." -f2)
 VNUM3=$(echo "$VERSION" | cut -d"." -f3)
 VNUM1=`echo $VNUM1 | sed 's/v//'`
 
-# Check for #major or #minor in commit message and increment the relevant version number
-MAJOR=`git log --format=%B -n 1 HEAD | grep '#major'`
-MINOR=`git log --format=%B -n 1 HEAD | grep '#minor'`
+# Check for #major or #minor in the master commit message and increment the relevant version number
+MAJOR=`printf "%s" "$MASTER_COMMIT_MESSAGE" | grep '#major'`
+MINOR=`printf "%s" "$MASTER_COMMIT_MESSAGE" | grep '#minor'`
 
 if [ "$MAJOR" ]; then
     echo "Update major version"
@@ -40,19 +65,26 @@ fi
 
 echo "Updating $VERSION to $NEW_TAG"
 
+if [ -z "$RELEASE_NOTES" ]; then
+    RELEASE_NOTES="$MASTER_COMMIT_MESSAGE"
+fi
+
+if [ -z "$RELEASE_NOTES" ]; then
+    RELEASE_NOTES="Release $NEW_TAG"
+fi
+
 #get current hash and see if it already has a tag
-GIT_COMMIT=`git rev-parse HEAD`
+GIT_COMMIT=`git rev-parse master`
 NEEDS_TAG=`git describe --contains $GIT_COMMIT 2>/dev/null`
 
 #only tag if no tag already (would be better if the git describe command above could have a silent option)
 if [ -z "$NEEDS_TAG" ]; then
     echo "Tagged with $NEW_TAG (Ignoring fatal:cannot describe - this means commit is untagged) "
-    git tag $NEW_TAG --force
     # Use "oauth2" as user. For example for CI_PROJECT_URL=https://gitlab.com/acme/my-project
     #   set origin to https://oauth2:wSHnMvSmYXtTfXtqRMxs@gitlab.com/acme/my-project.git
     #
     git remote add tag-origin https://oauth2:${GITLAB_ACCESS_TOKEN}@gitlab.com/${CI_PROJECT_PATH}.git
-    git tag -a "$NEW_TAG" -m "CI/CD auto tagged release: $NEW_TAG"
+    git tag -a "$NEW_TAG" -m "$RELEASE_NOTES" --force "$GIT_COMMIT"
 
     # Don't trigger pipeline again:
     # -o ci.skip is not well known Gitlab Git option which allows skipping new CI.
