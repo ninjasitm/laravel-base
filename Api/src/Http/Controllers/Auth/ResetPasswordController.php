@@ -1,13 +1,12 @@
 <?php
 namespace Nitm\Api\Http\Controllers\Auth;
 
-use Illuminate\Support\Arr;
+use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Str;
 use Nitm\Api\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ResetsPasswords;
 
-class ResetPasswordController extends Controller
-{
+class ResetPasswordController extends Controller implements HasMiddleware {
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
@@ -28,13 +27,7 @@ class ResetPasswordController extends Controller
      */
     protected $redirectTo = '/home';
 
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('guest');
+    public static function middleware(): array {
+        return ['guest'];
     }
 }

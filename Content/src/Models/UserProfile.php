@@ -1,5 +1,4 @@
 <?php
-
 namespace Nitm\Content\Models;
 
 use App\Models\Model as Model;
@@ -57,8 +56,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      )
  * )
  */
-class UserProfile extends Model
-{
+class UserProfile extends Model {
     use SoftDeletes;
 
     public $table = 'user_profiles';
@@ -66,15 +64,11 @@ class UserProfile extends Model
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-
-    protected $dates = ['deleted_at'];
-
-
     public $fillable = [
         'user_id',
         'bio',
         'is_public',
-        'dob'
+        'dob',
     ];
 
     /**
@@ -83,11 +77,12 @@ class UserProfile extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'user_id' => 'integer',
-        'bio' => 'string',
-        'is_public' => 'boolean',
-        'dob' => 'date'
+        'id'         => 'integer',
+        'user_id'    => 'integer',
+        'bio'        => 'string',
+        'is_public'  => 'boolean',
+        'dob'        => 'date',
+        'deleted_at' => 'datetime',
     ];
 
     /**
@@ -96,12 +91,12 @@ class UserProfile extends Model
      * @var array
      */
     public static $rules = [
-        'user_id' => 'required',
-        'bio' => 'nullable|string',
-        'is_public' => 'required|boolean',
+        'user_id'    => 'required',
+        'bio'        => 'nullable|string',
+        'is_public'  => 'required|boolean',
         'deleted_at' => 'nullable',
         'created_at' => 'nullable',
         'updated_at' => 'nullable',
-        'dob' => 'nullable'
+        'dob'        => 'nullable',
     ];
 }

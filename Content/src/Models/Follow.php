@@ -1,17 +1,15 @@
 <?php
-
 namespace Nitm\Content\Models;
 
-use Model;
-use DB;
-use Validator;
 use Carbon\Carbon;
+use DB;
+use Model;
+use Validator;
 
 /**
  * Model.
  */
-class Follow extends BaseAction
-{
+class Follow extends BaseAction {
     /*
       * Validation
       */
@@ -21,8 +19,8 @@ class Follow extends BaseAction
     ];
 
     public $customMessages = [
-        'exists' => "The user you want to follow doesn't exist",
-        'unique_follow' => 'Already following!',
+        'exists'         => "The user you want to follow doesn't exist",
+        'unique_follow'  => 'Already following!',
         'no_self_follow' => 'No self follows!',
     ];
 
@@ -38,8 +36,10 @@ class Follow extends BaseAction
     public $table = 'nitm_follows';
 
     public $casts = [
-        'followee' => 'array',
-        'follower' => 'array',
+        'followee'   => 'array',
+        'follower'   => 'array',
+        'deleted_at' => 'datetime',
+        'start_date' => 'datetime',
     ];
 
     public $fillable = [
@@ -71,24 +71,21 @@ class Follow extends BaseAction
     public $hasOne = [
         'follower' => [
             'Nitm\Content\Models\SimpleUser',
-            'key' => 'id',
+            'key'      => 'id',
             'otherKey' => 'follower_id',
         ],
         'followee' => [
             'Nitm\Content\Models\SimpleUser',
-            'key' => 'id',
+            'key'      => 'id',
             'otherKey' => 'followee_id',
         ],
     ];
 
-    protected $dates = ['deleted_at', 'start_date'];
-
-    protected static function setupCustomValidators()
-    {
+    protected static function setupCustomValidators() {
         Validator::extend('no_self_follow', function ($attribute, $value, $parameters, $validator) {
             $currentUser = static::getCurrentUser();
 
-            if (!$currentUser) {
+            if (! $currentUser) {
                 return false;
             }
 
@@ -112,7 +109,7 @@ class Follow extends BaseAction
             $query->where([
                 'followee_id' => $followeeId,
                 'follower_id' => static::getCurrentUser()->id,
-                'deleted_at' => null,
+                'deleted_at'  => null,
             ]);
 
             // Validation result will be false if any rows match the combination
@@ -120,22 +117,21 @@ class Follow extends BaseAction
         });
     }
 
-    public static function recordFollow(FollowObserver $observer)
-    {
-        $now = Carbon::now();
+    public static function recordFollow(FollowObserver $observer) {
+        $now        = Carbon::now();
         $actionName = $observer->getActionName();
-        $startDate = $actionName == 'follow' ? $now : null;
-        $endDate = $actionName != 'follow' ? $now : null;
-        $model = static::make([
-            'type' => $actionName,
-            'follower' => $observer->getFollower(),
-            'followee' => $observer->getFollowee(),
-            'follower_id' => $observer->getFollower()['_model']['id'],
-            'followee_id' => $observer->getFollowee()['_model']['id'],
-            'title' => $observer->getTitleString(),
+        $startDate  = $actionName == 'follow' ? $now : null;
+        $endDate    = $actionName != 'follow' ? $now : null;
+        $model      = static::make([
+            'type'            => $actionName,
+            'follower'        => $observer->getFollower(),
+            'followee'        => $observer->getFollowee(),
+            'follower_id'     => $observer->getFollower()['_model']['id'],
+            'followee_id'     => $observer->getFollowee()['_model']['id'],
+            'title'           => $observer->getTitleString(),
             'is_admin_action' => $observer->getIsAdminAction(),
-            'start_date' => $startDate,
-            'end_date' => $endDate,
+            'start_date'      => $startDate,
+            'end_date'        => $endDate,
         ]);
         $model->save();
         $model->isRecorded = true;
@@ -150,20 +146,17 @@ class Follow extends BaseAction
     //      return $attributes;
     //  }
 
-    public function getFollowerNameAttribute()
-    {
+    public function getFollowerNameAttribute() {
         $name = array_get($this->follower, 'displayName');
 
         return $name ?: array_get($this->follower, 'name');
     }
 
-    public function getFollowerDisplayNameAttribute()
-    {
+    public function getFollowerDisplayNameAttribute() {
         return $this->follower['displayName'];
     }
 
-    public function getFollowerTypeAttribute()
-    {
+    public function getFollowerTypeAttribute() {
         return $this->follower['type'];
     }
 
@@ -174,23 +167,19 @@ class Follow extends BaseAction
      *
      * @return [type] [description]
      */
-    public function getFollowerPublicIdAttribute()
-    {
+    public function getFollowerPublicIdAttribute() {
         return $this->follower['id'];
     }
 
-    public function getFolloweeNameAttribute()
-    {
+    public function getFolloweeNameAttribute() {
         return array_get($this->followee, 'displayName', array_get($this->followee, 'name'));
     }
 
-    public function getFolloweeDisplayNameAttribute()
-    {
+    public function getFolloweeDisplayNameAttribute() {
         return $this->followee['displayName'];
     }
 
-    public function getFolloweeTypeAttribute()
-    {
+    public function getFolloweeTypeAttribute() {
         return $this->followee['type'];
     }
 
@@ -201,38 +190,36 @@ class Follow extends BaseAction
      *
      * @return [type] [description]
      */
-    public function getFolloweePublicIdAttribute()
-    {
+    public function getFolloweePublicIdAttribute() {
         return $this->followee['id'];
     }
 
-    public function beforeSave()
-    {
+    public function beforeSave() {
         if (is_object($this->followee)) {
             $user = $this->followee;
         } else {
             $user = User::apiFind($this->followee);
         }
         $attributes = [];
-        $existing = self::where([
+        $existing   = self::where([
             'follower_id' => (int) $this->getCurrentUser()->id,
             'followee_id' => $user ? (int) $user->id : null,
-            'type' => 'unfollow',
+            'type'        => 'unfollow',
         ])->withTrashed()->first();
         if ($existing) {
             $attributes = [
-                'type' => 'follow',
+                'type'       => 'follow',
                 'deleted_at' => null,
-                'end_date' => null,
+                'end_date'   => null,
             ];
-            $this->id = $existing->id;
+            $this->id     = $existing->id;
             $this->exists = true;
         } else {
             $attributes = [
                 'follower_id' => (int) $this->getCurrentUser()->id,
                 'followee_id' => $user ? (int) $user->id : null,
-                'type' => 'follow',
-                'end_date' => null,
+                'type'        => 'follow',
+                'end_date'    => null,
             ];
         }
         $attributes['start_date'] = \Carbon\Carbon::now();
@@ -243,13 +230,12 @@ class Follow extends BaseAction
         return $this->validate();
     }
 
-    public function beforeDelete()
-    {
-        $attributes = [];
-        $attributes['type'] = 'unfollow';
-        $attributes['end_date'] = \Carbon\Carbon::now();
+    public function beforeDelete() {
+        $attributes               = [];
+        $attributes['type']       = 'unfollow';
+        $attributes['end_date']   = \Carbon\Carbon::now();
         $attributes['start_date'] = null;
-        $attributes['end_date'] = Carbon::now();
+        $attributes['end_date']   = Carbon::now();
         $this->fill($attributes);
     }
 
@@ -261,8 +247,7 @@ class Follow extends BaseAction
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
-    public static function apiFind($id, $options = ['*'])
-    {
+    public static function apiFind($id, $options = ['*']) {
         extract($options);
         $columns = isset($columns) ? $columns : ['*'];
         if (is_numeric($id)) {
@@ -282,11 +267,10 @@ class Follow extends BaseAction
      *
      * @return \Illuminate\Database\Eloquent\Model|\Illuminate\Database\Eloquent\Collection|null
      */
-    public static function apiQuery($options = [], $multiple = false, $query = null)
-    {
+    public static function apiQuery($options = [], $multiple = false, $query = null) {
         extract($options);
         $columns = isset($columns) ? $columns : ['*'];
-        $id = \Auth::getUser() ? \Auth::getUser()->id : 0;
+        $id      = \Auth::getUser() ? \Auth::getUser()->id : 0;
         if (is_numeric($id)) {
             return static::where('follower_id', '=', $id)->select($columns);
         } else {
@@ -296,13 +280,11 @@ class Follow extends BaseAction
         }
     }
 
-    public function scopeUserFollowerLimit($query)
-    {
+    public function scopeUserFollowerLimit($query) {
         return $query->take(10);
     }
 
-    public function scopeFollowLimit($query)
-    {
+    public function scopeFollowLimit($query) {
         return $query->take(10);
     }
 }

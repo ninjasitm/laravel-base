@@ -139,8 +139,6 @@ class Category extends Model {
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
 
-    protected $dates = ['deleted_at'];
-
     public $fillable = [
         'title',
         'slug',
@@ -173,6 +171,7 @@ class Category extends Model {
         'nest_left'   => 'integer',
         'nest_right'  => 'integer',
         'nest_depth'  => 'integer',
+        'deleted_at'  => 'datetime',
     ];
 
     /**
