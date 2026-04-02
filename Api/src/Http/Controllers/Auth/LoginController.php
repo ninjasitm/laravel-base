@@ -2,6 +2,7 @@
 namespace Nitm\Api\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 use Nitm\Api\Http\Controllers\Controller;
 use Nitm\Content\Services\FacebookService;
 

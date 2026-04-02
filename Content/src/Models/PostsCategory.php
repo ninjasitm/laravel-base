@@ -1,6 +1,7 @@
 <?php
 namespace Nitm\Content\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Nitm\Content\Models\BaseModel as Model;
 
 /**
@@ -14,8 +15,7 @@ use Nitm\Content\Models\BaseModel as Model;
 class PostsCategory extends Model {
     public $table = 'posts_categories';
 
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
+    public $timestamps = false;
 
     public $fillable = [
         'category_id',

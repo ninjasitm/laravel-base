@@ -40,6 +40,7 @@ class Follow extends BaseAction {
         'follower'   => 'array',
         'deleted_at' => 'datetime',
         'start_date' => 'datetime',
+        'end_date'   => 'datetime',
     ];
 
     public $fillable = [
@@ -233,7 +234,6 @@ class Follow extends BaseAction {
     public function beforeDelete() {
         $attributes               = [];
         $attributes['type']       = 'unfollow';
-        $attributes['end_date']   = \Carbon\Carbon::now();
         $attributes['start_date'] = null;
         $attributes['end_date']   = Carbon::now();
         $this->fill($attributes);

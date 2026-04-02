@@ -4,7 +4,6 @@ namespace Nitm\Api\Http\Controllers\Auth;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Nitm\Api\Http\Controllers\Controller;
 use Nitm\Content\User;
 

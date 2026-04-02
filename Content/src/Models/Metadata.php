@@ -122,7 +122,6 @@ class Metadata extends Model {
         'is_required'        => 'boolean',
         'section'            => 'string',
         'description'        => 'string',
-        'deleted_at'         => 'datetime',
     ];
 
     /**
@@ -200,14 +199,12 @@ class Metadata extends Model {
                 'url'         => null,
                 'simple_type' => static::DEFAULT_SIMPLE_TYPE,
             ];
-            break;
 
         case 'Google Drive':
         case 'Dropdown':
         case 'Checkbox':
         case 'Question':
             return [];
-            break;
 
         default:
             return null;
