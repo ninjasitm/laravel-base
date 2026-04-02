@@ -2,7 +2,6 @@
 namespace Nitm\Content\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use Nitm\Content\Contracts\Interactions\SendInvitation;
 use Nitm\Content\Contracts\Repositories\TeamRepository;
 use Nitm\Content\Http\Controllers\Controller;
@@ -10,17 +9,13 @@ use Nitm\Content\Http\Requests\CreateInvitationRequest;
 use Nitm\Content\Models\Invitation;
 use Nitm\Content\NitmContent;
 
-class MailedInvitationController extends Controller implements HasMiddleware {
+class MailedInvitationController extends Controller {
     /**
      * The team repository implementation.
      *
      * @var \Nitm\Content\Contracts\Repositories\TeamRepository
      */
     protected $teams;
-
-    public static function middleware(): array {
-        return ['auth'];
-    }
 
     /**
      * Create a new controller instance.
@@ -30,6 +25,8 @@ class MailedInvitationController extends Controller implements HasMiddleware {
      */
     public function __construct(TeamRepository $teams) {
         $this->teams = $teams;
+
+        $this->middleware('auth');
     }
 
     /**

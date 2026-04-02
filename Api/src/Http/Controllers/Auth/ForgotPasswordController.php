@@ -2,10 +2,9 @@
 namespace Nitm\Api\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use Nitm\Api\Http\Controllers\Controller;
 
-class ForgotPasswordController extends Controller implements HasMiddleware {
+class ForgotPasswordController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
@@ -19,7 +18,7 @@ class ForgotPasswordController extends Controller implements HasMiddleware {
 
     use SendsPasswordResetEmails;
 
-    public static function middleware(): array {
-        return ['guest'];
+    public function __construct() {
+        $this->middleware('guest');
     }
 }

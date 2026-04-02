@@ -2,15 +2,14 @@
 namespace Nitm\Content\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
 use Nitm\Content\Contracts\Interactions\AddTeamMember;
 use Nitm\Content\Http\Controllers\Controller;
 use Nitm\Content\Models\Invitation;
 use Nitm\Content\NitmContent;
 
-class PendingInvitationController extends Controller implements HasMiddleware {
-    public static function middleware(): array {
-        return ['auth'];
+class PendingInvitationController extends Controller {
+    public function __construct() {
+        $this->middleware('auth');
     }
 
     /**
