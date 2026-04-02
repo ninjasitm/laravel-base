@@ -1,5 +1,4 @@
 <?php
-
 namespace Nitm\Api\Http\Controllers;
 
 use Nitm\Api\Http\Controllers\Traits\ApiControllerTrait;
@@ -9,12 +8,10 @@ use Nitm\Api\Http\Controllers\Traits\ApiControllerTrait;
  *
  * @author Malcolm Paul <malcolm@ninjasitm.com>
  */
-abstract class BaseApiController extends BaseController
-{
+abstract class BaseApiController extends BaseController {
     use ApiControllerTrait;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware('auth:api');
         $this->middleware(\Nitm\Api\Http\Middleware\Timezone::class);
         $this->middleware(\Nitm\Api\Http\Middleware\UpdatesUserActivity::class);

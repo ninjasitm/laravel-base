@@ -1,11 +1,9 @@
 <?php
-
 namespace Nitm\Content\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Nitm\Content\Models\BaseModel as Model;
-use Nitm\Content\Traits\Sluggable;
 use Nitm\Content\Traits\NestedTree;
+use Nitm\Content\Traits\Sluggable;
 
 /**
  * Class PostCategory
@@ -22,16 +20,13 @@ use Nitm\Content\Traits\NestedTree;
  * @property integer $nest_right
  * @property integer $nest_depth
  */
-class PostCategory extends Model
-{
+class PostCategory extends Model {
     use Sluggable, NestedTree;
 
     public $table = 'post_categories';
 
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-
-    protected $dates = [];
 
     public $fillable = [
         'name',
@@ -41,7 +36,7 @@ class PostCategory extends Model
         'parent_id',
         'nest_left',
         'nest_right',
-        'nest_depth'
+        'nest_depth',
     ];
 
     /**
@@ -50,15 +45,15 @@ class PostCategory extends Model
      * @var array
      */
     protected $casts = [
-        'id' => 'integer',
-        'name' => 'string',
-        'slug' => 'string',
-        'code' => 'string',
+        'id'          => 'integer',
+        'name'        => 'string',
+        'slug'        => 'string',
+        'code'        => 'string',
         'description' => 'string',
-        'parent_id' => 'integer',
-        'nest_left' => 'integer',
-        'nest_right' => 'integer',
-        'nest_depth' => 'integer'
+        'parent_id'   => 'integer',
+        'nest_left'   => 'integer',
+        'nest_right'  => 'integer',
+        'nest_depth'  => 'integer',
     ];
 
     /**

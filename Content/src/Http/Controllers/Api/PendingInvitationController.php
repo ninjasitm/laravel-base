@@ -1,22 +1,14 @@
 <?php
-
 namespace Nitm\Content\Http\Controllers\Api;
 
-use Nitm\Content\NitmContent;
 use Illuminate\Http\Request;
-use Nitm\Content\Models\Invitation;
-use Nitm\Content\Http\Controllers\Controller;
 use Nitm\Content\Contracts\Interactions\AddTeamMember;
+use Nitm\Content\Http\Controllers\Controller;
+use Nitm\Content\Models\Invitation;
+use Nitm\Content\NitmContent;
 
-class PendingInvitationController extends Controller
-{
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
+class PendingInvitationController extends Controller {
+    public function __construct() {
         $this->middleware('auth');
     }
 
@@ -26,8 +18,7 @@ class PendingInvitationController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function all(Request $request)
-    {
+    public function all(Request $request) {
         return $request->user()->invitations()->with('team')->get();
     }
 
@@ -38,8 +29,7 @@ class PendingInvitationController extends Controller
      * @param \Nitm\Content\Models\Invitation $invitation
      * @return \Illuminate\Http\Response
      */
-    public function accept(Request $request, Invitation $invitation)
-    {
+    public function accept(Request $request, Invitation $invitation) {
         abort_unless($request->user()->id === $invitation->user_id, 404);
 
         NitmContent::interact(
@@ -47,7 +37,7 @@ class PendingInvitationController extends Controller
             [
                 $invitation->team,
                 $request->user(),
-                $invitation->role
+                $invitation->role,
             ]
         );
 
@@ -61,8 +51,7 @@ class PendingInvitationController extends Controller
      * @param \Nitm\Content\Models\Invitation $invitation
      * @return \Illuminate\Http\Response
      */
-    public function reject(Request $request, Invitation $invitation)
-    {
+    public function reject(Request $request, Invitation $invitation) {
         abort_unless($request->user()->id === $invitation->user_id, 404);
 
         $invitation->delete();
