@@ -1,50 +1,54 @@
 <?php
+
 namespace Tests;
 
-use function Orchestra\Testbench\artisan;
+use Illuminate\Foundation\Application;
 use Nitm\Content\Models\User;
 use Nitm\Content\NitmContent;
 use Nitm\Content\NitmContentServiceProvider;
 use Nitm\Testing\ApiTestTrait;
 use Nitm\Testing\PackageTestCase as BaseTestCase;
 
-abstract class TestCase extends BaseTestCase {
+use function Orchestra\Testbench\artisan;
+
+abstract class TestCase extends BaseTestCase
+{
     use ApiTestTrait;
+
     private $dbMigrated = false;
 
-    protected function getPackageProviders($app) {
+    protected function getPackageProviders($app)
+    {
         return [
             NitmContentServiceProvider::class,
         ];
     }
+
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      * @return void
      */
-    protected function defineEnvironment($app) {
+    protected function defineEnvironment($app)
+    {
         NitmContent::useUserModel(User::class);
-        $app['config']->set('database.default', 'pgsql');
-        $app['config']->set('database.connections.pgsql', [
-            'driver'   => 'pgsql',
-            'host'     => env('DB_HOST', '127.0.0.1'),
-            'port'     => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'testing'),
-            'username' => env('DB_USERNAME', 'testing_user'),
-            'password' => env('DB_PASSWORD', 'testing'),
-            'charset'  => 'utf8',
-            'prefix'   => '',
-            'schema'   => 'public',
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
         ]);
     }
-    protected function defineDatabaseMigrations() {
+
+    protected function defineDatabaseMigrations()
+    {
         if (! $this->dbMigrated) {
-            $this->artisan('migrate:fresh', ['--database' => 'pgsql']);
+            $this->artisan('migrate:fresh', ['--database' => 'sqlite']);
             $this->dbMigrated = true;
 
             $this->beforeApplicationDestroyed(
-                fn() => artisan($this, 'migrate:rollback', ['--database' => 'pgsql'])
+                fn () => artisan($this, 'migrate:rollback', ['--database' => 'sqlite'])
             );
         }
     }

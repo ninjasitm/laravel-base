@@ -1,10 +1,12 @@
 <?php
+
 namespace Nitm\Api\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Nitm\Api\Http\Controllers\Controller;
 
-class ForgotPasswordController extends Controller {
+class ForgotPasswordController extends Controller
+{
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
@@ -18,7 +20,8 @@ class ForgotPasswordController extends Controller {
 
     use SendsPasswordResetEmails;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('guest');
     }
 }
