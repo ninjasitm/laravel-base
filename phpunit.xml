@@ -30,12 +30,8 @@
     <env name="MAIL_MAILER" value="log"/>
     <env name="TELESCOPE_ENABLED" value="false"/>
     <env name="ACTIVITY_LOGGER_ENABLED" value="false"/>
-    <env name="DB_CONNECTION" value="pgsql"/>
-    <env name="DB_HOST" value="127.0.0.1"/>
-    <env name="DB_PORT" value="5432"/>
-    <env name="DB_DATABASE" value="testing"/>
-    <env name="DB_USERNAME" value="testing_user"/>
-    <env name="DB_PASSWORD" value="testing"/>
+    <env name="DB_CONNECTION" value="sqlite"/>
+    <env name="DB_DATABASE" value=":memory:"/>
     <env name="TELESCOPE_ENABLED" value="false"/>
     <env name="TELESCOPE_DB_CONNECTION" value="testing"/>
     <env name="ACTIVITY_LOGGER_ENABLED" value="false"/>

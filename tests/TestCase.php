@@ -25,26 +25,20 @@ abstract class TestCase extends BaseTestCase {
      */
     protected function defineEnvironment($app) {
         NitmContent::useUserModel(User::class);
-        $app['config']->set('database.default', 'pgsql');
-        $app['config']->set('database.connections.pgsql', [
-            'driver'   => 'pgsql',
-            'host'     => env('DB_HOST', '127.0.0.1'),
-            'port'     => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'testing'),
-            'username' => env('DB_USERNAME', 'testing_user'),
-            'password' => env('DB_PASSWORD', 'testing'),
-            'charset'  => 'utf8',
+        $app['config']->set('database.default', 'sqlite');
+        $app['config']->set('database.connections.sqlite', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
             'prefix'   => '',
-            'schema'   => 'public',
         ]);
     }
     protected function defineDatabaseMigrations() {
         if (! $this->dbMigrated) {
-            $this->artisan('migrate:fresh', ['--database' => 'pgsql']);
+            $this->artisan('migrate:fresh', ['--database' => 'sqlite']);
             $this->dbMigrated = true;
 
             $this->beforeApplicationDestroyed(
-                fn() => artisan($this, 'migrate:rollback', ['--database' => 'pgsql'])
+                fn() => artisan($this, 'migrate:rollback', ['--database' => 'sqlite'])
             );
         }
     }
