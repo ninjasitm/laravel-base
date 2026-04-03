@@ -1,10 +1,12 @@
 <?php
+
 namespace Nitm\Api\Http\Controllers\Auth;
 
 use Illuminate\Foundation\Auth\ResetsPasswords;
 use Nitm\Api\Http\Controllers\Controller;
 
-class ResetPasswordController extends Controller {
+class ResetPasswordController extends Controller
+{
     /*
     |--------------------------------------------------------------------------
     | Password Reset Controller
@@ -25,7 +27,8 @@ class ResetPasswordController extends Controller {
      */
     protected $redirectTo = '/home';
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->middleware('guest');
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Nitm\Content\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -7,12 +8,12 @@ use Nitm\Content\Models\BaseModel as Model;
 /**
  * Class PostsCategory
  *
- * @package Nitm\Content\Models
  * @version July 20, 2020, 1:28 am UTC
  *
- * @property integer $category_id
+ * @property int $category_id
  */
-class PostsCategory extends Model {
+class PostsCategory extends Model
+{
     public $table = 'posts_categories';
 
     public $timestamps = false;
@@ -27,7 +28,7 @@ class PostsCategory extends Model {
      * @var array
      */
     protected $casts = [
-        'post_id'     => 'integer',
+        'post_id' => 'integer',
         'category_id' => 'integer',
     ];
 
@@ -42,19 +43,17 @@ class PostsCategory extends Model {
 
     /**
      * Post
-     *
-     * @return BelongsTo
      */
-    public function post(): BelongsTo {
+    public function post(): BelongsTo
+    {
         return $this->belongsTo(Post::class);
     }
 
     /**
      * Post
-     *
-     * @return BelongsTo
      */
-    public function category(): BelongsTo {
+    public function category(): BelongsTo
+    {
         return $this->belongsTo(PostCategory::class);
     }
 }
