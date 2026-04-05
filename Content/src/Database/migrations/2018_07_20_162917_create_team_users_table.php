@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 return new class extends Migration
 {
@@ -12,14 +12,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('team_users', function (Blueprint $table) {
-            $table->unsignedInteger('team_id');
-            $table->unsignedInteger('user_id');
-            $table->boolean('is_approved')->default(false);
-            $table->text('role')->nullable();
+        if (! Schema::hasTable('team_users')) {
+            Schema::create('team_users', function (Blueprint $table) {
+                $table->unsignedInteger('team_id');
+                $table->unsignedInteger('user_id');
+                $table->boolean('is_approved')->default(false);
+                $table->text('role')->nullable();
 
-            $table->unique(['team_id', 'user_id']);
-        });
+                $table->unique(['team_id', 'user_id']);
+            });
+        }
     }
 
     /**

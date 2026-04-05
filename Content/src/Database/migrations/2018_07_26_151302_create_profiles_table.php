@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,13 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('profiles', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->primary(['user_id']);
-            $table->text('bio');
-            $table->timestamps();
-        });
+        if (! Schema::hasTable('profiles')) {
+            Schema::create('profiles', function (Blueprint $table) {
+                $table->integer('user_id')->unsigned();
+                $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+                $table->primary(['user_id']);
+                $table->text('bio');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
