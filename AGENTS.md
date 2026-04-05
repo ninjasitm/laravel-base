@@ -36,6 +36,13 @@ laravel-base/
 **Project ID:** nitm/laravel-base
 **Issue Key Format:** `#123`
 
+## Repository Remotes
+
+- Primary remote: `origin` -> `git@gitlab.com:nitm/laravel-base`
+- GitHub mirror remote: `github` -> `https://github.com/ninjasitm/laravel-base.git`
+
+Use the `github` remote for GitHub CLI pull request workflows (for example PR review against `https://github.com/ninjasitm/laravel-base/pull/4`).
+
 ### Conventions
 
 - Reference issues in commit messages: `#123: Brief description`

@@ -1,5 +1,16 @@
 # This package provides helpful classes for basic content, repositories and APIs
 
+## Repository Remotes
+
+This project uses GitLab as the primary origin and a GitHub mirror remote for pull request workflows.
+
+```
+git remote -v
+git remote add github https://github.com/ninjasitm/laravel-base.git
+```
+
+Use the `github` remote when running `gh` commands against GitHub PRs (for example `https://github.com/ninjasitm/laravel-base/pull/4`).
+
 # Base Content
 This package provides support for custom repositories, app helpers and useful traits to help improve development
 

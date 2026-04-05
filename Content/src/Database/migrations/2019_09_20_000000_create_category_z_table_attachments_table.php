@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,11 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attached_categories', function (Blueprint $table) {
-            $table->integer('category_id')->unsigned();
-            $table->morphs('entity');
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
-        });
+        if (! Schema::hasTable('attached_categories')) {
+            Schema::create('attached_categories', function (Blueprint $table) {
+                $table->integer('category_id')->unsigned();
+                $table->morphs('entity');
+                $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            });
+        }
     }
 
     /**

@@ -1,1 +1,6 @@
-vendor
+/vendor
+/.phpunit.result.cache
+
+# Local debug/output artifacts
+/.xdebug/
+/*.log
