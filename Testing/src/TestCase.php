@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
+use Laravel\Cashier\Cashier;
 use Nitm\Content\Models\Team;
 use Nitm\Content\Models\TeamUser;
 use Nitm\Content\Models\User;
@@ -66,9 +67,8 @@ abstract class TestCase extends BaseTestCase {
 
     protected function setUp(): void {
         ini_set('memory_limit', '2G');
-        $cashierClass = 'Laravel\\Cashier\\Cashier';
-        if (class_exists($cashierClass)) {
-            $cashierClass::ignoreMigrations();
+        if (method_exists(Cashier::class, 'ignoreMigrations')) {
+            Cashier::ignoreMigrations();
         }
         parent::setUp();
     }
