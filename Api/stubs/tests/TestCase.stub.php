@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
+use Laravel\Cashier\Cashier;
 
 abstract class TestCase extends BaseTestCase {
     public static $databaseSeeded = false;
@@ -30,9 +31,8 @@ abstract class TestCase extends BaseTestCase {
      * @param string $dataName
      */
     public function __construct(?string $name = null, array $data = [], string $dataName = '') {
-        $cashierClass = 'Laravel\\Cashier\\Cashier';
-        if (class_exists($cashierClass)) {
-            $cashierClass::ignoreMigrations();
+        if (method_exists(Cashier::class, 'ignoreMigrations')) {
+            Cashier::ignoreMigrations();
         }
         parent::__construct($name, $data, $dataName);
         // $this->hotfixSqlite();
