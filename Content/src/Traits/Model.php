@@ -5,7 +5,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Nitm\Content\Models\Team;
 use Nitm\Content\Models\User;
@@ -154,12 +153,49 @@ trait Model {
      */
     public function getTableColumns($table = null) {
         $table = $table ?: $this->getTable();
-        if (! isset(static::$tableColumns[$table])) {
-            $manager                      = $this->getConnection()->getDoctrineSchemaManager();
-            static::$tableColumns[$table] = $manager->listTableColumns($table);
+        $connection = $this->getConnection();
+        $cacheKey   = $connection->getName() . ':' . $connection->getDatabaseName() . ':' . $table;
+        if (! isset(static::$tableColumns[$cacheKey])) {
+            $columns = [];
+            foreach ($connection->getSchemaBuilder()->getColumns($table) as $column) {
+                $name = $column['name'];
+                $type = strtolower($column['type_name']);
+                $type = match ($type) {
+                    'varchar', 'character varying', 'char', 'bpchar', 'character' => 'string',
+                    'int8', 'bigint' => 'bigint',
+                    'int4', 'integer', 'int' => 'integer',
+                    'int2', 'smallint' => 'smallint',
+                    'bool', 'boolean' => 'boolean',
+                    'tinyint' => $column['type'] === 'tinyint(1)' ? 'boolean' : 'smallint',
+                    'numeric', 'decimal' => 'decimal',
+                    'float4', 'real', 'float' => 'float',
+                    'float8', 'double', 'double precision' => 'double',
+                    default => $type,
+                };
+
+                // Keep the legacy column/type getters used by the search scopes without requiring DBAL.
+                $columns[$name] = new class($name, $type) {
+                    public function __construct(private string $name, private string $type) {}
+
+                    public function getName(): string {
+                        return $this->name;
+                    }
+
+                    public function getType(): object {
+                        return new class($this->type) {
+                            public function __construct(private string $name) {}
+
+                            public function getName(): string {
+                                return $this->name;
+                            }
+                        };
+                    }
+                };
+            }
+            static::$tableColumns[$cacheKey] = $columns;
         }
 
-        return static::$tableColumns[$table];
+        return static::$tableColumns[$cacheKey];
     }
 
     /**
@@ -182,12 +218,14 @@ trait Model {
      * @return array
      */
     public function getTableForeignKeys($tableName) {
-        if (! isset(self::$foreignKeys[$tableName])) {
-            self::$foreignKeys[$tableName] = collect(Schema::getConnection()->getDoctrineSchemaManager()->listTableForeignKeys($tableName))->map(function ($foreignKey) {
-                return $foreignKey->getName();
-            })->all();
+        $connection = $this->getConnection();
+        $cacheKey   = $connection->getName() . ':' . $connection->getDatabaseName() . ':' . $tableName;
+        if (! isset(self::$foreignKeys[$cacheKey])) {
+            self::$foreignKeys[$cacheKey] = array_map(static function (array $foreignKey) use ($tableName): string {
+                return $foreignKey['name'] ?: $tableName . '_' . implode('_', $foreignKey['columns']) . '_foreign';
+            }, $connection->getSchemaBuilder()->getForeignKeys($tableName));
         }
-        return self::$foreignKeys[$tableName];
+        return self::$foreignKeys[$cacheKey];
     }
 
     /**

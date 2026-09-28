@@ -5,8 +5,7 @@ namespace Nitm\Helpers;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Fluent;
 
 /*
  * This is the DB helper class and attempts to fill in the gap to allow smoother DB abstraction.
@@ -49,15 +48,17 @@ class DbHelper
     public static function getTables($catalog = null)
     {
         static::beforeQuery();
-        $dbConfig = Config::get(implode('.', [
-            'database.connections', Config::get('database.default'),
-        ]));
-        $catalog = $catalog ?: $dbConfig['database'];
-        $cacheKey = 'tables-' . $catalog;
+        $connection = DB::connection();
+        $cacheKey = 'tables-' . $connection->getName() . '-' . $connection->getDatabaseName() . '-' . ($catalog ?? '');
 
-        return Cache::remember($cacheKey, 5, function () {
-            return static::normalizeResult(DB::getDoctrineSchemaManager()->listTables());
-        });
+        // Cache only serializable native data; anonymous adapters cannot be serialized by file/Redis caches.
+        $tables = Cache::remember($cacheKey, 5, fn () => $connection->getSchemaBuilder()->getTables());
+
+        return static::normalizeResult(array_map(static fn (array $table) => new class($table) extends Fluent {
+            public function getName(): string {
+                return $this->name;
+            }
+        }, $tables));
     }
 
     /**
@@ -70,19 +71,15 @@ class DbHelper
     public static function getTableNames($catalog = null)
     {
         static::beforeQuery();
-        $dbConfig = Config::get(implode('.', [
-            'database.connections', Config::get('database.default'),
-        ]));
-        $catalog = $catalog ?: $dbConfig['database'];
-        $cacheKey = 'tables-' . $catalog;
+        $connection = DB::connection();
+        $cacheKey = 'table-names-' . $connection->getName() . '-' . $connection->getDatabaseName() . '-' . ($catalog ?? '');
 
-        return Cache::remember($cacheKey, 5, function () use ($catalog) {
-            return static::normalizeResult(array_filter(DB::getDoctrineSchemaManager()->listTableNames()), function ($table) use($catalog) {
-                $table = explode('.', $table);
-                if (count($table) == 1 || $table[0] == $catalog) {
-                    return true;
-                }
-            });
+        return Cache::remember($cacheKey, 5, function () use ($connection) {
+            // The catalog is a database name, not a PostgreSQL schema. Qualify PostgreSQL
+            // names to distinguish identically named tables in different schemas.
+            return static::normalizeResult($connection->getSchemaBuilder()->getTableListing(
+                null, $connection->getDriverName() === 'pgsql'
+            ));
         });
     }
 
@@ -99,7 +96,23 @@ class DbHelper
     {
         static::beforeQuery();
 
-        return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableIndexes($tableName));
+        return static::normalizeResult(array_map(static fn (array $index) => new class($index) extends Fluent {
+            public function getName(): string {
+                return $this->name;
+            }
+
+            public function getColumns(): array {
+                return $this->columns;
+            }
+
+            public function isUnique(): bool {
+                return $this->unique;
+            }
+
+            public function isPrimary(): bool {
+                return $this->primary;
+            }
+        }, DB::connection()->getSchemaBuilder()->getIndexes($tableName)))->keyBy(fn ($index) => $index->getName());
     }
 
     /**
@@ -115,7 +128,15 @@ class DbHelper
     {
         static::beforeQuery();
 
-        return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableColumns($tableName));
+        return static::normalizeResult(array_map(static fn (array $column) => new class($column) extends Fluent {
+            public function getName(): string {
+                return $this->name;
+            }
+
+            public function getNotnull(): bool {
+                return ! $this->nullable;
+            }
+        }, DB::connection()->getSchemaBuilder()->getColumns($tableName)))->keyBy(fn ($column) => $column->getName());
     }
 
     /**
@@ -145,7 +166,20 @@ class DbHelper
     {
         static::beforeQuery();
 
-        return static::normalizeResult(DB::getDoctrineSchemaManager()->listTableForeignKeys($tableName));
+        return static::normalizeResult(array_map(static function (array $foreignKey) use ($tableName) {
+            // SQLite does not expose names; retain a usable Laravel-style name for lookups.
+            $foreignKey['name'] ??= $tableName . '_' . implode('_', $foreignKey['columns']) . '_foreign';
+
+            return new class($foreignKey) extends Fluent {
+                public function getName(): string {
+                    return $this->name;
+                }
+
+                public function getColumns(): array {
+                    return $this->columns;
+                }
+            };
+        }, DB::connection()->getSchemaBuilder()->getForeignKeys($tableName)));
     }
 
     /**
@@ -196,11 +230,11 @@ class DbHelper
      */
     public static function hasForeignConstraintColumns($tableName, $columns, $dbName = null)
     {
-        return static::getForeignConstraints($tableName, $dbName)->map(
-            function ($fkColumn) {
-                return $fkColumn->getColumns();
-            }
-        )->flatten()->contains($columns);
+        return static::getForeignConstraints($tableName, $dbName)->contains(
+            static fn ($foreignKey) => is_array($columns)
+                ? $foreignKey->getColumns() === $columns
+                : in_array($columns, $foreignKey->getColumns(), true)
+        );
     }
 
     /**
